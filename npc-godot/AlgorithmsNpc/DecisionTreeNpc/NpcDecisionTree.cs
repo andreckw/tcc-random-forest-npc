@@ -18,7 +18,7 @@ public partial class NpcDecisionTree : CharacterBody2D
     [Export]
     public Trait trait;
     [Export]
-    public Timer timer;
+    public TimerResource timer;
     [Export]
     public SocialClass socialClass;
     [Export]
@@ -65,13 +65,25 @@ public partial class NpcDecisionTree : CharacterBody2D
     {
         base._Ready();
 
+        if (Engine.IsEditorHint()) {
+            SetPhysicsProcess(false);
+        }
+
         state = new Idle();
 
-        timer ??= new Timer();
-        trait ??= new Trait();
+        timer ??= new TimerResource();
+        if (trait == null) {
+            trait = new Trait();
+            trait.randomTraits();
+        }
 
-        timer.Timeout += ChangeState;
+        timer.OnTimeout += ChangeState;
         timer.Start();
+    }
+
+    public override void _Process(double delta)
+    {
+        timer.Update((float) delta);
     }
 
     public override void _PhysicsProcess(double delta)
