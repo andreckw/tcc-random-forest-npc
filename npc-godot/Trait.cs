@@ -15,8 +15,10 @@ public partial class Trait : Resource
     public float emotionalStability = 0;
     [Export(PropertyHint.Range, "0,1")]
     public float opennesExp = 0;
+    [Export]
+    public bool alwaysRandomizer = false;
 
-    public void randomTraits()
+    public void RandomTraits()
     {
         var rand = new Random();
         extraversion = rand.NextSingle();

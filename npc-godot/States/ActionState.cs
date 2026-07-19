@@ -4,6 +4,6 @@ namespace States
 {
     public interface IActionState
     {
-        public void Act(Node node);
+        public void Act(NpcDecisionTree npc, float delta, Node node);
     }
 }

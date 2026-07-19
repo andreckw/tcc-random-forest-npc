@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using AlgorithmsNpc;
 using DecisionTree;
 using Godot;
 using States;
@@ -34,12 +35,17 @@ public partial class NpcDecisionTree : CharacterBody2D
 
     public void ChangeState()
     {
-        createDecisionTree();
+        CreateDecisionTree();
+        if (trait.alwaysRandomizer)
+        {
+            trait.RandomTraits();
+        }
         rootNode.Evalute(this);
+        SalvarDataset.GetInstance().InsertLinha(this);
         timer.Start();
     }
 
-    private void createDecisionTree()
+    private void CreateDecisionTree()
     {
         if (rootNode != null) return;
 
@@ -60,21 +66,67 @@ public partial class NpcDecisionTree : CharacterBody2D
         rootNode = new ConditionNode(investigationCondition, InvestigationState, conditionInteract);
     }
 
+    public void ConsumirRecusros(float delta)
+    {
+        hunger -= delta;
+        stamina -= delta;
+        leisure += delta;
+
+        if (hunger < 0)
+        {
+            hunger = 0;
+        }
+
+        if (stamina < 0)
+        {
+            stamina = 0;
+        }
+
+        if (leisure > 1)
+        {
+            leisure = 1;
+        }
+    }
+
+    public void RestaurarRecusros(float delta)
+    {
+        hunger += delta;
+        stamina += delta;
+        leisure -= delta;
+
+        if (hunger > 1)
+        {
+            hunger = 1;
+        }
+
+        if (stamina > 1)
+        {
+            stamina = 1;
+        }
+
+        if (leisure < 0)
+        {
+            leisure = 0;
+        }
+    }
+
 
     public override void _Ready()
     {
         base._Ready();
 
-        if (Engine.IsEditorHint()) {
+        if (Engine.IsEditorHint())
+        {
             SetPhysicsProcess(false);
         }
 
         state = new Idle();
 
         timer ??= new TimerResource();
-        if (trait == null) {
+        if (trait == null)
+        {
             trait = new Trait();
-            trait.randomTraits();
+            trait.RandomTraits();
         }
 
         timer.OnTimeout += ChangeState;
@@ -83,12 +135,12 @@ public partial class NpcDecisionTree : CharacterBody2D
 
     public override void _Process(double delta)
     {
-        timer.Update((float) delta);
+        timer.Update((float)delta);
     }
 
     public override void _PhysicsProcess(double delta)
     {
         base._PhysicsProcess(delta);
-        state.Act(this);
+        state.Act(this, (float) delta, null);
     }
 }
