@@ -12,8 +12,9 @@ agreableness = 0.7024752
 conscientiouness = 0.015607297
 emotionalStability = 0.98185325
 opennesExp = 0.18089515
+alwaysRandomizer = true
 
-[sub_resource type="Resource" id="Resource_s2mnp"]
+[sub_resource type="Resource" id="Resource_u8wfs"]
 script = ExtResource("2_u8wfs")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_botw2"]
@@ -63,7 +64,7 @@ size = Vector2(25, 25)
 [node name="NpcDecisionTree" type="CharacterBody2D" unique_id=1440692604]
 script = ExtResource("1_vqmno")
 trait = SubResource("Resource_fi3b4")
-timer = SubResource("Resource_s2mnp")
+timer = SubResource("Resource_u8wfs")
 metadata/_custom_type_script = "uid://dg28oia8vh2nu"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1718799953]
