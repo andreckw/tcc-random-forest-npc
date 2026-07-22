@@ -17,3 +17,16 @@ Um simulador para os Npcs ficarem decidindo suas ações, o jogo vai ser 2D e os
 - [ ] Colocar a camera dinamica (dar zoom, se mover pelo cenario) ou camera fisica
 - [ ] Ao clicar mostrar o estado atual do npc
 - [ ] Criar um mundo para eles ficarem
+
+
+### Conflito no git
+
+```cmd
+git stash
+```
+
+git pull ou git push
+
+```cmd
+git stash pop
+```
