@@ -6,6 +6,10 @@ Tenha o [.dotnet](https://dotnet.microsoft.com/pt-br/download/dotnet) instalado 
 
 O Addon/Plugin para a Godot está na pasta npc-godot, apenas copie e jogue em qualquer projeto criado na Godot para ativar
 
+## Random Forest
+
+Criar o dataset de no minimo 2k de registros, a Random Forest pode ser feita utilzando python ou C#, o que acharem mais facil, re-criar o NpcDecisionTree para NpcRandomForest fazendo nova classe para ele
+
 ## GDD do Prototipo
 
 Um simulador para os Npcs ficarem decidindo suas ações, o jogo vai ser 2D e os npcs 8 direções
