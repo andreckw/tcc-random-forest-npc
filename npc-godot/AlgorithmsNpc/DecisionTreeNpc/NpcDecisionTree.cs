@@ -13,6 +13,8 @@ public partial class NpcDecisionTree : CharacterBody2D
 
     private IDecisionNode rootNode;
 
+    public string NpcId { get; private set; }
+
     public IActionState state;
     public IActionState ultimoState;
 
@@ -115,22 +117,43 @@ public partial class NpcDecisionTree : CharacterBody2D
     {
         base._Ready();
 
+        NpcId = Guid.NewGuid().ToString();
+        state = new Idle();
+
         if (Engine.IsEditorHint())
         {
             SetPhysicsProcess(false);
+            SetProcess(false);
+            return;
         }
 
-        state = new Idle();
-
-        timer ??= new TimerResource();
         if (trait == null)
         {
             trait = new Trait();
             trait.RandomTraits();
         }
+        else
+        {
+            trait = (Trait)trait.Duplicate();
+        }
+
+        timer = timer == null ? new TimerResource() : (TimerResource)timer.Duplicate();
 
         timer.OnTimeout += ChangeState;
         timer.Start();
+    }
+
+    public override void _ExitTree()
+    {
+        base._ExitTree();
+
+        if (Engine.IsEditorHint())
+        {
+            return;
+        }
+
+        timer.OnTimeout -= ChangeState;
+        SalvarDataset.GetInstance().Flush();
     }
 
     public override void _Process(double delta)
