@@ -11,136 +11,162 @@ using Util;
 public partial class NpcDecisionTree : CharacterBody2D
 {
 
-    private IDecisionNode rootNode;
+	private IDecisionNode rootNode;
 
-    public IActionState state;
-    public IActionState ultimoState;
+	public IActionState state;
+	public IActionState ultimoState;
 
-    [Export]
-    public Trait trait;
-    [Export]
-    public TimerResource timer;
-    [Export]
-    public SocialClass socialClass;
-    [Export]
-    public Priority priority;
-    [Export]
-    public SocialStatus socialStatus;
-    [Export(PropertyHint.Range, "0,1")]
-    public float stamina = 1;
-    [Export(PropertyHint.Range, "0,1")]
-    public float leisure = 0;
-    [Export(PropertyHint.Range, "0,1")]
-    public float hunger = 1;
+	[Export]
+	public Trait trait;
+	[Export]
+	public TimerResource timer;
+	[Export]
+	public SocialClass socialClass;
+	[Export]
+	public Priority priority;
+	[Export]
+	public SocialStatus socialStatus;
+	[Export(PropertyHint.Range, "0,1")]
+	public float stamina = 1;
+	[Export(PropertyHint.Range, "0,1")]
+	public float leisure = 0;
+	[Export(PropertyHint.Range, "0,1")]
+	public float hunger = 1;
+	[Signal]
+	public delegate void NpcClickedEventHandler(NpcDecisionTree npc);
 
-    public void ChangeState()
-    {
-        CreateDecisionTree();
-        if (trait.alwaysRandomizer)
-        {
-            trait.RandomTraits();
-        }
-        rootNode.Evalute(this);
-        SalvarDataset.GetInstance().InsertLinha(this);
-        timer.Start();
-    }
+	public void ChangeState(){
+		CreateDecisionTree();
+		if (trait.alwaysRandomizer)
+		{
+			trait.RandomTraits();
+		}
+		rootNode.Evalute(this);
+		SalvarDataset.GetInstance().InsertLinha(this);
+		timer.Start();
+	}
 
-    private void CreateDecisionTree()
-    {
-        if (rootNode != null) return;
+	private void CreateDecisionTree()
+	{
+		if (rootNode != null) return;
 
-        ActionNode agressiveState = new(new Aggressive());
-        ActionNode idleState = new(new Idle());
-        ActionNode interactState = new(new Interact());
-        ActionNode InvestigationState = new(new Investigation());
-        ActionNode walkState = new(new PatrolWalk());
+		ActionNode agressiveState = new(new Aggressive());
+		ActionNode idleState = new(new Idle());
+		ActionNode interactState = new(new Interact());
+		ActionNode InvestigationState = new(new Investigation());
+		ActionNode walkState = new(new PatrolWalk());
 
-        Func<NpcDecisionTree, bool> walkCondition = npc => npc.trait.conscientiouness >= 0.4 && npc.stamina > 0.2;
-        Func<NpcDecisionTree, bool> agressiveCondition = npc => npc.trait.emotionalStability < 0.3 && npc.hunger < 0.7;
-        Func<NpcDecisionTree, bool> interactCondition = npc => npc.trait.extraversion > 0.5 && npc.leisure < 0.7;
-        Func<NpcDecisionTree, bool> investigationCondition = npc => npc.trait.opennesExp > 0.6 && npc.stamina > 0.4;
+		Func<NpcDecisionTree, bool> walkCondition = npc => npc.trait.conscientiouness >= 0.4 && npc.stamina > 0.2;
+		Func<NpcDecisionTree, bool> agressiveCondition = npc => npc.trait.emotionalStability < 0.3 && npc.hunger < 0.7;
+		Func<NpcDecisionTree, bool> interactCondition = npc => npc.trait.extraversion > 0.5 && npc.leisure < 0.7;
+		Func<NpcDecisionTree, bool> investigationCondition = npc => npc.trait.opennesExp > 0.6 && npc.stamina > 0.4;
 
-        var conditionWalk = new ConditionNode(walkCondition, walkState, idleState);
-        var conditionAgressive = new ConditionNode(agressiveCondition, agressiveState, conditionWalk);
-        var conditionInteract = new ConditionNode(interactCondition, interactState, conditionAgressive);
-        rootNode = new ConditionNode(investigationCondition, InvestigationState, conditionInteract);
-    }
+		var conditionWalk = new ConditionNode(walkCondition, walkState, idleState);
+		var conditionAgressive = new ConditionNode(agressiveCondition, agressiveState, conditionWalk);
+		var conditionInteract = new ConditionNode(interactCondition, interactState, conditionAgressive);
+		rootNode = new ConditionNode(investigationCondition, InvestigationState, conditionInteract);
+	}
 
-    public void ConsumirRecusros(float delta)
-    {
-        hunger -= delta;
-        stamina -= delta;
-        leisure += delta;
+	public void ConsumirRecusros(float delta)
+	{
+		hunger -= delta;
+		stamina -= delta;
+		leisure += delta;
 
-        if (hunger < 0)
-        {
-            hunger = 0;
-        }
+		if (hunger < 0)
+		{
+			hunger = 0;
+		}
 
-        if (stamina < 0)
-        {
-            stamina = 0;
-        }
+		if (stamina < 0)
+		{
+			stamina = 0;
+		}
 
-        if (leisure > 1)
-        {
-            leisure = 1;
-        }
-    }
+		if (leisure > 1)
+		{
+			leisure = 1;
+		}
+	}
 
-    public void RestaurarRecusros(float delta)
-    {
-        hunger += delta;
-        stamina += delta;
-        leisure -= delta;
+	public void RestaurarRecusros(float delta)
+	{
+		hunger += delta;
+		stamina += delta;
+		leisure -= delta;
 
-        if (hunger > 1)
-        {
-            hunger = 1;
-        }
+		if (hunger > 1)
+		{
+			hunger = 1;
+		}
 
-        if (stamina > 1)
-        {
-            stamina = 1;
-        }
+		if (stamina > 1)
+		{
+			stamina = 1;
+		}
 
-        if (leisure < 0)
-        {
-            leisure = 0;
-        }
-    }
+		if (leisure < 0)
+		{
+			leisure = 0;
+		}
+	}
+	
+public override void _Process(double delta){
+	timer.Update((float)delta);
+	
+	var label = GetNodeOrNull<Label>("StateLabel");
+	if (label != null && label.Visible){
+		label.Text = state.GetType().Name;
+	}
+}
+
+public override void _PhysicsProcess(double delta){
+	base._PhysicsProcess(delta);
+	state.Act(this, (float)delta, null);
+}
 
 
-    public override void _Ready()
-    {
-        base._Ready();
+public override void _Ready(){
+	base._Ready();
+	AddToGroup("npcs");
+	
+	if (Engine.IsEditorHint()){
+		SetPhysicsProcess(false);
+	}
+	state = new Idle();
+	timer ??= new TimerResource();
+	timer.Duration = 3.0f;
+	timer.OneShot = false;
+	
+	if (trait == null){
+		trait = new Trait();
+		trait.RandomTraits();
+	}
+	
+	timer.OnTimeout += ChangeState;
+	timer.Start();
 
-        if (Engine.IsEditorHint())
-        {
-            SetPhysicsProcess(false);
-        }
+	var area = GetNodeOrNull<Area2D>("Area2D");
+	if (area != null){
+		area.InputPickable = true;
+		area.InputEvent += OnAreaInputEvent;
+	}
 
-        state = new Idle();
+	var label = GetNodeOrNull<Label>("StateLabel");
+	if (label != null){
+		label.Visible = false;
+	}
+}
 
-        timer ??= new TimerResource();
-        if (trait == null)
-        {
-            trait = new Trait();
-            trait.RandomTraits();
-        }
-
-        timer.OnTimeout += ChangeState;
-        timer.Start();
-    }
-
-    public override void _Process(double delta)
-    {
-        timer.Update((float)delta);
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-        base._PhysicsProcess(delta);
-        state.Act(this, (float) delta, null);
-    }
+	private void OnAreaInputEvent(Node viewport, InputEvent inputEvent, long shapeIdx){
+		
+		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.Pressed){
+			var label = GetNodeOrNull<Label>("StateLabel");
+			if (label != null){
+				label.Text = state.GetType().Name;
+				label.Visible = !label.Visible;
+			}
+			EmitSignal(SignalName.NpcClicked, this);
+		}
+	}
 }
