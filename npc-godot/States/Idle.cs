@@ -1,13 +1,12 @@
-using Godot;
-
 namespace States
 {
     public class Idle : IActionState
     {
-        public void Act(NpcDecisionTree npc, float delta, Node node)
+        public void Act(NpcAgent npc, float delta)
         {
-            GD.Print("Agindo em IDLE");
-            npc.RestaurarRecusros(delta);
+            npc.ApplyMetabolism(delta);
+            npc.RestoreStamina(delta);
+            npc.AccumulateLeisureNeed(delta);
         }
     }
 }

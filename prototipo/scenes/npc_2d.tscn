@@ -8,10 +8,10 @@
 [sub_resource type="Resource" id="Resource_fi3b4"]
 script = ExtResource("2_btf6b")
 extraversion = 0.95405906
-agreableness = 0.7024752
-conscientiouness = 0.015607297
+agreeableness = 0.7024752
+conscientiousness = 0.015607297
 emotionalStability = 0.98185325
-opennesExp = 0.18089515
+opennessExp = 0.18089515
 alwaysRandomizer = true
 
 [sub_resource type="Resource" id="Resource_u8wfs"]

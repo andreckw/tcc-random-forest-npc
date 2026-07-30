@@ -1,13 +1,14 @@
-using Godot;
-
 namespace States
 {
     public class PatrolWalk : IActionState
     {
-        public void Act(NpcDecisionTree npc, float delta, Node node)
+        private const float Intensity = 1.0f;
+
+        public void Act(NpcAgent npc, float delta)
         {
-            GD.Print("Agindo em PatrolWalk");
-            npc.ConsumirRecusros(delta);
+            npc.ApplyMetabolism(delta);
+            npc.SpendStamina(delta, Intensity);
+            npc.AccumulateLeisureNeed(delta);
         }
     }
 }

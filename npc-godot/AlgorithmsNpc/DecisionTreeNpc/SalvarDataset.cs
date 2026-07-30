@@ -4,32 +4,14 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Godot;
 
 namespace AlgorithmsNpc
 {
-    public sealed record DatasetSample
-    {
-        [JsonPropertyName("npcId")] public string NpcId { get; init; } = string.Empty;
-        [JsonPropertyName("socialClass")] public int SocialClass { get; init; }
-        [JsonPropertyName("priority")] public int Priority { get; init; }
-        [JsonPropertyName("socialStatus")] public int SocialStatus { get; init; }
-        [JsonPropertyName("stamina")] public float Stamina { get; init; }
-        [JsonPropertyName("hunger")] public float Hunger { get; init; }
-        [JsonPropertyName("leisure")] public float Leisure { get; init; }
-        [JsonPropertyName("trait_extraversion")] public float TraitExtraversion { get; init; }
-        [JsonPropertyName("trait_agreeableness")] public float TraitAgreeableness { get; init; }
-        [JsonPropertyName("trait_conscientiousness")] public float TraitConscientiousness { get; init; }
-        [JsonPropertyName("trait_emotional_stability")] public float TraitEmotionalStability { get; init; }
-        [JsonPropertyName("trait_openness_exp")] public float TraitOpennessExp { get; init; }
-        [JsonPropertyName("actualState")] public string ActualState { get; init; } = string.Empty;
-    }
+    public sealed record DatasetSample(string NpcId, float[] Features, int Action);
 
     public sealed class SalvarDataset
     {
-        public const string CsvHeader = "npcId;socialClass;priority;socialStatus;stamina;hunger;leisure;trait_extraversion;trait_agreeableness;trait_conscientiousness;trait_emotional_stability;trait_openness_exp;actualState";
-
         private const int FlushThreshold = 50;
         private const char Separator = ';';
         private const string LineEnding = "\n";
@@ -43,7 +25,6 @@ namespace AlgorithmsNpc
         private readonly List<DatasetSample> persisted = [];
         private readonly string csvPath;
         private readonly string jsonPath;
-        private readonly JsonSerializerOptions jsonOptions = new() { WriteIndented = false };
 
         private SalvarDataset()
         {
@@ -52,16 +33,12 @@ namespace AlgorithmsNpc
 
             if (!File.Exists(csvPath))
             {
-                File.WriteAllText(csvPath, CsvHeader + LineEnding, Utf8NoBom);
+                File.WriteAllText(csvPath, BuildHeader() + LineEnding, Utf8NoBom);
             }
 
             if (File.Exists(jsonPath))
             {
-                string existing = File.ReadAllText(jsonPath, Utf8NoBom);
-                if (existing.Length > 0)
-                {
-                    persisted.AddRange(JsonSerializer.Deserialize<List<DatasetSample>>(existing) ?? []);
-                }
+                persisted.AddRange(ReadJson(jsonPath));
             }
 
             AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
@@ -72,33 +49,54 @@ namespace AlgorithmsNpc
             return instance ??= new SalvarDataset();
         }
 
+        public string CsvPath => csvPath;
+
+        public string JsonPath => jsonPath;
+
+        public int PersistedCount
+        {
+            get { lock (gate) { return persisted.Count; } }
+        }
+
         public int PendingCount
         {
             get { lock (gate) { return pending.Count; } }
         }
 
-        public string CsvPath => csvPath;
-
-        public string JsonPath => jsonPath;
-
-        public void InsertLinha(NpcDecisionTree npc)
+        public static string BuildHeader()
         {
-            DatasetSample sample = new()
+            StringBuilder header = new(NpcFeatureContract.IdColumn);
+
+            foreach (string name in NpcFeatureContract.FeatureNames)
             {
-                NpcId = npc.NpcId,
-                SocialClass = (int)npc.socialClass,
-                Priority = (int)npc.priority,
-                SocialStatus = (int)npc.socialStatus,
-                Stamina = npc.stamina,
-                Hunger = npc.hunger,
-                Leisure = npc.leisure,
-                TraitExtraversion = npc.trait.extraversion,
-                TraitAgreeableness = npc.trait.agreableness,
-                TraitConscientiousness = npc.trait.conscientiouness,
-                TraitEmotionalStability = npc.trait.emotionalStability,
-                TraitOpennessExp = npc.trait.opennesExp,
-                ActualState = npc.state.GetType().Name
-            };
+                header.Append(Separator).Append(name);
+            }
+
+            return header.Append(Separator).Append(NpcFeatureContract.LabelColumn).ToString();
+        }
+
+        public static string ToCsvLine(DatasetSample sample)
+        {
+            StringBuilder line = new(sample.NpcId);
+
+            foreach (float value in sample.Features)
+            {
+                line.Append(Separator).Append(value.ToString(CultureInfo.InvariantCulture));
+            }
+
+            return line.Append(Separator).Append(sample.Action.ToString(CultureInfo.InvariantCulture)).ToString();
+        }
+
+        public void InsertLinha(NpcAgent npc, int action)
+        {
+            float[] features = npc.BuildFeatureVector();
+
+            if (features.Length != NpcFeatureContract.FeatureCount)
+            {
+                throw new InvalidOperationException($"vetor de features com {features.Length} posições, contrato exige {NpcFeatureContract.FeatureCount}");
+            }
+
+            DatasetSample sample = new(npc.NpcId, features, action);
 
             bool shouldFlush;
             lock (gate)
@@ -111,26 +109,6 @@ namespace AlgorithmsNpc
             {
                 Flush();
             }
-        }
-
-        public static string ToCsvLine(DatasetSample sample)
-        {
-            CultureInfo invariant = CultureInfo.InvariantCulture;
-
-            return string.Join(Separator,
-                sample.NpcId,
-                sample.SocialClass.ToString(invariant),
-                sample.Priority.ToString(invariant),
-                sample.SocialStatus.ToString(invariant),
-                sample.Stamina.ToString(invariant),
-                sample.Hunger.ToString(invariant),
-                sample.Leisure.ToString(invariant),
-                sample.TraitExtraversion.ToString(invariant),
-                sample.TraitAgreeableness.ToString(invariant),
-                sample.TraitConscientiousness.ToString(invariant),
-                sample.TraitEmotionalStability.ToString(invariant),
-                sample.TraitOpennessExp.ToString(invariant),
-                sample.ActualState);
         }
 
         public void Flush()
@@ -156,20 +134,69 @@ namespace AlgorithmsNpc
 
                 File.AppendAllText(csvPath, csv.ToString(), Utf8NoBom);
 
-                string json;
+                DatasetSample[] snapshot;
                 lock (gate)
                 {
                     persisted.AddRange(batch);
                     pending.RemoveRange(0, batch.Count);
-                    json = JsonSerializer.Serialize(persisted, jsonOptions);
+                    snapshot = [.. persisted];
                 }
 
-                File.WriteAllText(jsonPath, json, Utf8NoBom);
+                WriteJson(jsonPath, snapshot);
             }
             catch (Exception e) when (e is IOException or UnauthorizedAccessException)
             {
                 GD.PushError($"SalvarDataset: falha ao gravar o dataset em {csvPath}: {e.Message}");
             }
+        }
+
+        private static void WriteJson(string path, DatasetSample[] samples)
+        {
+            using FileStream stream = File.Create(path);
+            using Utf8JsonWriter writer = new(stream, new JsonWriterOptions { Indented = false });
+
+            writer.WriteStartArray();
+
+            foreach (DatasetSample sample in samples)
+            {
+                writer.WriteStartObject();
+                writer.WriteString(NpcFeatureContract.IdColumn, sample.NpcId);
+
+                for (int i = 0; i < NpcFeatureContract.FeatureCount; i++)
+                {
+                    writer.WriteNumber(NpcFeatureContract.FeatureNames[i], sample.Features[i]);
+                }
+
+                writer.WriteNumber(NpcFeatureContract.LabelColumn, sample.Action);
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+            writer.Flush();
+        }
+
+        private static List<DatasetSample> ReadJson(string path)
+        {
+            List<DatasetSample> samples = [];
+
+            using JsonDocument document = JsonDocument.Parse(File.ReadAllText(path, Utf8NoBom));
+
+            foreach (JsonElement element in document.RootElement.EnumerateArray())
+            {
+                float[] features = new float[NpcFeatureContract.FeatureCount];
+
+                for (int i = 0; i < NpcFeatureContract.FeatureCount; i++)
+                {
+                    features[i] = element.GetProperty(NpcFeatureContract.FeatureNames[i]).GetSingle();
+                }
+
+                samples.Add(new DatasetSample(
+                    element.GetProperty(NpcFeatureContract.IdColumn).GetString(),
+                    features,
+                    element.GetProperty(NpcFeatureContract.LabelColumn).GetInt32()));
+            }
+
+            return samples;
         }
 
         private void OnProcessExit(object sender, EventArgs e)
