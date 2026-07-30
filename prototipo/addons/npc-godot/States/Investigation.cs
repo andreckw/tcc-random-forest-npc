@@ -28,7 +28,10 @@ namespace States
 
 			npc.Velocity = direction * 40f;
 			npc.MoveAndSlide();
-			sprite.Play("walk");
+			
+			// comporta
+			//npc.SetColor(Colors.Yellow);
+			npc.PlayAnimation("idle");
 		}
 	}
 }

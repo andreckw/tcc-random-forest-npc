@@ -123,9 +123,14 @@ public override void _PhysicsProcess(double delta){
 	state.Act(this, (float)delta, null);
 }
 
+/* teste */ 
+public AnimatedSprite2D Sprite { get; private set; }
+
 
 public override void _Ready(){
 	base._Ready();
+	
+	Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 	
 	if (Engine.IsEditorHint()){
 		SetPhysicsProcess(false);
@@ -153,6 +158,16 @@ public override void _Ready(){
 	if (label != null){
 		label.Visible = false;
 	}
+}
+
+public void PlayAnimation(string animation)
+{
+	Sprite.Play(animation);
+}
+
+public void SetColor(Color color)
+{
+	Sprite.Modulate = color;
 }
 
 	private void OnAreaInputEvent(Node viewport, InputEvent inputEvent, long shapeIdx){

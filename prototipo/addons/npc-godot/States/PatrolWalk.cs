@@ -28,7 +28,10 @@ namespace States
 
 			npc.Velocity = direction * 80f;
 			npc.MoveAndSlide();
-			sprite.Play("walk");
+			
+			// comportamento
+			//npc.SetColor(Colors.Cyan);
+			npc.PlayAnimation("walk");
 		}
 	}
 }

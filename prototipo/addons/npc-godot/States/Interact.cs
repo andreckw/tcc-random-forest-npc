@@ -11,7 +11,10 @@ namespace States
 			
 			npc.Velocity = Vector2.Zero;
 			npc.MoveAndSlide();
-			sprite.Play("idle");
+			
+			// comportamento
+			//npc.SetColor(Colors.Green);
+			npc.PlayAnimation("idle");
 		}
 	}
 }

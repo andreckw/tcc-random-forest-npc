@@ -6,7 +6,7 @@ namespace States
 
 		public void Act(NpcDecisionTree npc, float delta, Node node){
 			npc.ConsumirRecusros(delta);
-			var sprite = npc.GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+			
 
 			if (direction == Vector2.Zero){
 				direction = new Vector2(
@@ -25,7 +25,9 @@ namespace States
 
 			npc.Velocity = direction * 120f;
 			npc.MoveAndSlide();
-			sprite.Play("walk");
+			
+			//npc.SetColor(Colors.Red);
+			npc.PlayAnimation("walk_aggressive");
 		}
 	}
 }
