@@ -1,0 +1,7 @@
+joblib~=1.5
+numpy~=2.5
+onnx~=1.22
+onnxruntime~=1.28
+pandas~=3.0
+scikit-learn~=1.9
+skl2onnx~=1.20
