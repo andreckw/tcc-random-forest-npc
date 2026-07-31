@@ -1,33 +1,32 @@
 using Godot;
+
 namespace States
 {
-	public class Aggressive : IActionState{
-		private Vector2 direction = Vector2.Zero;
-
-		public void Act(NpcDecisionTree npc, float delta, Node node){
+	public class Aggressive : IActionState
+	{
+		public void Act(NpcDecisionTree npc, float delta, Node node)
+		{
+			
 			npc.ConsumirRecusros(delta);
+
 			
-
-			if (direction == Vector2.Zero){
-				direction = new Vector2(
-					(float)GD.RandRange(-1, 1),
-					(float)GD.RandRange(-1, 1)
-				).Normalized();
-			}
-
-			var screenSize = npc.GetViewportRect().Size;
-			if (npc.Position.X < 0 || npc.Position.X > screenSize.X){
-				direction.X = -direction.X;
-			}
-			if (npc.Position.Y < 0 || npc.Position.Y > screenSize.Y){
-				direction.Y = -direction.Y;
-			}
-
-			npc.Velocity = direction * 120f;
-			npc.MoveAndSlide();
-			
-			//npc.SetColor(Colors.Red);
+			// npc.SetColor(Colors.Red); // Se quiser usar cor 
 			npc.PlayAnimation("walk_aggressive");
+
+			// Procura o NPC mais próximo
+			NpcDecisionTree alvo = npc.GetNearestNpc();
+
+			// Se encontrou alguém, vai atrás dele
+			if (alvo != null)
+			{
+				npc.MoveTowards(alvo.Position, 120f);
+			}
+			else
+			{
+				// Caso não exista nenhum outro NPC
+				npc.Velocity = Vector2.Zero;
+				npc.MoveAndSlide();
+			}
 		}
 	}
 }

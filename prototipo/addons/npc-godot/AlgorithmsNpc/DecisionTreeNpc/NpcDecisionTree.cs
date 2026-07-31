@@ -10,7 +10,9 @@ using Util;
 [GlobalClass]
 public partial class NpcDecisionTree : CharacterBody2D
 {
-
+	// npcs criados
+	private Node2D npcSpawner;
+	
 	private IDecisionNode rootNode;
 
 	public IActionState state;
@@ -130,6 +132,7 @@ public AnimatedSprite2D Sprite { get; private set; }
 public override void _Ready(){
 	base._Ready();
 	
+	npcSpawner = GetParent<Node2D>();
 	Sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
 	
 	if (Engine.IsEditorHint()){
@@ -158,6 +161,40 @@ public override void _Ready(){
 	if (label != null){
 		label.Visible = false;
 	}
+}
+
+public NpcDecisionTree GetNearestNpc()
+{
+	float menorDistancia = float.MaxValue;
+	NpcDecisionTree maisProximo = null;
+
+	foreach (Node filho in npcSpawner.GetChildren())
+	{
+		if (filho == this)
+			continue;
+
+		if (filho is NpcDecisionTree npc)
+		{
+			float distancia = Position.DistanceTo(npc.Position);
+
+			if (distancia < menorDistancia)
+			{
+				menorDistancia = distancia;
+				maisProximo = npc;
+			}
+		}
+	}
+
+	return maisProximo;
+}
+
+public void MoveTowards(Vector2 target, float speed)
+{
+	Vector2 direction = (target - Position).Normalized();
+
+	Velocity = direction * speed;
+
+	MoveAndSlide();
 }
 
 public void PlayAnimation(string animation)
