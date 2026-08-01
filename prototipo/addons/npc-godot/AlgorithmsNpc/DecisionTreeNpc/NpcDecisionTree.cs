@@ -17,7 +17,8 @@ public partial class NpcDecisionTree : CharacterBody2D
 
 	public IActionState state;
 	public IActionState ultimoState;
-
+	public bool IsDead = false;
+	
 	[Export]
 	public Trait trait;
 	[Export]
@@ -35,16 +36,25 @@ public partial class NpcDecisionTree : CharacterBody2D
 	[Export(PropertyHint.Range, "0,1")]
 	public float hunger = 1;
 
-	public void ChangeState(){
-		CreateDecisionTree();
-		if (trait.alwaysRandomizer)
-		{
-			trait.RandomTraits();
-		}
-		rootNode.Evalute(this);
-		SalvarDataset.GetInstance().InsertLinha(this);
-		timer.Start();
+	public void ChangeState()
+{
+	if (IsDead)
+		return;
+
+	CreateDecisionTree();
+
+	if (trait.alwaysRandomizer)
+	{
+		trait.RandomTraits();
 	}
+
+	rootNode.Evalute(this);
+
+	SalvarDataset.GetInstance().InsertLinha(this);
+
+	timer.Start();
+}
+	
 
 	private void CreateDecisionTree()
 	{
@@ -120,8 +130,13 @@ public override void _Process(double delta){
 	}
 }
 
-public override void _PhysicsProcess(double delta){
+public override void _PhysicsProcess(double delta)
+{
+	if (IsDead)
+		return;
+
 	base._PhysicsProcess(delta);
+
 	state.Act(this, (float)delta, null);
 }
 
@@ -169,12 +184,15 @@ public NpcDecisionTree GetNearestNpc()
 	NpcDecisionTree maisProximo = null;
 
 	foreach (Node filho in npcSpawner.GetChildren())
-	{
+	{	
 		if (filho == this)
 			continue;
 
 		if (filho is NpcDecisionTree npc)
 		{
+			if (npc.IsDead)
+				continue;
+				
 			float distancia = Position.DistanceTo(npc.Position);
 
 			if (distancia < menorDistancia)
@@ -205,6 +223,17 @@ public void PlayAnimation(string animation)
 public void SetColor(Color color)
 {
 	Sprite.Modulate = color;
+}
+
+public void Die()
+{
+	GD.Print(Name + " MORREU");
+
+	IsDead = true;
+
+	Velocity = Vector2.Zero;
+
+	PlayAnimation("dead");
 }
 
 	private void OnAreaInputEvent(Node viewport, InputEvent inputEvent, long shapeIdx){

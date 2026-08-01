@@ -2,23 +2,30 @@
 
 [ext_resource type="Script" uid="uid://bgqh3gxbe0e66" path="res://addons/npc-godot/AlgorithmsNpc/DecisionTreeNpc/NpcDecisionTree.cs" id="1_vqmno"]
 [ext_resource type="Script" uid="uid://dbahpbqd5e0ji" path="res://addons/npc-godot/Trait.cs" id="2_btf6b"]
-[ext_resource type="Script" uid="uid://h2kncq8x42y3" path="res://addons/npc-godot/Util/TimerResource.cs" id="2_u8wfs"]
 [ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="3_btf6b"]
+[ext_resource type="Texture2D" uid="uid://dldw480syv332" path="res://images/dead.png" id="3_fi3b4"]
 [ext_resource type="Texture2D" uid="uid://bknxq0ymkyosx" path="res://images/2dBAD.png" id="5_btf6b"]
 
 [sub_resource type="Resource" id="Resource_fi3b4"]
 script = ExtResource("2_btf6b")
-extraversion = 0.75792193
-agreableness = 0.86220485
-conscientiouness = 0.64988923
-emotionalStability = 0.70541954
-opennesExp = 0.78521514
+extraversion = 0.8860975
+agreableness = 0.90799344
+conscientiouness = 0.9215992
+emotionalStability = 0.6221001
+opennesExp = 0.6649641
 alwaysRandomizer = true
 
-[sub_resource type="Resource" id="Resource_s2mnp"]
-script = ExtResource("2_u8wfs")
-Duration = 3.0
-OneShot = false
+[sub_resource type="AtlasTexture" id="AtlasTexture_5gxts"]
+atlas = ExtResource("3_fi3b4")
+region = Rect2(0, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cuh4y"]
+atlas = ExtResource("3_fi3b4")
+region = Rect2(40, 0, 40, 40)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yu78i"]
+atlas = ExtResource("3_fi3b4")
+region = Rect2(80, 0, 40, 40)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_botw2"]
 atlas = ExtResource("3_btf6b")
@@ -50,6 +57,20 @@ region = Rect2(80, 0, 40, 40)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_v2a3n"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5gxts")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cuh4y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yu78i")
+}],
+"loop": 1,
+"name": &"dead",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_botw2")
@@ -96,12 +117,11 @@ size = Vector2(32, 32)
 [node name="NpcDecisionTree" type="CharacterBody2D" unique_id=1440692604]
 script = ExtResource("1_vqmno")
 trait = SubResource("Resource_fi3b4")
-timer = SubResource("Resource_s2mnp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1718799953]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_v2a3n")
-animation = &"walk_aggressive"
+animation = &"dead"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1111297393]
 shape = SubResource("RectangleShape2D_boogr")
