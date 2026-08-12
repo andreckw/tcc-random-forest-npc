@@ -4,7 +4,7 @@ namespace States
 {
     public static class ActionCatalog
     {
-        public const int Count = 5;
+        public const int Count = AlgorithmsNpc.NpcFeatureContract.ActionCount;
 
         private static readonly IActionState[] catalog =
         [

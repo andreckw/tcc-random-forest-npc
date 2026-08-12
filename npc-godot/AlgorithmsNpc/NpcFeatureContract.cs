@@ -3,6 +3,7 @@ namespace AlgorithmsNpc
     public static class NpcFeatureContract
     {
         public const int FeatureCount = 12;
+        public const int ActionCount = 5;
         public const string IdColumn = "npcId";
         public const string LabelColumn = "acao_alvo";
 
@@ -20,6 +21,15 @@ namespace AlgorithmsNpc
             "trait_conscientiousness",
             "trait_emotional_stability",
             "trait_openness_exp"
+        ];
+
+        public static readonly string[] ActionNames =
+        [
+            "Idle",
+            "PatrolWalk",
+            "Interact",
+            "Investigation",
+            "Aggressive"
         ];
     }
 }
