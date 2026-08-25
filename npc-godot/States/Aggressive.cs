@@ -1,13 +1,14 @@
-using Godot;
-
 namespace States
 {
     public class Aggressive : IActionState
     {
-        public void Act(NpcDecisionTree npc, float delta, Node node)
+        private const float Intensity = 1.5f;
+
+        public void Act(NpcAgent npc, float delta)
         {
-            GD.Print("Agindo em Aggressive");
-            npc.ConsumirRecusros(delta);
+            npc.ApplyMetabolism(delta);
+            npc.SpendStamina(delta, Intensity);
+            npc.AccumulateLeisureNeed(delta);
         }
     }
 }

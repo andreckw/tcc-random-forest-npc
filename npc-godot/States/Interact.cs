@@ -1,13 +1,15 @@
-using Godot;
-
 namespace States
 {
     public class Interact : IActionState
     {
-        public void Act(NpcDecisionTree npc, float delta, Node node)
+        private const float Intensity = 0.5f;
+
+        public void Act(NpcAgent npc, float delta)
         {
-            GD.Print("Agindo em Interact");
-            npc.ConsumirRecusros(delta);
+            npc.ApplyMetabolism(delta);
+            npc.Eat(delta);
+            npc.SatisfyLeisureNeed(delta);
+            npc.SpendStamina(delta, Intensity);
         }
     }
 }

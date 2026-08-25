@@ -1,17 +1,17 @@
 [gd_scene format=3 uid="uid://bhoblijhk5u78"]
 
-[ext_resource type="Script" uid="uid://bgqh3gxbe0e66" path="res://addons/npc-godot/AlgorithmsNpc/DecisionTreeNpc/NpcDecisionTree.cs" id="1_vqmno"]
-[ext_resource type="Script" uid="uid://dbahpbqd5e0ji" path="res://addons/npc-godot/Trait.cs" id="2_btf6b"]
-[ext_resource type="Script" uid="uid://h2kncq8x42y3" path="res://addons/npc-godot/Util/TimerResource.cs" id="2_u8wfs"]
+[ext_resource type="Script" path="res://addons/npc-godot/AlgorithmsNpc/RandomForestNpc/NpcRandomForest.cs" id="1_vqmno"]
+[ext_resource type="Script" uid="uid://cvc6yjt0s1h87" path="res://addons/npc-godot/Trait.cs" id="2_btf6b"]
+[ext_resource type="Script" uid="uid://ciameij4l1eav" path="res://addons/npc-godot/Util/TimerResource.cs" id="2_u8wfs"]
 [ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="3_btf6b"]
 
 [sub_resource type="Resource" id="Resource_fi3b4"]
 script = ExtResource("2_btf6b")
-extraversion = 0.6922023
-agreableness = 0.04208696
-conscientiouness = 0.0065907836
-emotionalStability = 0.16200906
-opennesExp = 0.818592
+extraversion = 0.95405906
+agreeableness = 0.7024752
+conscientiousness = 0.015607297
+emotionalStability = 0.98185325
+opennessExp = 0.18089515
 alwaysRandomizer = true
 
 [sub_resource type="Resource" id="Resource_u8wfs"]
@@ -66,10 +66,11 @@ size = Vector2(25, 25)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_32sqe"]
 size = Vector2(32, 32)
 
-[node name="NpcDecisionTree" type="CharacterBody2D" unique_id=1440692604]
+[node name="NpcRandomForest" type="CharacterBody2D" unique_id=1440692604]
 script = ExtResource("1_vqmno")
 trait = SubResource("Resource_fi3b4")
 timer = SubResource("Resource_u8wfs")
+modelProfile = 4
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1718799953]
 texture_filter = 1
