@@ -1,17 +1,17 @@
 using System;
-using Godot;
+using States;
 
 namespace DecisionTree
 {
-    public class ConditionNode(Func<NpcDecisionTree, bool> condition, IDecisionNode trueNode, IDecisionNode falseNode) : IDecisionNode
+    public class ConditionNode(Func<NpcAgent, bool> condition, IDecisionNode trueNode, IDecisionNode falseNode) : IDecisionNode
     {
-        private Func<NpcDecisionTree, bool> condition = condition;
-        private IDecisionNode trueNode = trueNode;
-        private IDecisionNode falseNode = falseNode;
+        private readonly Func<NpcAgent, bool> condition = condition;
+        private readonly IDecisionNode trueNode = trueNode;
+        private readonly IDecisionNode falseNode = falseNode;
 
-        public IDecisionNode Evalute(NpcDecisionTree npc)
+        public IActionState Evaluate(NpcAgent npc)
         {
-            return condition(npc) ? trueNode.Evalute(npc) : falseNode.Evalute(npc);
+            return condition(npc) ? trueNode.Evaluate(npc) : falseNode.Evaluate(npc);
         }
     }
 }

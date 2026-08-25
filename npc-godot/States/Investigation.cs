@@ -1,13 +1,14 @@
-using Godot;
-
 namespace States
 {
     public class Investigation : IActionState
     {
-        public void Act(NpcDecisionTree npc, float delta, Node node)
+        private const float Intensity = 1.2f;
+
+        public void Act(NpcAgent npc, float delta)
         {
-            GD.Print("Agindo em Investigation");
-            npc.ConsumirRecusros(delta);
+            npc.ApplyMetabolism(delta);
+            npc.SpendStamina(delta, Intensity);
+            npc.AccumulateLeisureNeed(delta);
         }
     }
 }

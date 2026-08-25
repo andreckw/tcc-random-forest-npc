@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using AlgorithmsNpc;
 using DecisionTree;
 using Godot;
 using States;
@@ -8,139 +6,60 @@ using Util;
 
 [Tool]
 [GlobalClass]
-public partial class NpcDecisionTree : CharacterBody2D
+public partial class NpcDecisionTree : NpcAgent
 {
-
     private IDecisionNode rootNode;
 
-    public IActionState state;
-    public IActionState ultimoState;
-
-    [Export]
-    public Trait trait;
-    [Export]
-    public TimerResource timer;
-    [Export]
-    public SocialClass socialClass;
-    [Export]
-    public Priority priority;
-    [Export]
-    public SocialStatus socialStatus;
-    [Export(PropertyHint.Range, "0,1")]
-    public float stamina = 1;
-    [Export(PropertyHint.Range, "0,1")]
-    public float leisure = 0;
-    [Export(PropertyHint.Range, "0,1")]
-    public float hunger = 1;
-
-    public void ChangeState()
+    protected override int DecideAction()
     {
-        CreateDecisionTree();
-        if (trait.alwaysRandomizer)
-        {
-            trait.RandomTraits();
-        }
-        rootNode.Evalute(this);
-        SalvarDataset.GetInstance().InsertLinha(this);
-        timer.Start();
+        rootNode ??= BuildTree();
+        return ActionCatalog.ToIndex(rootNode.Evaluate(this));
     }
 
-    private void CreateDecisionTree()
+    private static IDecisionNode BuildTree()
     {
-        if (rootNode != null) return;
+        ActionNode idle = new(ActionCatalog.FromIndex(0));
+        ActionNode patrol = new(ActionCatalog.FromIndex(1));
+        ActionNode interact = new(ActionCatalog.FromIndex(2));
+        ActionNode investigation = new(ActionCatalog.FromIndex(3));
+        ActionNode aggressive = new(ActionCatalog.FromIndex(4));
 
-        ActionNode agressiveState = new(new Aggressive());
-        ActionNode idleState = new(new Idle());
-        ActionNode interactState = new(new Interact());
-        ActionNode InvestigationState = new(new Investigation());
-        ActionNode walkState = new(new PatrolWalk());
+        Func<NpcAgent, bool> starving = npc => npc.hunger > 0.7f;
+        Func<NpcAgent, bool> exhausted = npc => npc.stamina < 0.25f;
+        Func<NpcAgent, bool> nightTime = npc => npc.Hour < 6f || npc.Hour > 22f;
+        Func<NpcAgent, bool> onDuty = npc => npc.priority == Priority.WORK
+            && npc.trait.conscientiousness >= 0.4f
+            && npc.stamina > 0.3f;
+        Func<NpcAgent, bool> curious = npc => npc.trait.opennessExp > 0.6f && npc.stamina > 0.4f;
+        Func<NpcAgent, bool> sociable = npc => npc.trait.extraversion > 0.5f
+            && npc.leisure > LeisureThreshold(npc.socialClass)
+            && (npc.socialStatus == SocialStatus.MARRIED
+                || npc.priority == Priority.FAMILY
+                || npc.trait.agreeableness > 0.5f);
+        Func<NpcAgent, bool> hostile = npc => npc.trait.emotionalStability < 0.3f
+            && npc.trait.agreeableness < 0.4f
+            && npc.hunger > 0.4f;
+        Func<NpcAgent, bool> dutiful = npc => npc.trait.conscientiousness >= 0.4f && npc.stamina > 0.2f;
 
-        Func<NpcDecisionTree, bool> walkCondition = npc => npc.trait.conscientiouness >= 0.4 && npc.stamina > 0.2;
-        Func<NpcDecisionTree, bool> agressiveCondition = npc => npc.trait.emotionalStability < 0.3 && npc.hunger < 0.7;
-        Func<NpcDecisionTree, bool> interactCondition = npc => npc.trait.extraversion > 0.5 && npc.leisure < 0.7;
-        Func<NpcDecisionTree, bool> investigationCondition = npc => npc.trait.opennesExp > 0.6 && npc.stamina > 0.4;
+        ConditionNode dutifulNode = new(dutiful, patrol, idle);
+        ConditionNode hostileNode = new(hostile, aggressive, dutifulNode);
+        ConditionNode sociableNode = new(sociable, interact, hostileNode);
+        ConditionNode curiousNode = new(curious, investigation, sociableNode);
+        ConditionNode onDutyNode = new(onDuty, patrol, curiousNode);
+        ConditionNode nightNode = new(nightTime, idle, onDutyNode);
+        ConditionNode exhaustedNode = new(exhausted, idle, nightNode);
 
-        var conditionWalk = new ConditionNode(walkCondition, walkState, idleState);
-        var conditionAgressive = new ConditionNode(agressiveCondition, agressiveState, conditionWalk);
-        var conditionInteract = new ConditionNode(interactCondition, interactState, conditionAgressive);
-        rootNode = new ConditionNode(investigationCondition, InvestigationState, conditionInteract);
+        return new ConditionNode(starving, interact, exhaustedNode);
     }
 
-    public void ConsumirRecusros(float delta)
+    private static float LeisureThreshold(SocialClass socialClass)
     {
-        hunger -= delta;
-        stamina -= delta;
-        leisure += delta;
-
-        if (hunger < 0)
+        return socialClass switch
         {
-            hunger = 0;
-        }
-
-        if (stamina < 0)
-        {
-            stamina = 0;
-        }
-
-        if (leisure > 1)
-        {
-            leisure = 1;
-        }
-    }
-
-    public void RestaurarRecusros(float delta)
-    {
-        hunger += delta;
-        stamina += delta;
-        leisure -= delta;
-
-        if (hunger > 1)
-        {
-            hunger = 1;
-        }
-
-        if (stamina > 1)
-        {
-            stamina = 1;
-        }
-
-        if (leisure < 0)
-        {
-            leisure = 0;
-        }
-    }
-
-
-    public override void _Ready()
-    {
-        base._Ready();
-
-        if (Engine.IsEditorHint())
-        {
-            SetPhysicsProcess(false);
-        }
-
-        state = new Idle();
-
-        timer ??= new TimerResource();
-        if (trait == null)
-        {
-            trait = new Trait();
-            trait.RandomTraits();
-        }
-
-        timer.OnTimeout += ChangeState;
-        timer.Start();
-    }
-
-    public override void _Process(double delta)
-    {
-        timer.Update((float)delta);
-    }
-
-    public override void _PhysicsProcess(double delta)
-    {
-        base._PhysicsProcess(delta);
-        state.Act(this, (float) delta, null);
+            SocialClass.HIGH => 0.35f,
+            SocialClass.AVERAGE => 0.5f,
+            SocialClass.LOW => 0.65f,
+            _ => 0.5f
+        };
     }
 }
