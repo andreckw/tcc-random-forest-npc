@@ -48,11 +48,18 @@ public abstract partial class NpcAgent : CharacterBody2D
 
     public float Hour => WorldClock.Hour;
 
+    [Export]
+    public AnimatedSprite2D Sprite { get; set; }
+    public int Speed = 200;
+
+
+
     protected Random rng;
 
     public override void _Ready()
     {
         base._Ready();
+
 
         NpcId = Guid.NewGuid().ToString();
         rng = randomSeed == 0 ? new Random() : new Random(randomSeed);
@@ -183,5 +190,30 @@ public abstract partial class NpcAgent : CharacterBody2D
         }
 
         return value > 1f ? 1f : value;
+    }
+
+    public NpcAgent GetNearestNpc()
+    {
+        float menorDistancia = float.MaxValue;
+        NpcAgent maisProximo = null;
+
+        foreach (Node filho in GetParent().GetChildren())
+        {
+            if (filho == this)
+                continue;
+
+            if (filho is NpcAgent npc)
+            {
+                float distancia = Position.DistanceTo(npc.Position);
+
+                if (distancia < menorDistancia)
+                {
+                    menorDistancia = distancia;
+                    maisProximo = npc;
+                }
+            }
+        }
+
+        return maisProximo;
     }
 }

@@ -1,3 +1,4 @@
+using Godot;
 namespace States
 {
     public class Interact : IActionState
@@ -10,6 +11,9 @@ namespace States
             npc.Eat(delta);
             npc.SatisfyLeisureNeed(delta);
             npc.SpendStamina(delta, Intensity);
+            
+            npc.Velocity = Vector2.Zero;
+			npc.MoveAndSlide();
         }
     }
 }
