@@ -16,6 +16,8 @@ alwaysRandomizer = true
 
 [sub_resource type="Resource" id="Resource_u8wfs"]
 script = ExtResource("2_u8wfs")
+Duration = 3.0
+OneShot = false
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_botw2"]
 atlas = ExtResource("3_btf6b")
@@ -61,6 +63,9 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_boogr"]
 size = Vector2(25, 25)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32sqe"]
+size = Vector2(32, 32)
+
 [node name="NpcRandomForest" type="CharacterBody2D" unique_id=1440692604]
 script = ExtResource("1_vqmno")
 trait = SubResource("Resource_fi3b4")
@@ -70,7 +75,20 @@ modelProfile = 4
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1718799953]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_v2a3n")
-animation = &"idle"
+animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1111297393]
 shape = SubResource("RectangleShape2D_boogr")
+
+[node name="StateLabel" type="Label" parent="." unique_id=1073431321]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+offset_transform_enabled = true
+offset_transform_position = Vector2(-20, -30)
+text = "Idle"
+
+[node name="Area2D" type="Area2D" parent="." unique_id=240253241]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1985346713]
+shape = SubResource("RectangleShape2D_32sqe")
