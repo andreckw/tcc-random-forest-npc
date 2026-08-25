@@ -1,8 +1,9 @@
-using Godot;
+using States;
 
-namespace DecisionTree {
+namespace DecisionTree
+{
     public interface IDecisionNode
     {
-        public abstract IDecisionNode Evalute(NpcDecisionTree npc);
+        IActionState Evaluate(NpcAgent npc);
     }
 }

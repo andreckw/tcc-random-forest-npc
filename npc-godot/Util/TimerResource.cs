@@ -1,7 +1,8 @@
 using Godot;
 using System;
 
-namespace Util {
+namespace Util
+{
     [GlobalClass]
     public partial class TimerResource : Resource
     {
@@ -21,15 +22,29 @@ namespace Util {
 
         public void Update(float delta)
         {
-            if (!IsActive) return;
+            if (!IsActive)
+            {
+                return;
+            }
 
             TimeLeft -= delta;
-            if (TimeLeft <= 0)
+
+            if (TimeLeft > 0)
+            {
+                return;
+            }
+
+            if (OneShot)
             {
                 IsActive = false;
                 TimeLeft = 0;
-                OnTimeout?.Invoke();
             }
+            else
+            {
+                TimeLeft += Duration;
+            }
+
+            OnTimeout?.Invoke();
         }
     }
 }

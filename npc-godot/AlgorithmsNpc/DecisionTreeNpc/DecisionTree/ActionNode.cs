@@ -1,17 +1,14 @@
-using Godot;
 using States;
 
 namespace DecisionTree
 {
     public class ActionNode(IActionState actionState) : IDecisionNode
     {
-        private IActionState actionState = actionState;
+        private readonly IActionState actionState = actionState;
 
-        public IDecisionNode Evalute(NpcDecisionTree npc)
+        public IActionState Evaluate(NpcAgent npc)
         {
-            npc.ultimoState = npc.state;
-            npc.state = actionState;
-            return this;
+            return actionState;
         }
     }
 }
