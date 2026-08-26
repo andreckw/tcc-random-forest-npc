@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://b03qpjw65ai1u" path="res://images/tileset.png" id="1_nnsk1"]
 [ext_resource type="Script" uid="uid://dpikshwksakov" path="res://scenes/NPCSpawner.gd" id="2_4wyf3"]
-[ext_resource type="PackedScene" uid="uid://bhoblijhk5u78" path="res://scenes/npc_2d.tscn" id="2_rwgxs"]
+[ext_resource type="PackedScene" uid="uid://cdenswyngsxr8" path="res://scenes/npc_2d_decision_tree.tscn" id="3_k0juu"]
 [ext_resource type="Script" uid="uid://yafno6bkqwni" path="res://scenes/cameradinamica.gd" id="5_71j4m"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rwgxs"]
@@ -1558,7 +1558,7 @@ tile_set = SubResource("TileSet_j22ui")
 
 [node name="NPCSpawner" type="Node2D" parent="TileMapLayer" unique_id=1305493062]
 script = ExtResource("2_4wyf3")
-npc_scene = ExtResource("2_rwgxs")
+npc_scene = ExtResource("3_k0juu")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1550296982]
 position = Vector2(649, 515)

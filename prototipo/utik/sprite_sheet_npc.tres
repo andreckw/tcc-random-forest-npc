@@ -1,0 +1,44 @@
+[gd_resource type="SpriteFrames" format=3 uid="uid://bx7ooa7vkbbla"]
+
+[ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="1_xffox"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_botw2"]
+atlas = ExtResource("1_xffox")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gycr"]
+atlas = ExtResource("1_xffox")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_le8ok"]
+atlas = ExtResource("1_xffox")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dph16"]
+atlas = ExtResource("1_xffox")
+region = Rect2(64, 0, 32, 32)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_botw2")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7gycr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_le8ok")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dph16")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 4.0
+}]

@@ -1,0 +1,35 @@
+[gd_scene format=3 uid="uid://cdenswyngsxr8"]
+
+[ext_resource type="Script" uid="uid://coeggy7bbcx44" path="res://script/Npc2dDecisionTree.cs" id="1_t5bx6"]
+[ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="2_34gih"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_v2a3n"]
+size = Vector2(28, 28)
+
+[node name="Npc2dDecisionTree" type="CharacterBody2D" unique_id=488705077 node_paths=PackedStringArray("AreaClickable", "Label")]
+script = ExtResource("1_t5bx6")
+AreaClickable = NodePath("Area2D")
+Label = NodePath("Label")
+metadata/_custom_type_script = "uid://disn23faqf6rm"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1342897689]
+sprite_frames = ExtResource("2_34gih")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1854565951]
+shape = SubResource("RectangleShape2D_86cna")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=417262648]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=396323713]
+position = Vector2(-1, 0)
+shape = SubResource("RectangleShape2D_v2a3n")
+
+[node name="Label" type="Label" parent="." unique_id=989060622]
+visible = false
+offset_left = -18.0
+offset_top = -34.0
+offset_right = 22.0
+offset_bottom = -11.0
