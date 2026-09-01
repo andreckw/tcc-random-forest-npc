@@ -1,31 +1,34 @@
-using AlgorithmsNpc.RandomForestNpc;
 using Godot;
 
-[Tool]
-[GlobalClass]
-public partial class NpcRandomForest : NpcAgent
+namespace AlgorithmsNpc.RandomForestNpc
 {
-    [Export]
-    public RandomForestProfile modelProfile = RandomForestProfile.Victor;
 
-    [Export(PropertyHint.File, "*.json")]
-    public string customModelPath = "";
-
-    private RuntimeRandomForest model;
-
-    protected override int DecideAction()
+    [Tool]
+    [GlobalClass]
+    public partial class NpcRandomForest : NpcAgent
     {
-        model ??= RuntimeRandomForest.Load(ResolveModelPath());
-        return model.Predict(BuildFeatureVector());
-    }
+        [Export]
+        public RandomForestProfile modelProfile = RandomForestProfile.Victor;
 
-    private string ResolveModelPath()
-    {
-        if (!string.IsNullOrWhiteSpace(customModelPath))
+        [Export(PropertyHint.File, "*.json")]
+        public string customModelPath = "";
+
+        private RuntimeRandomForest model;
+
+        protected override int DecideAction()
         {
-            return customModelPath;
+            model ??= RuntimeRandomForest.Load(ResolveModelPath());
+            return model.Predict(BuildFeatureVector());
         }
 
-        return $"res://addons/npc-godot/Models/{modelProfile}.json";
+        private string ResolveModelPath()
+        {
+            if (!string.IsNullOrWhiteSpace(customModelPath))
+            {
+                return customModelPath;
+            }
+
+            return $"res://addons/npc-godot/Models/{modelProfile}.json";
+        }
     }
 }
