@@ -50,8 +50,9 @@ public abstract partial class NpcAgent : CharacterBody2D
 
     [Export]
     public AnimatedSprite2D Sprite { get; set; }
+    [Export]
     public int Speed = 200;
-
+    public Vector2? targetNav;
 
 
     protected Random rng;
@@ -169,6 +170,7 @@ public abstract partial class NpcAgent : CharacterBody2D
         {
             trait.RandomTraits(rng);
         }
+        targetNav = null;
 
         int action = DecideAction();
 

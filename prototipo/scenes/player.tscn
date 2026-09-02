@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://biyvjhlmt48nr"]
+
+[ext_resource type="Script" uid="uid://dd25lhs320t2t" path="res://script/player.gd" id="1_3vyb7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
+
+[node name="Player" type="CharacterBody2D" unique_id=1859219748 node_paths=PackedStringArray("camera")]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("1_3vyb7")
+camera = NodePath("Camera2D")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=237612162]
+zoom = Vector2(1.25, 1.25)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1354511256]
+shape = SubResource("RectangleShape2D_86cna")
+disabled = true
