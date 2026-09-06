@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://bg6rf8q3jg5nm"]
+
+[ext_resource type="Script" uid="uid://6gl4efd16pf0" path="res://script/Npc2dRadomForest.cs" id="1_ng2pk"]
+[ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="2_1o7aq"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_b5hxq"]
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
+size = Vector2(24, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ng2pk"]
+size = Vector2(32, 32)
+
+[node name="Npc2dRadomForest" type="CharacterBody2D" unique_id=679041133 node_paths=PackedStringArray("AreaClickable", "Label", "Sprite")]
+collision_mask = 2
+script = ExtResource("1_ng2pk")
+AreaClickable = NodePath("Area2D")
+Label = NodePath("Label")
+Sprite = NodePath("AnimatedSprite2D")
+GerarDataset = true
+metadata/_custom_type_script = "uid://dqk68lf21057o"
+
+[node name="Label" type="Label" parent="." unique_id=1635147997]
+visible = false
+offset_left = -19.0
+offset_top = -35.0
+offset_right = 21.0
+offset_bottom = -12.0
+label_settings = SubResource("LabelSettings_b5hxq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1019706443]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_86cna")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1761662260]
+modulate = Color(0.05000007, 1, 0, 1)
+texture_filter = 1
+sprite_frames = ExtResource("2_1o7aq")
+animation = &"idle"
+
+[node name="Area2D" type="Area2D" parent="." unique_id=569827936]
+collision_layer = 2147483648
+collision_mask = 2147483648
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1225644746]
+shape = SubResource("RectangleShape2D_ng2pk")

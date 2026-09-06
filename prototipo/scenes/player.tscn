@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://biyvjhlmt48nr"]
+
+[ext_resource type="Script" uid="uid://dd25lhs320t2t" path="res://script/player.gd" id="1_3vyb7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_86cna"]
+font_size = 20
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v2a3n"]
+line_spacing = 2.0
+font_size = 20
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[node name="Player" type="CharacterBody2D" unique_id=1859219748 node_paths=PackedStringArray("camera", "fps_label", "memory_label")]
+collision_layer = 8
+collision_mask = 8
+script = ExtResource("1_3vyb7")
+camera = NodePath("Camera2D")
+fps_label = NodePath("CanvasLayer/VBoxContainer/Fps")
+memory_label = NodePath("CanvasLayer/VBoxContainer/Memoria")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=237612162]
+zoom = Vector2(1.25, 1.25)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1354511256]
+shape = SubResource("RectangleShape2D_86cna")
+disabled = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1535949091]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer" unique_id=1939265496]
+offset_right = 70.0
+offset_bottom = 50.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="Fps" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=2132792787]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+label_settings = SubResource("LabelSettings_86cna")
+
+[node name="Memoria" type="Label" parent="CanvasLayer/VBoxContainer" unique_id=1053305373]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_v2a3n")

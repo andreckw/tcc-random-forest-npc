@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="prototipo"
-run/main_scene="uid://bhoblijhk5u78"
+run/main_scene="uid://cawvqbk4soxfy"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -28,8 +28,15 @@ project/assembly_name="prototipo"
 
 enabled=PackedStringArray("res://addons/npc-godot/plugin.cfg")
 
+[layer_names]
+
+2d_physics/layer_1="mundo"
+2d_physics/layer_2="npc"
+2d_physics/layer_32="lixo"
+
 [physics]
 
+2d/run_on_separate_thread=true
 3d/physics_engine="Jolt Physics"
 
 [rendering]

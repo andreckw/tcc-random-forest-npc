@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://bvdiu30fha0vx"]
+
+[ext_resource type="TileSet" uid="uid://bwv2mttyhmuvg" path="res://utik/tile_set.tres" id="1_momlo"]
+[ext_resource type="Script" uid="uid://dpikshwksakov" path="res://scenes/NPCSpawner.gd" id="3_unp0h"]
+[ext_resource type="PackedScene" uid="uid://biyvjhlmt48nr" path="res://scenes/player.tscn" id="4_momlo"]
+[ext_resource type="PackedScene" uid="uid://cdenswyngsxr8" path="res://scenes/npc_2d_decision_tree.tscn" id="4_tbymv"]
+
+[node name="WorldDecisionTree" type="Node2D" unique_id=3455193]
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1742068366]
+tile_set = ExtResource("1_momlo")
+
+[node name="NPCSpawner" type="Node2D" parent="." unique_id=1075735689]
+script = ExtResource("3_unp0h")
+npc_scene = ExtResource("4_tbymv")
+quantidade = 50
+area_x = 900.0
+area_y = 900.0
+
+[node name="Player" parent="." unique_id=1859219748 instance=ExtResource("4_momlo")]
