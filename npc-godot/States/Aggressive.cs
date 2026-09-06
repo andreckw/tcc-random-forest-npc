@@ -11,7 +11,11 @@ namespace States
             npc.SpendStamina(delta, Intensity);
             npc.AccumulateLeisureNeed(delta);
 
-            npc.Sprite?.Play("walk_aggressive");
+
+            if (npc.Sprite != null)
+            {
+                npc.Sprite.Modulate = Color.FromHsv(0, 1, 1);
+            }
 
             // procura o npc mais prox
             NpcAgent alvo = npc.GetNearestNpc();

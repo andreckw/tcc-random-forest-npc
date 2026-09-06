@@ -50,8 +50,12 @@ public abstract partial class NpcAgent : CharacterBody2D
 
     [Export]
     public AnimatedSprite2D Sprite { get; set; }
+    [Export]
     public int Speed = 200;
+    public Vector2? targetNav;
 
+    [Export]
+    public bool GerarDataset = false;
 
 
     protected Random rng;
@@ -169,6 +173,7 @@ public abstract partial class NpcAgent : CharacterBody2D
         {
             trait.RandomTraits(rng);
         }
+        targetNav = null;
 
         int action = DecideAction();
 
@@ -178,7 +183,10 @@ public abstract partial class NpcAgent : CharacterBody2D
         }
 
         CurrentState = ActionCatalog.FromIndex(action);
-        SalvarDataset.GetInstance().InsertLinha(this, action);
+        if (GerarDataset)
+        {
+            SalvarDataset.GetInstance().InsertLinha(this, action);
+        }
         timer.Start();
     }
 

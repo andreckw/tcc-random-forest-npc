@@ -12,7 +12,8 @@ extends CharacterBody2D
     "bottom": 0,
 }
 
-var npc_alvo = null
+@export var fps_label: Label
+@export var memory_label: Label
 
 func _ready() -> void:
     camera.limit_top = camera_limits["top"]
@@ -20,14 +21,17 @@ func _ready() -> void:
     camera.limit_right = camera_limits["right"]
     camera.limit_left = camera_limits["left"]
 
-func _physics_process(delta: float) -> void:
-    if npc_alvo != null and is_instance_valid(npc_alvo):
-        position = position.lerp(npc_alvo.position, 5.0 * delta)
-    else:
+func _process(delta: float) -> void:
+    if fps_label != null:
+        fps_label.text = "FPS: %d" % Engine.get_frames_per_second()
+    
+    if memory_label != null:
+        memory_label.text = "Memoria: %.2fMB" % (Performance.get_monitor(Performance.MEMORY_STATIC) / 1024 / 1024)
 
-        var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
-        
-        position += direction * move_speed * delta
+func _physics_process(delta: float) -> void:
+    var direction = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+    
+    position += direction * move_speed * delta
 
 func _unhandled_input(event):
     if event is InputEventMouseButton:

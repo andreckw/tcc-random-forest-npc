@@ -28,8 +28,15 @@ project/assembly_name="prototipo"
 
 enabled=PackedStringArray("res://addons/npc-godot/plugin.cfg")
 
+[layer_names]
+
+2d_physics/layer_1="mundo"
+2d_physics/layer_2="npc"
+2d_physics/layer_32="lixo"
+
 [physics]
 
+2d/run_on_separate_thread=true
 3d/physics_engine="Jolt Physics"
 
 [rendering]

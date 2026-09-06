@@ -28,8 +28,8 @@ namespace AlgorithmsNpc
 
         private SalvarDataset()
         {
-            csvPath = ProjectSettings.GlobalizePath("user://dataset.csv");
-            jsonPath = ProjectSettings.GlobalizePath("user://dataset.json");
+            csvPath = ProjectSettings.GlobalizePath("res://addons/npc-godot/.npc-godot.csv");
+            jsonPath = ProjectSettings.GlobalizePath("res://addons/npc-godot/.npc-godot.json");
 
             if (!File.Exists(csvPath))
             {
