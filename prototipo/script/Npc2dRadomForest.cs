@@ -26,7 +26,7 @@ public partial class Npc2dRadomForest : NpcRandomForest
 
         if (Label != null)
         {
-            Label.Text = CurrentState.GetType().Name;
+            Label.Text = CurrentState.GetType().Name + " - " +  Math.Round(timer.TimeLeft, 2);
         }
 
     }

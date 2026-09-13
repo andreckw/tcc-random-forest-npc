@@ -33,6 +33,9 @@ func _physics_process(delta: float) -> void:
     
     position += direction * move_speed * delta
 
+    if Input.is_action_just_pressed("ui_cancel"):
+        get_tree().change_scene_to_file("res://scenes/title_screen.tscn")
+
 func _unhandled_input(event):
     if event is InputEventMouseButton:
         if event.button_index == MOUSE_BUTTON_WHEEL_UP:

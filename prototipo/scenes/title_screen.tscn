@@ -1,0 +1,90 @@
+[gd_scene format=3 uid="uid://cgqx35k2aqyr2"]
+
+[ext_resource type="Script" uid="uid://bfosyhqec3tho" path="res://script/title_screen.gd" id="1_mgrm8"]
+[ext_resource type="Texture2D" uid="uid://cyeq0ovnuf61u" path="res://images/tilesets/btns/01.png" id="1_sa3yf"]
+[ext_resource type="Texture2D" uid="uid://d3u486ywy7a4a" path="res://images/background.png" id="2_dc4i4"]
+[ext_resource type="Theme" uid="uid://cbxokyrc5w4w0" path="res://utik/btn_theme.tres" id="2_s4lrb"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_v2a3n"]
+content_margin_left = 30.0
+content_margin_top = 20.0
+content_margin_right = 30.0
+content_margin_bottom = 60.0
+texture = ExtResource("1_sa3yf")
+expand_margin_left = 100.0
+expand_margin_right = 100.0
+region_rect = Rect2(0, 84, 80, 30)
+
+[sub_resource type="LabelSettings" id="LabelSettings_86cna"]
+font_size = 25
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+
+[node name="TitleScreen" type="Control" unique_id=179648205]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mgrm8")
+
+[node name="Background" type="TextureRect" parent="." unique_id=1880720034]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -672.0
+offset_top = -384.0
+offset_right = 672.0
+offset_bottom = 384.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_dc4i4")
+
+[node name="Label" type="Label" parent="." unique_id=1906278565]
+texture_filter = 3
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -214.0
+offset_top = -57.5
+offset_right = 214.0
+offset_bottom = 57.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_v2a3n")
+text = "Random Forest aplicada a NPC"
+label_settings = SubResource("LabelSettings_86cna")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=55228138]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -170.0
+offset_right = 261.0
+grow_vertical = 0
+
+[node name="RFWBtn" type="Button" parent="VBoxContainer" unique_id=1309135462]
+texture_filter = 3
+layout_mode = 2
+theme = ExtResource("2_s4lrb")
+text = "Random Forest World"
+autowrap_mode = 2
+
+[node name="DTWBtn" type="Button" parent="VBoxContainer" unique_id=1519844737]
+texture_filter = 3
+layout_mode = 2
+theme = ExtResource("2_s4lrb")
+text = "Decision Tree World"
+
+[connection signal="pressed" from="VBoxContainer/RFWBtn" to="." method="_on_rfw_btn_pressed"]
+[connection signal="pressed" from="VBoxContainer/DTWBtn" to="." method="_on_dtw_btn_pressed"]

@@ -22,6 +22,7 @@ tile_set = ExtResource("1_dngih")
 position = Vector2(0, -1)
 script = ExtResource("3_dngih")
 npc_scene = ExtResource("4_3yh70")
+quantidade = 50
 area_x = 1152.0
 area_y = 671.0
 

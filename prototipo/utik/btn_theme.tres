@@ -1,0 +1,11 @@
+[gd_resource type="Theme" format=3 uid="uid://cbxokyrc5w4w0"]
+
+[ext_resource type="StyleBox" uid="uid://b1u72f23e6or3" path="res://utik/box_texture_hover.tres" id="1_ommrd"]
+[ext_resource type="StyleBox" uid="uid://bsldlny6kelnd" path="res://utik/box_texture.tres" id="2_d68wu"]
+
+[resource]
+Button/constants/outline_size = 4
+Button/styles/focus = ExtResource("1_ommrd")
+Button/styles/hover = ExtResource("1_ommrd")
+Button/styles/normal = ExtResource("2_d68wu")
+Button/styles/pressed = ExtResource("2_d68wu")

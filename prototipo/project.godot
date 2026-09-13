@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="prototipo"
-run/main_scene="uid://cawvqbk4soxfy"
+run/main_scene="uid://cgqx35k2aqyr2"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [display]
 
+window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 

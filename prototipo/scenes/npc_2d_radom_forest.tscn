@@ -20,7 +20,6 @@ AreaClickable = NodePath("Area2D")
 Label = NodePath("Label")
 Sprite = NodePath("AnimatedSprite2D")
 GerarDataset = true
-metadata/_custom_type_script = "uid://dqk68lf21057o"
 
 [node name="Label" type="Label" parent="." unique_id=1635147997]
 visible = false
