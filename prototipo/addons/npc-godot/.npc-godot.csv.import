@@ -1,0 +1,16 @@
+[remap]
+
+importer="csv_translation"
+type="Translation"
+uid="uid://ckh4she0q2mke"
+
+[deps]
+
+source_file="res://addons/npc-godot/.npc-godot.csv"
+
+[params]
+
+compress=1
+delimiter=0
+unescape_keys=false
+unescape_translations=true

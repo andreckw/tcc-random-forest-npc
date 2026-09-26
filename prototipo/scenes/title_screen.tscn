@@ -69,11 +69,18 @@ layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -170.0
+offset_top = -239.0
 offset_right = 261.0
 grow_vertical = 0
 
-[node name="RFWBtn" type="Button" parent="VBoxContainer" unique_id=1309135462]
+[node name="Prototipo" type="Button" parent="VBoxContainer" unique_id=1309135462]
+texture_filter = 3
+layout_mode = 2
+theme = ExtResource("2_s4lrb")
+text = "Living/Dynamic Click"
+autowrap_mode = 2
+
+[node name="RFWBtn" type="Button" parent="VBoxContainer" unique_id=253962097]
 texture_filter = 3
 layout_mode = 2
 theme = ExtResource("2_s4lrb")
@@ -86,5 +93,6 @@ layout_mode = 2
 theme = ExtResource("2_s4lrb")
 text = "Decision Tree World"
 
+[connection signal="pressed" from="VBoxContainer/Prototipo" to="." method="_on_game_btn_pressed"]
 [connection signal="pressed" from="VBoxContainer/RFWBtn" to="." method="_on_rfw_btn_pressed"]
 [connection signal="pressed" from="VBoxContainer/DTWBtn" to="." method="_on_dtw_btn_pressed"]
