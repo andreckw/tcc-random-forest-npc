@@ -4,6 +4,8 @@
 [ext_resource type="Script" uid="uid://duu4hpw426tjg" path="res://scenes/mina.gd" id="2_8pfbp"]
 [ext_resource type="Texture2D" uid="uid://buag2nyaaolne" path="res://images/IronOre.png" id="4_2svpv"]
 [ext_resource type="Texture2D" uid="uid://dvsyb4hs5vdmk" path="res://images/Effect.png" id="4_maxyj"]
+[ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
+[ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1mssb"]
 atlas = ExtResource("4_2svpv")
@@ -123,6 +125,14 @@ shape = SubResource("RectangleShape2D_un37q")
 
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina01" unique_id=1137050041]
 
+[node name="ProgressBar" type="ProgressBar" parent="MinasInterativas/Mina01" unique_id=195416555]
+offset_left = 144.0
+offset_top = 286.0
+offset_right = 234.0
+offset_bottom = 313.0
+max_value = 10.0
+value = 10.0
+
 [node name="Mina02" type="Area2D" parent="MinasInterativas" unique_id=1854232202]
 script = ExtResource("2_8pfbp")
 
@@ -142,3 +152,65 @@ shape = SubResource("RectangleShape2D_un37q")
 position = Vector2(177.00002, 247.25)
 scale = Vector2(0.044999994, 0.03874999)
 sprite_frames = SubResource("SpriteFrames_un37q")
+
+[node name="UI" type="Control" parent="." unique_id=1658092192]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_lb20b")
+
+[node name="Menu" type="Button" parent="UI" unique_id=558874042]
+layout_mode = 0
+offset_left = 1071.0
+offset_top = 54.0
+offset_right = 1126.0
+offset_bottom = 94.0
+text = "🛒"
+
+[node name="MenuLateral" type="Panel" parent="UI" unique_id=863084788]
+layout_mode = 0
+offset_top = 9.0
+offset_right = 250.0
+offset_bottom = 667.0
+offset_transform_visual_only = false
+
+[node name="LojaButton" type="Button" parent="UI/MenuLateral" unique_id=745114326]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 94.0
+offset_right = 188.0
+offset_bottom = 214.0
+text = "👷 NPCs"
+
+[node name="RoletaButton" type="Button" parent="UI/MenuLateral" unique_id=1694752381]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 286.0
+offset_right = 188.0
+offset_bottom = 406.0
+text = "🎰 Roleta"
+
+[node name="NPCButton" type="Button" parent="UI/MenuLateral" unique_id=303095399]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 473.0
+offset_right = 188.0
+offset_bottom = 593.0
+text = "🛒 Loja"
+
+[node name="BackButton" type="Button" parent="UI/MenuLateral" unique_id=19752054]
+layout_mode = 0
+offset_left = 214.0
+offset_right = 249.0
+offset_bottom = 37.0
+text = "X"
+
+[node name="DinheiroLabel" type="Label" parent="UI" unique_id=1077521063]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 53.0
+offset_right = 86.0
+offset_bottom = 81.0
+text = "💰 $ 0"
+script = ExtResource("5_2svpv")
