@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmruaj7qpqf4a"
-path="res://.godot/imported/ironstone.jpg-04c3e58607261c58292d05d30fd84dec.ctex"
+uid="uid://dt7sb46i0tg4j"
+path="res://.godot/imported/skin.png-e03ab31157b407caa156b885360467c2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/ironstone.jpg"
-dest_files=["res://.godot/imported/ironstone.jpg-04c3e58607261c58292d05d30fd84dec.ctex"]
+source_file="res://images/skin.png"
+dest_files=["res://.godot/imported/skin.png-e03ab31157b407caa156b885360467c2.ctex"]
 
 [params]
 

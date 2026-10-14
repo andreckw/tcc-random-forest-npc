@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buag2nyaaolne"
-path="res://.godot/imported/IronOre.png-dcfe9f448d2de385326ce4e524abe80d.ctex"
+uid="uid://bo3bne255ouv4"
+path="res://.godot/imported/coin.png-695ce95cd101656c35145cf6dbf255cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/IronOre.png"
-dest_files=["res://.godot/imported/IronOre.png-dcfe9f448d2de385326ce4e524abe80d.ctex"]
+source_file="res://assets/shop/coin.png"
+dest_files=["res://.godot/imported/coin.png-695ce95cd101656c35145cf6dbf255cc.ctex"]
 
 [params]
 

@@ -2,7 +2,8 @@
 
 [ext_resource type="TileSet" uid="uid://bwv2mttyhmuvg" path="res://utik/tile_set.tres" id="1_ptyfu"]
 [ext_resource type="Script" uid="uid://duu4hpw426tjg" path="res://scenes/mina.gd" id="2_8pfbp"]
-[ext_resource type="Texture2D" uid="uid://buag2nyaaolne" path="res://images/IronOre.png" id="4_2svpv"]
+[ext_resource type="Texture2D" uid="uid://deqhhftydmx5w" path="res://images/IronOre01.png" id="3_ktxpj"]
+[ext_resource type="Texture2D" uid="uid://bady814jurh62" path="res://images/IronOre02.png" id="4_1nqxk"]
 [ext_resource type="Texture2D" uid="uid://dvsyb4hs5vdmk" path="res://images/Effect.png" id="4_maxyj"]
 [ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
@@ -12,28 +13,30 @@
 [ext_resource type="Texture2D" uid="uid://dyhocg6ha18bc" path="res://images/menu/exit.png" id="9_ep4yw"]
 [ext_resource type="Texture2D" uid="uid://cf6nltb2u8a0l" path="res://images/menu/loja/skinspicaretas.png" id="11_ol6ku"]
 [ext_resource type="Texture2D" uid="uid://qnj2kvxmqnj7" path="res://images/menu/loja/eficiencia.png" id="12_oiexa"]
+[ext_resource type="Script" uid="uid://chvr28m0aca0p" path="res://scenes/shop_menu.gd" id="13_dmbx5"]
+[ext_resource type="Script" uid="uid://b2uhdxybhp782" path="res://scenes/cursor.gd" id="14_1nqxk"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_1mssb"]
-atlas = ExtResource("4_2svpv")
-region = Rect2(0, 374, 691, 374)
+[sub_resource type="AtlasTexture" id="AtlasTexture_ao8dx"]
+atlas = ExtResource("3_ktxpj")
+region = Rect2(0, 395, 450, 395)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_maxyj"]
-atlas = ExtResource("4_2svpv")
-region = Rect2(0, 0, 691, 374)
+[sub_resource type="AtlasTexture" id="AtlasTexture_kwxe7"]
+atlas = ExtResource("3_ktxpj")
+region = Rect2(0, 0, 450, 395)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_2svpv"]
-atlas = ExtResource("4_2svpv")
-region = Rect2(691, 0, 691, 374)
+[sub_resource type="AtlasTexture" id="AtlasTexture_dxv3v"]
+atlas = ExtResource("4_1nqxk")
+region = Rect2(0, 0, 450, 395)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_lb20b"]
-atlas = ExtResource("4_2svpv")
-region = Rect2(691, 374, 691, 374)
+[sub_resource type="AtlasTexture" id="AtlasTexture_n6rv6"]
+atlas = ExtResource("4_1nqxk")
+region = Rect2(0, 395, 450, 395)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_8pfbp"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_1mssb")
+"texture": SubResource("AtlasTexture_ao8dx")
 }],
 "loop": 1,
 "name": &"baixa",
@@ -41,7 +44,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_maxyj")
+"texture": SubResource("AtlasTexture_kwxe7")
 }],
 "loop": 1,
 "name": &"cheia",
@@ -49,7 +52,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_2svpv")
+"texture": SubResource("AtlasTexture_dxv3v")
 }],
 "loop": 1,
 "name": &"media",
@@ -57,7 +60,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_lb20b")
+"texture": SubResource("AtlasTexture_n6rv6")
 }],
 "loop": 1,
 "name": &"vazia",
@@ -65,7 +68,13 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_un37q"]
-size = Vector2(30, 28)
+size = Vector2(93.66406, 84.41016)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lqr2k"]
+size = Vector2(41, 37)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c26eh"]
+size = Vector2(44, 37)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6enje"]
 atlas = ExtResource("4_maxyj")
@@ -123,22 +132,22 @@ tile_set = ExtResource("1_ptyfu")
 script = ExtResource("2_8pfbp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MinasInterativas/Mina01" unique_id=383891145]
-position = Vector2(187.00002, 265)
-scale = Vector2(0.11414617, 0.10494648)
+position = Vector2(588, 463)
+scale = Vector2(0.2811586, 0.20672455)
 sprite_frames = SubResource("SpriteFrames_8pfbp")
 animation = &"cheia"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MinasInterativas/Mina01" unique_id=1925563520]
-position = Vector2(191, 268)
+[node name="CollisionMina01" type="CollisionShape2D" parent="MinasInterativas/Mina01" unique_id=1925563520]
+position = Vector2(589, 461)
 shape = SubResource("RectangleShape2D_un37q")
 
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina01" unique_id=1137050041]
 
 [node name="ProgressBar" type="ProgressBar" parent="MinasInterativas/Mina01" unique_id=195416555]
-offset_left = 144.0
-offset_top = 286.0
-offset_right = 234.0
-offset_bottom = 313.0
+offset_left = 545.0
+offset_top = 509.0
+offset_right = 635.0
+offset_bottom = 536.0
 max_value = 10.0
 value = 10.0
 
@@ -151,11 +160,26 @@ scale = Vector2(0.11414617, 0.10494648)
 sprite_frames = SubResource("SpriteFrames_8pfbp")
 animation = &"cheia"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="MinasInterativas/Mina02" unique_id=618052402]
-position = Vector2(320, 333)
-shape = SubResource("RectangleShape2D_un37q")
-
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina02" unique_id=901597861]
+
+[node name="CollisionMina02" type="CollisionShape2D" parent="MinasInterativas/Mina02" unique_id=853823908]
+position = Vector2(317.5, 329.5)
+shape = SubResource("RectangleShape2D_lqr2k")
+
+[node name="Mina03" type="Area2D" parent="MinasInterativas" unique_id=27497366]
+script = ExtResource("2_8pfbp")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MinasInterativas/Mina03" unique_id=1398435033]
+position = Vector2(214.00003, 313)
+scale = Vector2(0.11414617, 0.10494648)
+sprite_frames = SubResource("SpriteFrames_8pfbp")
+animation = &"cheia"
+
+[node name="Timer" type="Timer" parent="MinasInterativas/Mina03" unique_id=1847032622]
+
+[node name="CollisionMina03" type="CollisionShape2D" parent="MinasInterativas/Mina03" unique_id=468075262]
+position = Vector2(214, 312.5)
+shape = SubResource("RectangleShape2D_c26eh")
 
 [node name="AnimatedEffect" type="AnimatedSprite2D" parent="MinasInterativas" unique_id=727647790]
 position = Vector2(177.00002, 247.25)
@@ -163,6 +187,7 @@ scale = Vector2(0.044999994, 0.03874999)
 sprite_frames = SubResource("SpriteFrames_un37q")
 
 [node name="UI" type="Control" parent="." unique_id=1658092192]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -230,6 +255,7 @@ text = "💰 $ 0"
 script = ExtResource("5_2svpv")
 
 [node name="Shop" type="Panel" parent="UI" unique_id=2013623181]
+visible = false
 layout_mode = 0
 offset_left = 579.0
 offset_top = 88.0
@@ -343,3 +369,20 @@ offset_top = 12.0
 offset_right = 188.0
 offset_bottom = 44.0
 flat = true
+
+[node name="CursorManager" type="Control" parent="UI" unique_id=1322476795]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("14_1nqxk")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=209116776]
+
+[node name="Control" type="Control" parent="CanvasLayer" unique_id=1426967265]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 311.0
+offset_top = 9.0
+offset_right = 429.0
+offset_bottom = 187.0
+script = ExtResource("13_dmbx5")
