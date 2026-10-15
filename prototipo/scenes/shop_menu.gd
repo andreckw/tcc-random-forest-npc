@@ -1,118 +1,121 @@
 extends Control
 class_name ShopMenu
-## LOJA COMPLETA (Skins, Eficiência, Fortuna, Extras) - Godot 4.2+
-## Não precisa de nenhuma imagem: toda a interface e todos os ícones são
-## gerados por código (ícones em SVG embutido, rasterizados em tempo de execução).
+## LOJA - Skins, Eficiência, Fortuna e Extras (visual idêntico às referências)
+## Godot 4.2+. Anexe este script a um nó Control (dentro de um CanvasLayer).
+## Todas as imagens ficam em res://assets/shop/ (veja a estrutura no final do arquivo).
 ##
-## USO: anexe este script a um nó Control (ou use a cena shop_menu.tscn).
-## OPCIONAL: se quiser usar suas próprias artes, coloque PNGs em icons_folder
-## com os nomes: skin_<id>.png, efficiency_<n>.png, fortune_<n>.png,
-## extra_<id>.png, tab_<id>.png, coin.png, shop_icon.png. Se existir, substitui o SVG.
+## LÓGICA: qualquer nível de Eficiência/Fortuna pode ser comprado em qualquer ordem.
+## O bônus ativo é o MAIOR multiplicador entre os níveis comprados (veja get_*_multiplier).
 
-signal item_purchased(category: String, item_id: String)
+signal item_purchased(category: String, item_id: String)   # "skin", "efficiency", "fortune", "extra"
 signal skin_equipped(skin_id: String)
+signal extra_purchased(extra_id: String, total_owned: int)
 signal coins_changed(new_amount: int)
 signal closed
 
-@export var panel_size := Vector2(400, 630)
 @export var coins: int = 1000
-@export var icons_folder := "res://assets/shop/"
+@export var panel_size := Vector2(574, 615)
+## Escala visual do menu inteiro (0.7 = 70%).
+@export_range(0.3, 2.0, 0.05) var ui_scale := 1.0
 @export var play_open_animation := true
-## Escala visual da loja (0.6 = 60% do tamanho). Use para diminuir o menu inteiro.
-@export_range(0.3, 2.0, 0.05) var ui_scale := 1;
+@export var assets_folder := "res://assets/shop/"
 
-# ======================= CORES =======================
-const OUT := "#150f2e"
-const C_DIM := Color(0, 0, 0, 0.65)
-var C_BG := Color("0b2150")
-var C_BORDER := Color("2a6fd1")
-var C_HEADER := Color("0e2b63")
-var C_ROW := Color("0c2554")
-var C_ROW_BORDER := Color("1a468f")
-var C_FRAME_BG := Color("0a1c40")
-var C_TAB := Color("0d2a5e")
-var C_TAB_BORDER := Color("1f5cb8")
-var C_TAB_ACTIVE := Color("1b7fe0")
-var C_TAB_ACTIVE_BORDER := Color("63e0ff")
-var C_NAME := Color("f1d6ff")
-var C_DESC := Color("bcd4ff")
-var C_GREEN := Color("3fae3f")
-var C_GREEN_HOVER := Color("52c652")
-var C_GREEN_DARK := Color("1f6b1f")
-var C_BLUE_BTN := Color("2a6fd1")
-var C_GREY := Color("2b3b5c")
-var C_RED := Color("e0414b")
-
-# ======================= DADOS =======================
+# ======================= DADOS (edite à vontade) =======================
 var TABS := [
-	{"id": "skins",      "title": "Skins",      "page_title": "Skins de Picareta",      "subtitle": "Deixe sua picareta com o seu estilo!"},
-	{"id": "efficiency", "title": "Eficiência", "page_title": "Eficiência da Picareta", "subtitle": "Deixe sua picareta ainda mais eficiente!"},
-	{"id": "fortune",    "title": "Fortuna",    "page_title": "Fortuna",                "subtitle": "Mais sorte para encontrar tesouros!"},
-	{"id": "extras",     "title": "Extras",     "page_title": "Extras",                 "subtitle": "Itens especiais para a sua jornada!"},
+	{"id": "skins",      "title": "Skins",      "page_title": "Skins de Picareta",      "subtitle": "Deixe sua picareta com o seu estilo!", "header_icon": "header_skins"},
+	{"id": "efficiency", "title": "Eficiência", "page_title": "Eficiência da Picareta", "subtitle": "Deixe sua picareta ainda mais eficiente!", "header_icon": "header_efficiency"},
+	{"id": "fortune",    "title": "Fortuna",    "page_title": "Fortuna",                "subtitle": "Mais sorte para encontrar tesouros!", "header_icon": ""},
+	{"id": "extras",     "title": "Extras",     "page_title": "Extras",                 "subtitle": "Itens especiais para a sua jornada!", "header_icon": ""},
 ]
 
+# price 0 = já vem desbloqueada. rarity: padrao / rara / epica / lendaria
 var SKINS := [
-	{"id": "basica",    "name": "Picareta Básica",     "desc": "O visual clássico para os verdadeiros mineradores.", "price": 0,    "rarity": "padrao",   "handle": "#b5651d", "head": "#aab2c5", "edge": "#e6ecff"},
-	{"id": "dourada",   "name": "Picareta Dourada",    "desc": "Brilho e estilo para sua jornada.",                  "price": 500,  "rarity": "rara",     "handle": "#c27a1a", "head": "#ffb81c", "edge": "#fff0a0"},
-	{"id": "cristal",   "name": "Picareta de Cristal", "desc": "Mais beleza para suas minas.",                       "price": 1500, "rarity": "epica",    "handle": "#8fa0b8", "head": "#4fd0ff", "edge": "#d4f6ff"},
-	{"id": "vulcanica", "name": "Picareta Vulcânica",  "desc": "O poder do fogo em suas mãos.",                      "price": 3000, "rarity": "lendaria", "handle": "#4a2f2f", "head": "#3a1f1f", "edge": "#ff7a2a"},
+	{"id": "basica",    "name": "Picareta Básica",     "desc": "O visual clássico para os verdadeiros mineradores.", "price": 0,    "rarity": "padrao"},
+	{"id": "dourada",   "name": "Picareta Dourada",    "desc": "Brilho e estilo para sua jornada.",                  "price": 500,  "rarity": "rara"},
+	{"id": "cristal",   "name": "Picareta de Cristal", "desc": "Mais beleza para suas minas.",                       "price": 1500, "rarity": "epica"},
+	{"id": "vulcanica", "name": "Picareta Vulcânica",  "desc": "O poder do fogo em suas mãos.",                      "price": 3000, "rarity": "lendaria"},
 ]
-
 var RARITIES := {
-	"padrao":   {"label": "Padrão",   "color": Color("2b3b5c")},
-	"rara":     {"label": "Rara",     "color": Color("1f5fd6")},
-	"epica":    {"label": "Épica",    "color": Color("7a2fd0")},
-	"lendaria": {"label": "Lendária", "color": Color("c4701a")},
+	"padrao":   {"label": "Padrão",   "pill": "pill_padrao"},
+	"rara":     {"label": "Rara",     "pill": "pill_rara"},
+	"epica":    {"label": "Épica",    "pill": "pill_epica"},
+	"lendaria": {"label": "Lendária", "pill": "pill_lendaria"},
 }
 
-# Comprados em ordem (I antes do II...). "hex" é a cor do ícone.
 var EFFICIENCY_TIERS := [
-	{"name": "Eficiência I",   "mult": 2.0,  "price": 50,     "hex": "#3a8bff"},
-	{"name": "Eficiência II",  "mult": 3.0,  "price": 200,    "hex": "#3fd04a"},
-	{"name": "Eficiência III", "mult": 4.0,  "price": 500,    "hex": "#38b6ff"},
-	{"name": "Eficiência IV",  "mult": 5.0,  "price": 1000,   "hex": "#b455ff"},
-	{"name": "Eficiência V",   "mult": 7.0,  "price": 5000,   "hex": "#ff9a1f"},
-	{"name": "Eficiência X",   "mult": 20.0, "price": 100000, "hex": "#ff3b3b"},
+	{"name": "Eficiência I",   "mult": 2.0,  "price": 50},
+	{"name": "Eficiência II",  "mult": 3.0,  "price": 200},
+	{"name": "Eficiência III", "mult": 4.0,  "price": 500},
+	{"name": "Eficiência IV",  "mult": 5.0,  "price": 1000},
+	{"name": "Eficiência V",   "mult": 7.0,  "price": 5000},
+	{"name": "Eficiência X",   "mult": 20.0, "price": 100000},
 ]
-
-# EXEMPLO - ajuste como quiser
 var FORTUNE_TIERS := [
-	{"name": "Fortuna I",   "mult": 1.2, "price": 100,  "hex": "#3fd04a"},
-	{"name": "Fortuna II",  "mult": 1.5, "price": 400,  "hex": "#38b6ff"},
-	{"name": "Fortuna III", "mult": 2.0, "price": 1500, "hex": "#b455ff"},
-	{"name": "Fortuna IV",  "mult": 3.0, "price": 6000, "hex": "#ff9a1f"},
+	{"name": "Fortuna I",   "mult": 2.0,  "price": 100},
+	{"name": "Fortuna II",  "mult": 3.0,  "price": 400},
+	{"name": "Fortuna III", "mult": 4.0,  "price": 1500},
+	{"name": "Fortuna IV",  "mult": 7.0,  "price": 4500},
+	{"name": "Fortuna V",   "mult": 10.0, "price": 15000},
+	{"name": "Fortuna X",   "mult": 20.0, "price": 100000},
 ]
 
-# EXEMPLO - ajuste como quiser (ids com ícone pronto: mochila, lanterna, ima, botas)
-var EXTRAS := [
-	{"id": "mochila",  "name": "Mochila Maior",  "desc": "Carrega mais minérios.",        "price": 250, "hex": "#3a8bff"},
-	{"id": "lanterna", "name": "Lanterna",       "desc": "Enxergue melhor nas cavernas.", "price": 150, "hex": "#ffd23a"},
-	{"id": "ima",      "name": "Ímã de Minério", "desc": "Atrai drops próximos.",         "price": 400, "hex": "#e0414b"},
-	{"id": "botas",    "name": "Botas Rápidas",  "desc": "Move-se mais rápido.",          "price": 300, "hex": "#3fd04a"},
+# once = true -> compra única. false -> consumível (pode comprar várias vezes)
+var EXTRAS := {
+	"dynamite":           {"name": "Dinamite",            "price": 100,   "once": false},
+	"tnt":                {"name": "TNT",                 "price": 500,   "once": false},
+	"nuke":               {"name": "Nuke",                "price": 9999,  "once": false},
+	"philosophers_stone": {"name": "Philosopher's Stone", "price": 1000,  "once": false},
+	"mirror":             {"name": "Mirror",              "price": 5000,  "once": true},
+	"pandoras_box":       {"name": "Pandora's Box",       "price": 5000,  "once": false},
+	"pyramid_eye":        {"name": "Olho da Pirâmide",    "price": 10000, "once": false},
+	"festive_cosmetics":  {"name": "FestiveCosmetics",    "price": 20000, "once": true},
+}
+var EXTRA_SECTIONS := [
+	{"title": "BOMBAS",            "icon": "section_bombs",  "items": ["dynamite", "tnt", "nuke"]},
+	{"title": "ITENS ÚTEIS",       "icon": "section_useful", "items": ["philosophers_stone", "mirror"]},
+	{"title": "EVENTOS ESPECIAIS", "icon": "section_events", "items": ["pandoras_box", "pyramid_eye", "festive_cosmetics"]},
 ]
+
+# Margens dos 9-patch (l, t, r, b) na escala de tela
+var MARGINS := {
+	"window_bg": [142, 105, 18, 85], "row_card": [22, 18, 22, 18], "icon_frame": [19, 19, 19, 19],
+	"btn_green": [18, 17, 18, 19], "btn_blue": [18, 17, 18, 19], "btn_grey": [18, 17, 18, 19],
+	"btn_pill": [12, 10, 12, 10], "pill_blue": [12, 10, 12, 10], "pill_grey": [12, 10, 12, 10],
+	"tab_normal": [22, 20, 22, 20], "tab_hover": [22, 20, 22, 20], "tab_active": [22, 20, 22, 20],
+	"pill_padrao": [12, 11, 12, 11], "pill_rara": [12, 11, 12, 11], "pill_epica": [12, 11, 12, 11],
+	"pill_lendaria": [12, 11, 12, 11], "section_bar": [5, 10, 20, 10],
+}
 
 # ======================= ESTADO =======================
 var owned_skins: Array = ["basica"]
 var equipped_skin := "basica"
-var levels := {"efficiency": 0, "fortune": 0}
-var owned_extras: Array = []
+var owned_tiers := {"efficiency": [], "fortune": []}   # índices dos níveis comprados
+var extras_inventory := {}                              # id -> quantidade
 var current_tab := 0
 
 # ======================= UI =======================
 var window: PanelContainer
+var tab_group := ButtonGroup.new()
 var tab_buttons: Array[Button] = []
+var page_icon: TextureRect
 var page_title_label: Label
 var page_subtitle_label: Label
 var list_box: VBoxContainer
 var coins_label: Label
 var message_label: Label
 var toast_tween: Tween
-var _svg_cache := {}
-var _warned := {}
+var _tex_cache := {}
+var _font_bold: Font
+var _font_med: Font
+
+const C_TEXT := Color.WHITE
+const C_SUB := Color("cfe3ff")
+const C_LINE := Color("1e6fe0")
 
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	_load_fonts()
 	_build_ui()
 	_select_tab(0)
 	_update_coins_label()
@@ -136,18 +139,28 @@ func add_coins(amount: int) -> void:
 		_populate_list()
 
 func get_click_multiplier() -> float:
-	var n: int = levels["efficiency"]
-	return 1.0 if n == 0 else EFFICIENCY_TIERS[n - 1]["mult"]
+	return _best_mult(EFFICIENCY_TIERS, owned_tiers["efficiency"])
 
 func get_fortune_multiplier() -> float:
-	var n: int = levels["fortune"]
-	return 1.0 if n == 0 else FORTUNE_TIERS[n - 1]["mult"]
+	return _best_mult(FORTUNE_TIERS, owned_tiers["fortune"])
 
 func get_equipped_skin() -> String:
 	return equipped_skin
 
+func get_extra_count(extra_id: String) -> int:
+	return int(extras_inventory.get(extra_id, 0))
+
 func has_extra(extra_id: String) -> bool:
-	return extra_id in owned_extras
+	return get_extra_count(extra_id) > 0
+
+## Consome 1 unidade de um extra (ex: ao plantar uma dinamite). Retorna false se não tiver.
+func use_extra(extra_id: String) -> bool:
+	if get_extra_count(extra_id) <= 0:
+		return false
+	extras_inventory[extra_id] = get_extra_count(extra_id) - 1
+	if list_box != null:
+		_populate_list()
+	return true
 
 func open_shop() -> void:
 	show()
@@ -160,151 +173,125 @@ func close_shop() -> void:
 
 func get_save_data() -> Dictionary:
 	return {"coins": coins, "owned_skins": owned_skins, "equipped_skin": equipped_skin,
-		"levels": levels, "owned_extras": owned_extras}
+		"owned_tiers": owned_tiers, "extras_inventory": extras_inventory}
 
 func load_save_data(d: Dictionary) -> void:
 	coins = d.get("coins", coins)
 	owned_skins = d.get("owned_skins", owned_skins)
 	equipped_skin = d.get("equipped_skin", equipped_skin)
-	levels = d.get("levels", levels)
-	owned_extras = d.get("owned_extras", owned_extras)
+	owned_tiers = d.get("owned_tiers", owned_tiers)
+	extras_inventory = d.get("extras_inventory", extras_inventory)
 	if list_box != null:
 		_update_coins_label()
 		_populate_list()
 
+func _best_mult(tiers: Array, owned: Array) -> float:
+	var best := 1.0
+	for i in owned:
+		best = maxf(best, float(tiers[int(i)]["mult"]))
+	return best
+
 
 # =====================================================================
-#  ÍCONES (SVG gerados por código)
+#  RECURSOS (texturas, estilos, fontes)
 # =====================================================================
-const SVG_HEAD := '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">'
-
-func _svg_tex(svg: String) -> Texture2D:
-	if _svg_cache.has(svg):
-		return _svg_cache[svg]
-	var img := Image.new()
-	var err := img.load_svg_from_string(svg, 2.0) # 64 -> 128 px
-	if err != OK:
-		push_warning("ShopMenu: falha ao rasterizar SVG")
+func _tex(rel: String) -> Texture2D:
+	if rel == "":
 		return null
-	var tex := ImageTexture.create_from_image(img)
-	_svg_cache[svg] = tex
-	return tex
-
-## Usa PNG do projeto se existir; senão, o SVG gerado.
-func _icon(file_name: String, svg: String) -> Texture2D:
-	var path := icons_folder + file_name
+	if _tex_cache.has(rel):
+		return _tex_cache[rel]
+	var path := assets_folder + rel
+	var t: Texture2D = null
 	if ResourceLoader.exists(path):
-		return load(path) as Texture2D
-	# O arquivo pode existir mas ainda não ter sido importado pela Godot
-	if FileAccess.file_exists(path):
+		t = load(path) as Texture2D
+	elif FileAccess.file_exists(path):
 		var img := Image.load_from_file(path)
 		if img != null and not img.is_empty():
-			return ImageTexture.create_from_image(img)
-	if not _warned.has(path):
-		_warned[path] = true
-		print("ShopMenu: PNG não encontrado em '%s' -> usando ícone SVG" % path)
-	return _svg_tex(svg)
+			t = ImageTexture.create_from_image(img)
+	if t == null:
+		push_warning("ShopMenu: imagem não encontrada: " + path)
+	_tex_cache[rel] = t
+	return t
 
-func _svg_pickaxe(handle: String, head: String, edge: String) -> String:
-	var s := SVG_HEAD
-	s += '<line x1="12" y1="58" x2="46" y2="22" stroke="%s" stroke-width="11" stroke-linecap="round"/>' % OUT
-	s += '<line x1="12" y1="58" x2="46" y2="22" stroke="%s" stroke-width="6" stroke-linecap="round"/>' % handle
-	s += '<path d="M20 12 Q58 2 62 44 Q50 22 20 12 Z" fill="%s" stroke="%s" stroke-width="4" stroke-linejoin="round"/>' % [head, OUT]
-	s += '<path d="M25 13 Q52 8 58 36" fill="none" stroke="%s" stroke-width="2" stroke-linecap="round" opacity="0.85"/>' % edge
-	return s + "</svg>"
+## StyleBox 9-patch a partir de ui/<name>.png. content = margens internas (l, t, r, b).
+func _nine(name: String, content := Vector4(0, 0, 0, 0)) -> StyleBox:
+	var t := _tex("ui/%s.png" % name)
+	var sb_flat := StyleBoxFlat.new()
+	if t == null:  # plano B se a imagem não existir
+		sb_flat.bg_color = Color("0c2554")
+		sb_flat.border_color = Color("2a6fd1")
+		sb_flat.set_border_width_all(2)
+		sb_flat.set_corner_radius_all(8)
+		sb_flat.content_margin_left = content.x
+		sb_flat.content_margin_top = content.y
+		sb_flat.content_margin_right = content.z
+		sb_flat.content_margin_bottom = content.w
+		return sb_flat
+	var sb := StyleBoxTexture.new()
+	sb.texture = t
+	var m: Array = MARGINS[name]
+	sb.texture_margin_left = m[0]
+	sb.texture_margin_top = m[1]
+	sb.texture_margin_right = m[2]
+	sb.texture_margin_bottom = m[3]
+	sb.content_margin_left = content.x
+	sb.content_margin_top = content.y
+	sb.content_margin_right = content.z
+	sb.content_margin_bottom = content.w
+	return sb
 
-func _svg_bolt(color: String, arrow: bool) -> String:
-	var s := SVG_HEAD
-	s += '<circle cx="32" cy="32" r="30" fill="%s" opacity="0.18"/>' % color
-	s += '<polygon points="38,4 16,34 29,34 24,60 50,26 36,26 46,4" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % [color, OUT]
-	if arrow:
-		s += '<polygon points="50,40 59,52 54,52 54,61 46,61 46,52 41,52" fill="#ffffff" stroke="%s" stroke-width="2" stroke-linejoin="round"/>' % OUT
-	return s + "</svg>"
+func _tinted(sb: StyleBox, c: Color) -> StyleBox:
+	var d: StyleBox = sb.duplicate() as StyleBox
+	if d is StyleBoxTexture:
+		(d as StyleBoxTexture).modulate_color = c
+	return d
 
-func _svg_clover(color: String) -> String:
-	var s := SVG_HEAD
-	s += '<path d="M32 38 Q34 52 44 60" fill="none" stroke="%s" stroke-width="6" stroke-linecap="round"/>' % OUT
-	s += '<path d="M32 38 Q34 52 44 60" fill="none" stroke="%s" stroke-width="3" stroke-linecap="round"/>' % color
-	var pts := [[23, 23], [41, 23], [23, 41], [41, 41]]
-	for p in pts:
-		s += '<circle cx="%d" cy="%d" r="14.5" fill="%s"/>' % [p[0], p[1], OUT]
-	for p in pts:
-		s += '<circle cx="%d" cy="%d" r="12" fill="%s"/>' % [p[0], p[1], color]
-	s += '<circle cx="32" cy="32" r="7" fill="%s"/>' % color
-	return s + "</svg>"
+func _load_fonts() -> void:
+	var fb := assets_folder + "fonts/Poppins-Bold.ttf"
+	var fm := assets_folder + "fonts/Poppins-Medium.ttf"
+	if ResourceLoader.exists(fb):
+		_font_bold = load(fb)
+	else:
+		var fv := FontVariation.new()
+		fv.base_font = ThemeDB.fallback_font
+		fv.variation_embolden = 0.7
+		_font_bold = fv
+	_font_med = load(fm) if ResourceLoader.exists(fm) else ThemeDB.fallback_font
 
-func _svg_star(color: String) -> String:
-	var s := SVG_HEAD
-	s += '<polygon points="32,4 39.05,22.29 58.63,23.35 43.41,35.71 48.46,54.65 32,44 15.54,54.65 20.59,35.71 5.37,23.35 24.95,22.29" fill="%s" stroke="%s" stroke-width="3.5" stroke-linejoin="round"/>' % [color, OUT]
-	return s + "</svg>"
+func _label(text: String, size: int, color := C_TEXT, bold := true, outline := 0) -> Label:
+	var l := Label.new()
+	l.text = text
+	l.add_theme_font_override("font", _font_bold if bold else _font_med)
+	l.add_theme_font_size_override("font_size", size)
+	l.add_theme_color_override("font_color", color)
+	if outline > 0:
+		l.add_theme_constant_override("outline_size", outline)
+		l.add_theme_color_override("font_outline_color", Color("0a1f4d"))
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
 
-func _svg_coin() -> String:
-	var s := SVG_HEAD
-	s += '<circle cx="32" cy="32" r="28" fill="#ffc21a" stroke="#8a5a00" stroke-width="4"/>'
-	s += '<circle cx="32" cy="32" r="19" fill="none" stroke="#ffe08a" stroke-width="3"/>'
-	s += '<rect x="29" y="19" width="6" height="26" rx="3" fill="#ffe08a"/>'
-	return s + "</svg>"
+func _img(rel: String, size: Vector2) -> TextureRect:
+	var tr := TextureRect.new()
+	tr.texture = _tex(rel)
+	tr.custom_minimum_size = size
+	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return tr
 
-func _svg_shop() -> String:
-	var s := SVG_HEAD
-	s += '<rect x="12" y="24" width="40" height="30" rx="3" fill="#2a6fd1" stroke="%s" stroke-width="3"/>' % OUT
-	s += '<rect x="12" y="40" width="40" height="7" fill="#8b5a2b" stroke="%s" stroke-width="2"/>' % OUT
-	s += '<path d="M6 24 L12 8 H52 L58 24 Z" fill="#e0414b" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % OUT
-	for x in [18, 30, 42]:
-		s += '<polygon points="%d,9 %d,9 %d,23 %d,23" fill="#ffffff" opacity="0.9"/>' % [x, x + 6, x + 5, x - 1]
-	s += '<circle cx="54" cy="52" r="8" fill="#ffc21a" stroke="#8a5a00" stroke-width="3"/>'
-	return s + "</svg>"
-
-func _svg_extra(id: String, color: String) -> String:
-	var s := SVG_HEAD
-	match id:
-		"mochila":
-			s += '<path d="M24 14 Q24 5 32 5 Q40 5 40 14" fill="none" stroke="%s" stroke-width="5"/>' % OUT
-			s += '<rect x="14" y="14" width="36" height="44" rx="12" fill="%s" stroke="%s" stroke-width="3"/>' % [color, OUT]
-			s += '<rect x="21" y="36" width="22" height="16" rx="5" fill="#ffffff" fill-opacity="0.3" stroke="%s" stroke-width="2"/>' % OUT
-			s += '<line x1="14" y1="28" x2="50" y2="28" stroke="%s" stroke-width="3"/>' % OUT
-		"lanterna":
-			s += '<polygon points="20,8 44,8 38,28 26,28" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % [color, OUT]
-			s += '<rect x="26" y="28" width="12" height="28" rx="3" fill="#8fa0b8" stroke="%s" stroke-width="3"/>' % OUT
-			s += '<rect x="26" y="38" width="12" height="6" fill="#5b6b88"/>'
-		"ima":
-			s += '<path d="M16 12 V36 A16 16 0 0 0 48 36 V12" fill="none" stroke="%s" stroke-width="16"/>' % OUT
-			s += '<path d="M16 12 V36 A16 16 0 0 0 48 36 V12" fill="none" stroke="%s" stroke-width="10"/>' % color
-			s += '<line x1="16" y1="10" x2="16" y2="22" stroke="#ffffff" stroke-width="10"/>'
-			s += '<line x1="48" y1="10" x2="48" y2="22" stroke="#ffffff" stroke-width="10"/>'
-		"botas":
-			s += '<polygon points="22,8 38,8 38,34 56,44 56,56 16,56 16,44 22,40" fill="%s" stroke="%s" stroke-width="3" stroke-linejoin="round"/>' % [color, OUT]
-			s += '<rect x="16" y="50" width="40" height="6" fill="#ffffff" fill-opacity="0.4"/>'
-		_:
-			return _svg_star(color)
-	return s + "</svg>"
-
-func _tab_icon(id: String) -> Texture2D:
-	match id:
-		"skins":      return _icon("tab_skins.png", _svg_pickaxe("#b5651d", "#aab2c5", "#e6ecff"))
-		"efficiency": return _icon("tab_efficiency.png", _svg_bolt("#ffc21a", false))
-		"fortune":    return _icon("tab_fortune.png", _svg_clover("#3fd04a"))
-		_:            return _icon("tab_extras.png", _svg_star("#ffc21a"))
-
-
-# =====================================================================
-#  HELPERS DE ESTILO / ANIMAÇÃO
-# =====================================================================
-func _box(bg: Color, border: Color, radius := 10, border_w := 2, pad := 0) -> StyleBoxFlat:
-	var s := StyleBoxFlat.new()
-	s.bg_color = bg
-	s.border_color = border
-	s.set_border_width_all(border_w)
-	s.set_corner_radius_all(radius)
-	if pad > 0:
-		s.set_content_margin_all(pad)
-	return s
-
-func _margin(n: int) -> MarginContainer:
+func _margin(l: int, t: int, r: int, b: int) -> MarginContainer:
 	var m := MarginContainer.new()
-	for side in ["left", "right", "top", "bottom"]:
-		m.add_theme_constant_override("margin_" + side, n)
+	m.add_theme_constant_override("margin_left", l)
+	m.add_theme_constant_override("margin_top", t)
+	m.add_theme_constant_override("margin_right", r)
+	m.add_theme_constant_override("margin_bottom", b)
 	return m
+
+func _ignore_mouse(n: Node) -> void:
+	if n is Control and not (n is BaseButton):
+		(n as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+	for c in n.get_children():
+		_ignore_mouse(c)
 
 func _fmt(n: int) -> String:
 	var s := str(n)
@@ -317,15 +304,10 @@ func _fmt(n: int) -> String:
 			out = "." + out
 	return out
 
-func _icon_rect(tex: Texture2D, size: Vector2) -> TextureRect:
-	var tr := TextureRect.new()
-	tr.texture = tex
-	tr.custom_minimum_size = size
-	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return tr
 
+# =====================================================================
+#  ANIMAÇÕES
+# =====================================================================
 func _play_open() -> void:
 	await get_tree().process_frame
 	if window == null:
@@ -341,25 +323,24 @@ func _play_open() -> void:
 	tw.tween_property(window, "scale", target, 0.2).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	tw.tween_property(window, "modulate:a", 1.0, 0.15)
 
-# Efeito de hover / clique nos botões
-func _juicy(b: Button) -> void:
+func _juicy(b: BaseButton) -> void:
 	b.resized.connect(_on_btn_resized.bind(b))
 	b.mouse_entered.connect(_on_btn_hover.bind(b, true))
 	b.mouse_exited.connect(_on_btn_hover.bind(b, false))
 	b.button_down.connect(_on_btn_down.bind(b))
 	b.button_up.connect(_on_btn_up.bind(b))
 
-func _on_btn_resized(b: Button) -> void:
+func _on_btn_resized(b: BaseButton) -> void:
 	b.pivot_offset = b.size / 2.0
 
-func _on_btn_hover(b: Button, entered: bool) -> void:
-	_tween_scale(b, 1.06 if (entered and not b.disabled) else 1.0)
+func _on_btn_hover(b: BaseButton, entered: bool) -> void:
+	_tween_scale(b, 1.05 if (entered and not b.disabled) else 1.0)
 
-func _on_btn_down(b: Button) -> void:
-	_tween_scale(b, 0.94)
+func _on_btn_down(b: BaseButton) -> void:
+	_tween_scale(b, 0.95)
 
-func _on_btn_up(b: Button) -> void:
-	_tween_scale(b, 1.06 if (b.is_hovered() and not b.disabled) else 1.0)
+func _on_btn_up(b: BaseButton) -> void:
+	_tween_scale(b, 1.05 if (b.is_hovered() and not b.disabled) else 1.0)
 
 func _tween_scale(n: Control, s: float) -> void:
 	var tw := n.create_tween()
@@ -371,178 +352,191 @@ func _tween_scale(n: Control, s: float) -> void:
 # =====================================================================
 func _build_ui() -> void:
 	var dim := ColorRect.new()
-	dim.color = C_DIM
+	dim.color = Color(0, 0, 0, 0.65)
 	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(dim)
 
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 
 	window = PanelContainer.new()
 	window.custom_minimum_size = panel_size
-	var wstyle := _box(C_BG, C_BORDER, 18, 4)
-	wstyle.shadow_color = Color(0, 0, 0, 0.6)
-	wstyle.shadow_size = 18
-	window.add_theme_stylebox_override("panel", wstyle)
+	window.add_theme_stylebox_override("panel", _nine("window_bg", Vector4(8, 8, 8, 4)))
 	center.add_child(window)
 
-	var margin := _margin(10)
-	window.add_child(margin)
-
 	var root := VBoxContainer.new()
-	root.add_theme_constant_override("separation", 8)
-	margin.add_child(root)
+	root.add_theme_constant_override("separation", 0)
+	window.add_child(root)
 
 	root.add_child(_build_header())
 
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	body.add_theme_constant_override("separation", 8)
+	body.add_theme_constant_override("separation", 0)
 	root.add_child(body)
 	body.add_child(_build_sidebar())
 	body.add_child(_build_content())
 
-	root.add_child(_build_footer())
-
 
 func _build_header() -> Control:
-	var header := PanelContainer.new()
-	header.add_theme_stylebox_override("panel", _box(C_HEADER, C_BORDER, 14, 2, 8))
-
+	var m := _margin(16, 0, 12, 0)
+	m.custom_minimum_size.y = 80
 	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 12)
-	header.add_child(h)
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 10)
+	m.add_child(h)
 
-	h.add_child(_icon_rect(_icon("shop_icon.png", _svg_shop()), Vector2(60, 60)))
-
-	var title := Label.new()
-	title.text = "LOJA"
-	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title.add_theme_font_size_override("font_size", 44)
-	title.add_theme_color_override("font_color", Color("e9dcff"))
-	title.add_theme_color_override("font_outline_color", Color("1a1050"))
-	title.add_theme_constant_override("outline_size", 8)
-	h.add_child(title)
-
-	var close_btn := Button.new()
-	close_btn.text = "X"
-	close_btn.custom_minimum_size = Vector2(52, 52)
-	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.add_theme_font_size_override("font_size", 26)
-	close_btn.add_theme_stylebox_override("normal", _box(C_RED, Color("ffb3b8"), 12, 3))
-	close_btn.add_theme_stylebox_override("hover", _box(Color("f2555f"), Color("ffd0d3"), 12, 3))
-	close_btn.add_theme_stylebox_override("pressed", _box(Color("b82f38"), Color("ffb3b8"), 12, 3))
-	close_btn.pressed.connect(close_shop)
-	_juicy(close_btn)
-	h.add_child(close_btn)
-
-	return header
-
-
-func _build_sidebar() -> Control:
-	var side := VBoxContainer.new()
-	side.custom_minimum_size.x = 120
-	side.add_theme_constant_override("separation", 8)
-
-	var group := ButtonGroup.new()
-	for i in TABS.size():
-		var t: Dictionary = TABS[i]
-		var b := Button.new()
-		b.toggle_mode = true
-		b.button_group = group
-		b.text = t["title"]
-		b.focus_mode = Control.FOCUS_NONE
-		b.custom_minimum_size = Vector2(112, 92)
-		b.add_theme_font_size_override("font_size", 16)
-		for c in ["font_color", "font_hover_color", "font_pressed_color", "font_hover_pressed_color"]:
-			b.add_theme_color_override(c, Color.WHITE)
-
-		b.icon = _tab_icon(t["id"])
-		b.expand_icon = true
-		b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-		b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		b.add_theme_constant_override("icon_max_width", 44)
-
-		var active := _box(C_TAB_ACTIVE, C_TAB_ACTIVE_BORDER, 14, 3)
-		b.add_theme_stylebox_override("normal", _box(C_TAB, C_TAB_BORDER, 14, 2))
-		b.add_theme_stylebox_override("hover", _box(Color("123775"), Color("3a82e0"), 14, 2))
-		b.add_theme_stylebox_override("pressed", active)
-		b.add_theme_stylebox_override("hover_pressed", active)
-
-		b.pressed.connect(_select_tab.bind(i))
-		_juicy(b)
-		side.add_child(b)
-		tab_buttons.append(b)
-
-	tab_buttons[0].button_pressed = true
-	return side
-
-
-func _build_content() -> Control:
-	var panel := PanelContainer.new()
-	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	panel.add_theme_stylebox_override("panel", _box(Color("0a1f4a"), C_ROW_BORDER, 14, 2))
-
-	var margin := _margin(10)
-	panel.add_child(margin)
-
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 8)
-	margin.add_child(v)
-
-	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", 10)
-	v.add_child(head)
-
-	page_title_label = Label.new()
-	page_title_label.add_theme_font_size_override("font_size", 22)
-	page_title_label.add_theme_color_override("font_color", C_NAME)
-	head.add_child(page_title_label)
+	h.add_child(_img("icons/header/shop_icon.png", Vector2(70, 62)))
+	h.add_child(_img("icons/header/title_loja.png", Vector2(100, 40)))
 
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(spacer)
+	h.add_child(spacer)
 
-	page_subtitle_label = Label.new()
-	page_subtitle_label.add_theme_font_size_override("font_size", 12)
-	page_subtitle_label.add_theme_color_override("font_color", C_DESC)
+	var close_btn := TextureButton.new()
+	close_btn.texture_normal = _tex("icons/header/close_btn.png")
+	close_btn.ignore_texture_size = true
+	close_btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+	close_btn.custom_minimum_size = Vector2(46, 46)
+	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.pressed.connect(close_shop)
+	_juicy(close_btn)
+	h.add_child(close_btn)
+	return m
+
+
+func _build_sidebar() -> Control:
+	var m := _margin(2, 12, 0, 0)
+	m.custom_minimum_size.x = 123
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	m.add_child(v)
+	for i in TABS.size():
+		var b := _make_tab(i)
+		v.add_child(b)
+		tab_buttons.append(b)
+	tab_buttons[0].button_pressed = true
+	return m
+
+
+func _make_tab(i: int) -> Button:
+	var t: Dictionary = TABS[i]
+	var b := Button.new()
+	b.toggle_mode = true
+	b.button_group = tab_group
+	b.focus_mode = Control.FOCUS_NONE
+	b.custom_minimum_size = Vector2(112, 66)
+	b.add_theme_stylebox_override("normal", _nine("tab_normal"))
+	b.add_theme_stylebox_override("hover", _nine("tab_hover"))
+	b.add_theme_stylebox_override("pressed", _nine("tab_active"))
+	b.add_theme_stylebox_override("hover_pressed", _nine("tab_active"))
+	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+
+	var icon := _img("icons/tabs/tab_%s.png" % t["id"], Vector2(44, 44))
+	icon.position = Vector2(10, 4)
+	icon.size = Vector2(44, 44)
+	b.add_child(icon)
+
+	var lm := _margin(0, 0, 9, 8)
+	lm.set_anchors_preset(Control.PRESET_FULL_RECT)
+	lm.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var lab := _label(t["title"], 13, C_TEXT, true, 3)
+	lab.size_flags_horizontal = Control.SIZE_SHRINK_END
+	lab.size_flags_vertical = Control.SIZE_SHRINK_END
+	lm.add_child(lab)
+	b.add_child(lm)
+
+	b.pressed.connect(_select_tab.bind(i))
+	_juicy(b)
+	return b
+
+
+func _build_content() -> Control:
+	var m := _margin(14, 10, 6, 0)
+	m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	m.add_child(v)
+
+	# Cabeçalho da página
+	var head := HBoxContainer.new()
+	head.custom_minimum_size.y = 36
+	head.add_theme_constant_override("separation", 8)
+	v.add_child(head)
+	page_icon = _img("", Vector2(28, 28))
+	head.add_child(page_icon)
+	page_title_label = _label("", 19)
+	head.add_child(page_title_label)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head.add_child(sp)
+	page_subtitle_label = _label("", 11, C_SUB, false)
 	page_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	page_subtitle_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	page_subtitle_label.custom_minimum_size.x = 150
+	page_subtitle_label.custom_minimum_size.x = 120
 	head.add_child(page_subtitle_label)
 
+	# Lista rolável
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	v.add_child(scroll)
-
 	list_box = VBoxContainer.new()
 	list_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	list_box.add_theme_constant_override("separation", 8)
+	list_box.add_theme_constant_override("separation", 7)
 	scroll.add_child(list_box)
 
-	return panel
+	v.add_child(_build_footer())
+	return m
 
 
 func _build_footer() -> Control:
 	var f := HBoxContainer.new()
-	f.add_theme_constant_override("separation", 8)
+	f.custom_minimum_size.y = 54
+	f.add_theme_constant_override("separation", 6)
 
-	f.add_child(_icon_rect(_icon("coin.png", _svg_coin()), Vector2(28, 28)))
+	var left := HBoxContainer.new()
+	left.alignment = BoxContainer.ALIGNMENT_CENTER
+	left.add_theme_constant_override("separation", 6)
+	left.add_child(_img("icons/header/cart.png", Vector2(26, 22)))
+	left.add_child(_line(34))
+	left.add_child(_img("ui/diamond.png", Vector2(10, 10)))
+	f.add_child(left)
 
-	coins_label = Label.new()
-	coins_label.add_theme_font_size_override("font_size", 22)
-	coins_label.add_theme_color_override("font_color", Color("ffd23a"))
-	f.add_child(coins_label)
+	var center := VBoxContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.alignment = BoxContainer.ALIGNMENT_CENTER
+	center.add_theme_constant_override("separation", 0)
+	var crow := HBoxContainer.new()
+	crow.alignment = BoxContainer.ALIGNMENT_CENTER
+	crow.add_theme_constant_override("separation", 5)
+	crow.add_child(_img("icons/header/coin.png", Vector2(20, 20)))
+	coins_label = _label("", 16, Color("ffd23a"), true, 2)
+	crow.add_child(coins_label)
+	center.add_child(crow)
+	message_label = _label("", 11, C_TEXT, false)
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	center.add_child(message_label)
+	f.add_child(center)
 
-	message_label = Label.new()
-	message_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	message_label.add_theme_font_size_override("font_size", 15)
-	f.add_child(message_label)
-
+	var right := HBoxContainer.new()
+	right.alignment = BoxContainer.ALIGNMENT_CENTER
+	right.add_theme_constant_override("separation", 6)
+	right.add_child(_img("ui/diamond.png", Vector2(10, 10)))
+	right.add_child(_line(34))
+	f.add_child(right)
 	return f
+
+
+func _line(width: int) -> ColorRect:
+	var l := ColorRect.new()
+	l.color = C_LINE
+	l.custom_minimum_size = Vector2(width, 2)
+	l.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
 
 
 # =====================================================================
@@ -550,8 +544,13 @@ func _build_footer() -> Control:
 # =====================================================================
 func _select_tab(index: int) -> void:
 	current_tab = index
-	page_title_label.text = TABS[index]["page_title"]
-	page_subtitle_label.text = TABS[index]["subtitle"]
+	var t: Dictionary = TABS[index]
+	page_title_label.text = t["page_title"]
+	page_subtitle_label.text = t["subtitle"]
+	var hi: String = t["header_icon"]
+	page_icon.visible = hi != ""
+	if hi != "":
+		page_icon.texture = _tex("icons/header/%s.png" % hi)
 	_populate_list(true)
 
 
@@ -562,8 +561,8 @@ func _populate_list(animate := false) -> void:
 
 	match TABS[current_tab]["id"]:
 		"skins":      _populate_skins()
-		"efficiency": _populate_tiers("efficiency", EFFICIENCY_TIERS, "x click")
-		"fortune":    _populate_tiers("fortune", FORTUNE_TIERS, "x sorte")
+		"efficiency": _populate_tiers("efficiency", EFFICIENCY_TIERS, "x click", Color.WHITE)
+		"fortune":    _populate_tiers("fortune", FORTUNE_TIERS, "x drop", Color("a9d6ff"))
 		"extras":     _populate_extras()
 
 	if animate:
@@ -579,7 +578,6 @@ func _populate_list(animate := false) -> void:
 func _populate_skins() -> void:
 	for s in SKINS:
 		var id: String = s["id"]
-		var rarity: Dictionary = RARITIES[s["rarity"]]
 		var btn: Button
 		if id == equipped_skin:
 			btn = _make_button("disabled", 0, "Equipada")
@@ -588,56 +586,92 @@ func _populate_skins() -> void:
 		else:
 			btn = _make_button("buy", s["price"], "Comprar")
 		btn.pressed.connect(_on_skin_pressed.bind(id))
-		var tex := _icon("skin_%s.png" % id, _svg_pickaxe(s["handle"], s["head"], s["edge"]))
-		_add_row(tex, rarity["color"].lightened(0.3), s["name"], s["desc"],
-			rarity["label"], rarity["color"], btn)
+		var rar: Dictionary = RARITIES[s["rarity"]]
+		var icon := _framed_icon("icons/skins/skin_%s.png" % id, Vector2(88, 88), Vector2(66, 66))
+		_add_row(icon, s["name"], s["desc"], C_SUB, rar, btn)
 
 
-func _populate_tiers(category: String, tiers: Array, suffix: String) -> void:
-	var bought: int = levels[category]
+func _populate_tiers(category: String, tiers: Array, suffix: String, sub_color: Color) -> void:
+	var owned: Array = owned_tiers[category]
 	for i in tiers.size():
 		var t: Dictionary = tiers[i]
 		var btn: Button
-		if i < bought:
+		if i in owned:
 			btn = _make_button("disabled", 0, "Comprado")
-		elif i == bought:
-			btn = _make_button("buy", t["price"], "Comprar")
 		else:
-			btn = _make_button("locked", t["price"], "Bloqueado")
+			btn = _make_button("buy", t["price"], "Comprar")
 		btn.pressed.connect(_on_tier_pressed.bind(category, i))
-		var svg := _svg_bolt(t["hex"], true) if category == "efficiency" else _svg_clover(t["hex"])
-		var tex := _icon("%s_%d.png" % [category, i + 1], svg)
-		_add_row(tex, Color(t["hex"]), t["name"], "%.1f%s" % [t["mult"], suffix], "", Color.WHITE, btn)
+		var tex := _tex("tiles/%s_%d.png" % [category, i + 1])
+		var icon := TextureRect.new()
+		icon.texture = tex
+		if tex:
+			icon.custom_minimum_size = tex.get_size() * 0.5
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+		_add_row(icon, t["name"], "%.1f%s" % [t["mult"], suffix], sub_color, {}, btn)
 
 
 func _populate_extras() -> void:
-	for e in EXTRAS:
-		var id: String = e["id"]
-		var btn: Button
-		if id in owned_extras:
-			btn = _make_button("disabled", 0, "Adquirido")
-		else:
-			btn = _make_button("buy", e["price"], "Comprar")
-		btn.pressed.connect(_on_extra_pressed.bind(id))
-		var tex := _icon("extra_%s.png" % id, _svg_extra(id, e["hex"]))
-		_add_row(tex, Color(e["hex"]), e["name"], e["desc"], "", Color.WHITE, btn)
+	for sec in EXTRA_SECTIONS:
+		list_box.add_child(_section_header(sec["title"], sec["icon"]))
+		for id in sec["items"]:
+			var e: Dictionary = EXTRAS[id]
+			var owned := get_extra_count(id)
+			var btn: Button
+			if e["once"] and owned > 0:
+				btn = _make_button("disabled", 0, "Comprado")
+			else:
+				btn = _make_button("buy", e["price"], "Comprar")
+			btn.pressed.connect(_on_extra_pressed.bind(id))
+			var icon := _framed_icon("icons/extras/extra_%s.png" % id, Vector2(86, 56), Vector2(44, 44))
+			var sub := ""
+			if not e["once"] and owned > 0:
+				sub = "Você tem: %d" % owned
+			_add_row(icon, e["name"], sub, C_SUB, {}, btn)
 
 
-func _add_row(tex: Texture2D, frame_color: Color, title: String, desc: String,
-		badge: String, badge_color: Color, btn: Button) -> void:
+func _section_header(title: String, icon_name: String) -> Control:
+	var h := HBoxContainer.new()
+	h.custom_minimum_size.y = 36
+	h.add_theme_constant_override("separation", -6)
+	h.add_child(_img("icons/sections/%s.png" % icon_name, Vector2(36, 36)))
+	var bar := PanelContainer.new()
+	bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	bar.add_theme_stylebox_override("panel", _nine("section_bar", Vector4(12, 3, 24, 3)))
+	bar.add_child(_label(title, 15, C_TEXT, true, 3))
+	h.add_child(bar)
+	var tail := HBoxContainer.new()
+	tail.add_theme_constant_override("separation", 0)
+	tail.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	tail.add_child(_line(90))
+	tail.add_child(_img("ui/diamond.png", Vector2(10, 10)))
+	h.add_child(tail)
+	return h
+
+
+## Moldura azul arredondada com o ícone dentro (skins e extras)
+func _framed_icon(rel: String, frame_size: Vector2, icon_size: Vector2) -> Control:
+	var p := PanelContainer.new()
+	p.custom_minimum_size = frame_size
+	p.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	p.add_theme_stylebox_override("panel", _nine("icon_frame", Vector4(8, 8, 8, 8)))
+	var ic := _img(rel, icon_size)
+	ic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	ic.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	p.add_child(ic)
+	return p
+
+
+## Linha (card) da lista: [ícone] [nome / descrição / selo] [botão]
+func _add_row(icon: Control, title: String, desc: String, desc_color: Color, rarity: Dictionary, btn: Button) -> void:
 	var row := PanelContainer.new()
-	row.add_theme_stylebox_override("panel", _box(C_ROW, C_ROW_BORDER, 12, 2, 8))
+	row.add_theme_stylebox_override("panel", _nine("row_card", Vector4(10, 8, 10, 8)))
 
 	var hbox := HBoxContainer.new()
 	hbox.add_theme_constant_override("separation", 12)
 	row.add_child(hbox)
-
-	var frame := PanelContainer.new()
-	frame.custom_minimum_size = Vector2(76, 76)
-	frame.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	frame.add_theme_stylebox_override("panel", _box(C_FRAME_BG, frame_color, 10, 3, 5))
-	hbox.add_child(frame)
-	frame.add_child(_icon_rect(tex, Vector2(60, 60)))
+	hbox.add_child(icon)
 
 	var info := VBoxContainer.new()
 	info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -645,119 +679,90 @@ func _add_row(tex: Texture2D, frame_color: Color, title: String, desc: String,
 	info.add_theme_constant_override("separation", 2)
 	hbox.add_child(info)
 
-	var name_label := Label.new()
-	name_label.text = title
-	name_label.add_theme_font_size_override("font_size", 20)
-	name_label.add_theme_color_override("font_color", C_NAME)
-	info.add_child(name_label)
+	var name_l := _label(title, 16)
+	name_l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	name_l.custom_minimum_size.x = 90
+	info.add_child(name_l)
 
-	var desc_label := Label.new()
-	desc_label.text = desc
-	desc_label.add_theme_font_size_override("font_size", 15)
-	desc_label.add_theme_color_override("font_color", C_DESC)
-	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc_label.custom_minimum_size.x = 140
-	info.add_child(desc_label)
+	if desc != "":
+		var d := _label(desc, 11 if not rarity.is_empty() else 14, desc_color, false)
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		d.custom_minimum_size.x = 90
+		info.add_child(d)
 
-	if badge != "":
-		var b := PanelContainer.new()
-		b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		var sb := _box(badge_color, badge_color.lightened(0.35), 8, 1)
-		sb.content_margin_left = 12
-		sb.content_margin_right = 12
-		sb.content_margin_top = 2
-		sb.content_margin_bottom = 2
-		b.add_theme_stylebox_override("panel", sb)
-		var bl := Label.new()
-		bl.text = badge
-		bl.add_theme_font_size_override("font_size", 12)
-		b.add_child(bl)
-		info.add_child(b)
+	if not rarity.is_empty():
+		info.add_child(_rarity_pill(rarity))
 
 	btn.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	hbox.add_child(btn)
 	list_box.add_child(row)
 
 
-## mode: "buy" (verde, moeda + preço), "action" (azul), "disabled" (cinza), "locked" (cinza + preço)
+func _rarity_pill(rarity: Dictionary) -> Control:
+	var pill := PanelContainer.new()
+	pill.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	pill.add_theme_stylebox_override("panel", _nine(rarity["pill"], Vector4(10, 1, 10, 2)))
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 4)
+	pill.add_child(h)
+	if rarity["pill"] == "pill_padrao":
+		h.add_child(_img("icons/header/check.png", Vector2(13, 13)))
+	h.add_child(_label(rarity["label"], 11, C_TEXT, false))
+	return pill
+
+
+## mode: "buy" (verde: moeda + preço + Comprar), "action" (azul), "disabled" (cinza)
 func _make_button(mode: String, price: int, label: String) -> Button:
-	var b := Button.new()
-	b.custom_minimum_size = Vector2(124, 68)
-	b.focus_mode = Control.FOCUS_NONE
-	b.add_theme_font_size_override("font_size", 17)
-	b.add_theme_color_override("font_color", Color.WHITE)
-	b.add_theme_color_override("font_hover_color", Color.WHITE)
-	b.add_theme_color_override("font_pressed_color", Color.WHITE)
-	b.add_theme_color_override("font_disabled_color", Color("8fa3c8"))
-
+	var btn_style := "btn_green"
+	var pill_style := "btn_pill"
 	match mode:
-		"buy":
-			b.add_theme_stylebox_override("normal", _box(C_GREEN, C_GREEN_DARK, 12, 3))
-			b.add_theme_stylebox_override("hover", _box(C_GREEN_HOVER, C_GREEN_DARK, 12, 3))
-			b.add_theme_stylebox_override("pressed", _box(C_GREEN_DARK, C_GREEN_DARK, 12, 3))
-			_price_content(b, price, label, C_GREEN_DARK, Color.WHITE, false)
 		"action":
-			b.text = label
-			b.add_theme_stylebox_override("normal", _box(C_BLUE_BTN, Color("7fb6ff"), 12, 3))
-			b.add_theme_stylebox_override("hover", _box(Color("3a86ee"), Color("a5ccff"), 12, 3))
-			b.add_theme_stylebox_override("pressed", _box(Color("1d55a8"), Color("7fb6ff"), 12, 3))
-		"locked":
-			b.disabled = true
-			b.add_theme_stylebox_override("disabled", _box(C_GREY, Color("3f5380"), 12, 3))
-			_price_content(b, price, label, Color("1c2842"), Color("8fa3c8"), true)
-		_:
-			b.text = label
-			b.disabled = true
-			b.add_theme_stylebox_override("disabled", _box(C_GREY, Color("3f5380"), 12, 3))
+			btn_style = "btn_blue"
+			pill_style = "pill_blue"
+		"disabled":
+			btn_style = "btn_grey"
+			pill_style = "pill_grey"
 
-	_juicy(b)
-	return b
+	var b := Button.new()
+	b.custom_minimum_size = Vector2(108, 62)
+	b.focus_mode = Control.FOCUS_NONE
+	var normal := _nine(btn_style)
+	b.add_theme_stylebox_override("normal", normal)
+	b.add_theme_stylebox_override("hover", _tinted(normal, Color(1.12, 1.12, 1.12)))
+	b.add_theme_stylebox_override("pressed", _tinted(normal, Color(0.82, 0.82, 0.82)))
+	b.add_theme_stylebox_override("disabled", normal)
+	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
+	b.disabled = (mode == "disabled")
 
-
-## Monta "[moeda] preço" em cima e uma pílula com o texto embaixo (como no mockup)
-func _price_content(b: Button, price: int, label: String, pill_color: Color, text_color: Color, dim: bool) -> void:
+	var m := _margin(7, 5, 7, 7)
+	m.set_anchors_preset(Control.PRESET_FULL_RECT)
+	b.add_child(m)
 	var v := VBoxContainer.new()
-	v.set_anchors_preset(Control.PRESET_FULL_RECT)
 	v.alignment = BoxContainer.ALIGNMENT_CENTER
-	v.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_theme_constant_override("separation", 3)
-	b.add_child(v)
+	v.add_theme_constant_override("separation", 2)
+	m.add_child(v)
 
-	var top := HBoxContainer.new()
-	top.alignment = BoxContainer.ALIGNMENT_CENTER
-	top.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top.add_theme_constant_override("separation", 4)
-	v.add_child(top)
-
-	var coin := _icon_rect(_icon("coin.png", _svg_coin()), Vector2(22, 22))
-	if dim:
-		coin.modulate = Color(1, 1, 1, 0.45)
-	top.add_child(coin)
-
-	var pl := Label.new()
-	pl.text = _fmt(price)
-	pl.add_theme_font_size_override("font_size", 18)
-	pl.add_theme_color_override("font_color", text_color)
-	pl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	top.add_child(pl)
+	if mode == "buy":
+		var top := HBoxContainer.new()
+		top.alignment = BoxContainer.ALIGNMENT_CENTER
+		top.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		top.add_theme_constant_override("separation", 4)
+		top.add_child(_img("icons/header/coin.png", Vector2(22, 22)))
+		top.add_child(_label(_fmt(price), 15, C_TEXT, true, 2))
+		v.add_child(top)
 
 	var pill := PanelContainer.new()
-	pill.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	pill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sb := _box(pill_color, pill_color, 8, 0)
-	sb.content_margin_left = 14
-	sb.content_margin_right = 14
-	sb.content_margin_top = 1
-	sb.content_margin_bottom = 1
-	pill.add_theme_stylebox_override("panel", sb)
+	pill.custom_minimum_size.y = 22 if mode == "buy" else 30
+	pill.add_theme_stylebox_override("panel", _nine(pill_style, Vector4(4, 0, 4, 1)))
+	var pl := _label(label, 12)
+	pl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	pill.add_child(pl)
 	v.add_child(pill)
 
-	var ll := Label.new()
-	ll.text = label
-	ll.add_theme_font_size_override("font_size", 14)
-	ll.add_theme_color_override("font_color", text_color)
-	ll.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	pill.add_child(ll)
+	_ignore_mouse(m)
+	_juicy(b)
+	return b
 
 
 # =====================================================================
@@ -794,25 +799,27 @@ func _on_skin_pressed(id: String) -> void:
 
 func _on_tier_pressed(category: String, index: int) -> void:
 	var tiers: Array = EFFICIENCY_TIERS if category == "efficiency" else FORTUNE_TIERS
-	if index != levels[category]:
+	var owned: Array = owned_tiers[category]
+	if index in owned:
 		return
 	if not _try_spend(tiers[index]["price"]):
 		return
-	levels[category] += 1
+	owned.append(index)
 	item_purchased.emit(category, str(index + 1))
 	_toast("%s comprada!" % tiers[index]["name"], Color("7dff7d"))
 	_populate_list()
 
 
 func _on_extra_pressed(id: String) -> void:
-	if id in owned_extras:
+	var e: Dictionary = EXTRAS[id]
+	if e["once"] and get_extra_count(id) > 0:
 		return
-	var extra: Dictionary = EXTRAS.filter(func(e): return e["id"] == id)[0]
-	if not _try_spend(extra["price"]):
+	if not _try_spend(e["price"]):
 		return
-	owned_extras.append(id)
+	extras_inventory[id] = get_extra_count(id) + 1
 	item_purchased.emit("extra", id)
-	_toast("Adquirido: " + extra["name"], Color("7dff7d"))
+	extra_purchased.emit(id, get_extra_count(id))
+	_toast("Adquirido: " + e["name"], Color("7dff7d"))
 	_populate_list()
 
 
@@ -835,3 +842,11 @@ func _toast(text: String, color: Color) -> void:
 	toast_tween = create_tween()
 	toast_tween.tween_interval(2.0)
 	toast_tween.tween_callback(func(): message_label.text = "")
+
+# =====================================================================
+#  ESTRUTURA DE PASTAS ESPERADA (res://assets/shop/)
+#    ui/      -> window_bg, row_card, icon_frame, btn_*, pill_*, tab_*, section_bar, diamond
+#    tiles/   -> efficiency_1..6, fortune_1..6   (moldura + ícone brilhante)
+#    icons/   -> skins/, efficiency/, fortune/, extras/, tabs/, sections/, header/
+#    fonts/   -> Poppins-Bold.ttf, Poppins-Medium.ttf
+# =====================================================================

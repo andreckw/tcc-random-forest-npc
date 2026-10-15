@@ -7,10 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dvsyb4hs5vdmk" path="res://images/Effect.png" id="4_maxyj"]
 [ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
-[ext_resource type="Texture2D" uid="uid://dtactgy6cb63r" path="res://images/menu/loja.png" id="6_rgp31"]
-[ext_resource type="Texture2D" uid="uid://cejsn70ie1dih" path="res://images/menu/roleta.png" id="7_ep4yw"]
-[ext_resource type="Texture2D" uid="uid://bt4feuso2c672" path="res://images/menu/npc.png" id="8_ol6ku"]
-[ext_resource type="Texture2D" uid="uid://dyhocg6ha18bc" path="res://images/menu/exit.png" id="9_ep4yw"]
+[ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
 [ext_resource type="Texture2D" uid="uid://cf6nltb2u8a0l" path="res://images/menu/loja/skinspicaretas.png" id="11_ol6ku"]
 [ext_resource type="Texture2D" uid="uid://qnj2kvxmqnj7" path="res://images/menu/loja/eficiencia.png" id="12_oiexa"]
 [ext_resource type="Script" uid="uid://chvr28m0aca0p" path="res://scenes/shop_menu.gd" id="13_dmbx5"]
@@ -187,7 +184,6 @@ scale = Vector2(0.044999994, 0.03874999)
 sprite_frames = SubResource("SpriteFrames_un37q")
 
 [node name="UI" type="Control" parent="." unique_id=1658092192]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -204,45 +200,50 @@ text = "🛒 SHOP"
 
 [node name="MenuLateral" type="Panel" parent="UI" unique_id=863084788]
 layout_mode = 0
-offset_right = 254.0
-offset_bottom = 671.0
+offset_right = 260.0
+offset_bottom = 668.0
 offset_transform_visual_only = false
+
+[node name="TextureMenu" type="TextureRect" parent="UI/MenuLateral" unique_id=401141350]
+layout_mode = 0
+offset_left = -6.0
+offset_top = -17.0
+offset_right = 259.0
+offset_bottom = 671.0
+texture = ExtResource("7_oiexa")
+expand_mode = 1
 
 [node name="LojaButton" type="Button" parent="UI/MenuLateral" unique_id=745114326]
 layout_mode = 0
-offset_left = 68.0
-offset_top = 85.0
-offset_right = 196.0
-offset_bottom = 213.0
-icon = ExtResource("6_rgp31")
+offset_left = 40.0
+offset_top = 93.0
+offset_right = 216.0
+offset_bottom = 238.0
 flat = true
 alignment = 0
 
 [node name="RoletaButton" type="Button" parent="UI/MenuLateral" unique_id=1694752381]
 layout_mode = 0
-offset_left = 68.0
-offset_top = 279.0
-offset_right = 200.0
-offset_bottom = 414.0
-icon = ExtResource("7_ep4yw")
+offset_left = 38.0
+offset_top = 262.0
+offset_right = 215.0
+offset_bottom = 413.0
 flat = true
 
 [node name="NPCButton" type="Button" parent="UI/MenuLateral" unique_id=303095399]
 layout_mode = 0
-offset_left = 68.0
-offset_top = 473.0
-offset_right = 188.0
-offset_bottom = 593.0
-icon = ExtResource("8_ol6ku")
+offset_left = 41.0
+offset_top = 426.0
+offset_right = 215.0
+offset_bottom = 583.0
 flat = true
 
 [node name="BackButton" type="Button" parent="UI/MenuLateral" unique_id=19752054]
 layout_mode = 0
-offset_left = 204.0
-offset_top = -1.0
-offset_right = 252.0
-offset_bottom = 47.0
-icon = ExtResource("9_ep4yw")
+offset_left = 200.0
+offset_top = 20.0
+offset_right = 235.0
+offset_bottom = 48.0
 flat = true
 
 [node name="DinheiroLabel" type="Label" parent="UI" unique_id=1077521063]
