@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
 [ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
+[ext_resource type="Texture2D" uid="uid://dymxfdq0qqq6v" path="res://images/pickaxes/iron_pickaxe.png" id="10_ol6ku"]
 [ext_resource type="Script" uid="uid://chvr28m0aca0p" path="res://scenes/shop_menu.gd" id="13_dmbx5"]
 [ext_resource type="Script" uid="uid://b2uhdxybhp782" path="res://scenes/cursor.gd" id="14_1nqxk"]
 
@@ -252,9 +253,21 @@ script = ExtResource("5_2svpv")
 
 [node name="CursorManager" type="Control" parent="UI" unique_id=1322476795]
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+offset_left = 354.0
+offset_top = 219.0
+offset_right = 367.0
+offset_bottom = 232.0
 script = ExtResource("14_1nqxk")
+
+[node name="PicaretaCursor" type="TextureRect" parent="UI/CursorManager" unique_id=344240879]
+layout_mode = 0
+offset_left = 28.0
+offset_top = -45.0
+offset_right = 58.0
+offset_bottom = -20.0
+mouse_filter = 2
+texture = ExtResource("10_ol6ku")
+expand_mode = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=209116776]
 

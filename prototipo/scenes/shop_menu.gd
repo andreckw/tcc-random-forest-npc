@@ -21,6 +21,7 @@ signal closed
 @export_range(0.3, 2.0, 0.05) var ui_scale := 1.0
 @export var play_open_animation := true
 @export var assets_folder := "res://assets/shop/"
+@onready var cursor_manager = $"../../UI/CursorManager"
 
 # ======================= DADOS (edite à vontade) =======================
 var TABS := [
@@ -43,14 +44,14 @@ var RARITIES := {
 	"epica":    {"label": "Épica",    "pill": "pill_epica"},
 	"lendaria": {"label": "Lendária", "pill": "pill_lendaria"},
 }
-
+## para abaixar os valores de fortuna e eficiencia para testes
 var EFFICIENCY_TIERS := [
 	{"name": "Eficiência I",   "mult": 2.0,  "price": 50},
 	{"name": "Eficiência II",  "mult": 3.0,  "price": 200},
 	{"name": "Eficiência III", "mult": 4.0,  "price": 500},
 	{"name": "Eficiência IV",  "mult": 5.0,  "price": 1000},
 	{"name": "Eficiência V",   "mult": 7.0,  "price": 5000},
-	{"name": "Eficiência X",   "mult": 20.0, "price": 100000},
+	{"name": "Eficiência X",   "mult": 20.0, "price": 1},
 ]
 var FORTUNE_TIERS := [
 	{"name": "Fortuna I",   "mult": 2.0,  "price": 100},
@@ -58,7 +59,7 @@ var FORTUNE_TIERS := [
 	{"name": "Fortuna III", "mult": 4.0,  "price": 1500},
 	{"name": "Fortuna IV",  "mult": 7.0,  "price": 4500},
 	{"name": "Fortuna V",   "mult": 10.0, "price": 15000},
-	{"name": "Fortuna X",   "mult": 20.0, "price": 100000},
+	{"name": "Fortuna X",   "mult": 20.0, "price": 1},
 ]
 
 # once = true -> compra única. false -> consumível (pode comprar várias vezes)
@@ -121,15 +122,43 @@ var _font_med: Font
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+
 	_money = _find_money()
 	_font_bold = _load_font("Poppins-Bold.ttf")
 	_font_med = _load_font("Poppins-Medium.ttf")
+
+	skin_equipped.connect(_on_skin_equipped)
+	_on_skin_equipped(equipped_skin)
+
 	_build_ui()
 	_select_tab(0)
 	_update_coins_label()
 	_play_open()
 	_refit_later()
+	
+	
+func _get_pickaxe_texture(skin_id: String) -> Texture2D:
+	var arquivos := {
+		"basica": "iron_pickaxe.png",
+		"dourada": "gold_pickaxe.png",
+		"cristal": "crystal_pickaxe.png",
+		"vulcanica": "volcanic_pickaxe.png"
+	}
 
+	if not arquivos.has(skin_id):
+		push_warning("Picareta não configurada: " + skin_id)
+		return null
+
+	return load("res://imagens/pickaxes/" + arquivos[skin_id]) as Texture2D
+		
+func _on_skin_equipped(skin_id: String) -> void:
+	var textura = _tex("icons/skins/skin_%s.png" % skin_id)
+
+	if textura == null:
+		push_warning("Textura da skin não encontrada: " + skin_id)
+		return
+
+	cursor_manager.alterar_skin_picareta(textura)
 
 func _process(_delta: float) -> void:
 	# Atualiza o saldo quando o jogador ganha dinheiro com a loja aberta
@@ -819,13 +848,33 @@ func _on_skin_pressed(id: String) -> void:
 func _on_tier_pressed(category: String, index: int) -> void:
 	var tiers: Array = EFFICIENCY_TIERS if category == "efficiency" else FORTUNE_TIERS
 	var owned: Array = owned_tiers[category]
+
 	if index in owned or not _try_spend(tiers[index]["price"]):
 		return
-	owned.append(index)
-	item_purchased.emit(category, str(index + 1))
-	_toast("%s comprada!" % tiers[index]["name"], Color("7dff7d"))
-	_populate_list()
 
+	# Registra que esse nível foi comprado
+	owned.append(index)
+
+	# Descobre o maior valor comprado
+	var maior_valor: int = 1
+
+	for nivel in owned:
+		var valor_atual: int = int(tiers[int(nivel)]["mult"])
+
+		if valor_atual > maior_valor:
+			maior_valor = valor_atual
+
+	# Atualiza o atributo correspondente
+	if category == "efficiency":
+		GameManager.atualizar_eficiencia(maior_valor)
+	else:
+		GameManager.atualizar_fortuna(maior_valor)
+
+	item_purchased.emit(category, str(index + 1))
+
+	_toast("%s comprada!" % tiers[index]["name"], Color("7dff7d"))
+
+	_populate_list()
 
 func _on_extra_pressed(id: String) -> void:
 	var e: Dictionary = EXTRAS[id]
