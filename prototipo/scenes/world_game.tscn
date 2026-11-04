@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
 [ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
 [ext_resource type="Texture2D" uid="uid://dymxfdq0qqq6v" path="res://images/pickaxes/iron_pickaxe.png" id="10_ol6ku"]
+[ext_resource type="Script" uid="uid://ctkcovk2boef1" path="res://script/npc_menu.gd" id="12_oiexa"]
 [ext_resource type="Script" uid="uid://chvr28m0aca0p" path="res://scenes/shop_menu.gd" id="13_dmbx5"]
 [ext_resource type="Script" uid="uid://b2uhdxybhp782" path="res://scenes/cursor.gd" id="14_1nqxk"]
 
@@ -136,14 +137,6 @@ shape = SubResource("RectangleShape2D_un37q")
 
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina01" unique_id=1137050041]
 
-[node name="ProgressBar" type="ProgressBar" parent="MinasInterativas/Mina01" unique_id=195416555]
-offset_left = 545.0
-offset_top = 509.0
-offset_right = 635.0
-offset_bottom = 536.0
-max_value = 10.0
-value = 10.0
-
 [node name="Mina02" type="Area2D" parent="MinasInterativas" unique_id=1854232202]
 script = ExtResource("2_8pfbp")
 
@@ -175,8 +168,8 @@ position = Vector2(214, 312.5)
 shape = SubResource("RectangleShape2D_c26eh")
 
 [node name="AnimatedEffect" type="AnimatedSprite2D" parent="MinasInterativas" unique_id=727647790]
-position = Vector2(177.00002, 247.25)
-scale = Vector2(0.044999994, 0.03874999)
+position = Vector2(316.23682, 207.55432)
+scale = Vector2(0.070527256, 0.057827067)
 sprite_frames = SubResource("SpriteFrames_un37q")
 
 [node name="UI" type="Control" parent="." unique_id=1658092192]
@@ -244,10 +237,10 @@ flat = true
 
 [node name="DinheiroLabel" type="Label" parent="UI" unique_id=1077521063]
 layout_mode = 0
-offset_left = 1082.0
-offset_top = 52.0
-offset_right = 1156.0
-offset_bottom = 90.0
+offset_left = 1055.0
+offset_top = 49.0
+offset_right = 1145.0
+offset_bottom = 87.0
 text = "💰 $ 0"
 script = ExtResource("5_2svpv")
 
@@ -281,10 +274,10 @@ offset_bottom = 187.0
 script = ExtResource("13_dmbx5")
 
 [node name="NPC" type="Control" parent="CanvasLayer" unique_id=720631247]
-visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = 919.0
-offset_top = 7.0
-offset_right = 1088.0
-offset_bottom = 201.0
+offset_left = 281.0
+offset_top = -16.0
+offset_right = 400.0
+offset_bottom = 123.0
+script = ExtResource("12_oiexa")

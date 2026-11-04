@@ -2,23 +2,27 @@ extends Control
 
 @onready var menu_lateral: Panel = $MenuLateral
 @onready var shop: Control = $"../CanvasLayer/Shop"
+@onready var npc: Control = $"../CanvasLayer/NPC"
 
 @onready var menu_button: Button = $Menu
 @onready var back_button: Button = $MenuLateral/BackButton
 @onready var loja_button: Button = $MenuLateral/LojaButton
+@onready var NPCbutton: Button = $MenuLateral/NPCButton
 
 
 func _ready():
 	# Inicialização
 	menu_lateral.visible = false
 	shop.visible = false
-
+	npc.visible = false	
+	
 	# Menu lateral
 	menu_button.pressed.connect(open_menu)
 	back_button.pressed.connect(open_menu)
 
 	# Loja
 	loja_button.pressed.connect(open_loja)
+	NPCbutton.pressed.connect(open_NPC)
 
 func open_menu():
 	menu_lateral.visible = !menu_lateral.visible
@@ -30,3 +34,8 @@ func open_loja():
 	if menu_lateral.visible:
 		menu_lateral.visible = false
 	shop.visible = true
+
+func open_NPC():
+	if menu_lateral.visible:
+		menu_lateral.visible = false
+	npc.visible = true	

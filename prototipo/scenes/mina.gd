@@ -18,14 +18,14 @@ func _ready():
 	timer.one_shot = false
 	timer.timeout.connect(recuperar_mina)
 
-	efeito.play("default")
+	# Configura o efeito do clique
+	efeito.visible = false
+	efeito.sprite_frames.set_animation_loop("click", false)
 
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
-	
-	
 
-
+	efeito.animation_finished.connect(_on_efeito_animation_finished)
 
 func _input_event(viewport, event, shape_idx):
 	if esgotada:
@@ -33,7 +33,16 @@ func _input_event(viewport, event, shape_idx):
 
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+
 			cursor_manager.animar_picareta()
+
+			# Posiciona o efeito exatamente onde o mouse está
+			efeito.global_position = get_global_mouse_position()
+
+			# Mostra e executa a animação
+			efeito.visible = true
+			efeito.play("click")
+
 			minerar(event.position)
 
 func _on_mouse_entered():
@@ -44,7 +53,11 @@ func _on_mouse_entered():
 func _on_mouse_exited():
 	cursor_manager.desativar_cursor_picareta()
 	
-	
+func _on_efeito_animation_finished():
+	if efeito.animation == "click":
+		efeito.visible = false
+		efeito.play("default")
+		
 func minerar(posicao_clique):
 	# Eficiência 0 = 3 dano
 	# Eficiência 1 = 4 dano
@@ -64,8 +77,8 @@ func minerar(posicao_clique):
 	# Valor de cada ponto de mineração
 	var valor_por_clique: float = float(valor_total) / cliques_maximos
 
-	# Dinheiro base correspondente ao que realmente foi minerado
-	var dinheiro_base: int = roundi(valor_por_clique * dano_real)
+	# ALTERAÇÃO NO DINHEIRO valor_por_clique 
+	var dinheiro_base: int = roundi(valor_por_clique   * dano_real)
 
 	# Fortuna aumenta o dinheiro recebido
 	# Fortuna 0 = x1
