@@ -23,12 +23,12 @@ script = ExtResource("3_unp0h")
 npc_scene = ExtResource("4_tbymv")
 quantidade = 50
 area_x = 1152.0
-area_y = 0.0
+area_y = 671.0
 
 [node name="Player" parent="." unique_id=1859219748 instance=ExtResource("4_momlo")]
 camera_limits = {
-"bottom": 0,
-"left": 672,
-"right": 0,
-"top": 1152
+"bottom": 672,
+"left": 0,
+"right": 1152,
+"top": 0
 }
