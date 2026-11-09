@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
 [ext_resource type="Script" uid="uid://k6ixkpi6ynhm" path="res://scenes/npcs.gd" id="6_dmbx5"]
+[ext_resource type="PackedScene" uid="uid://bcyxw78et1k06" path="res://scenes/npc/NpcMinerador.tscn" id="7_ktxpj"]
 [ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
 [ext_resource type="Texture2D" uid="uid://dymxfdq0qqq6v" path="res://images/pickaxes/iron_pickaxe.png" id="10_ol6ku"]
 [ext_resource type="Script" uid="uid://ctkcovk2boef1" path="res://script/npc_menu.gd" id="12_oiexa"]
@@ -66,7 +67,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_un37q"]
-size = Vector2(93.66406, 84.41016)
+size = Vector2(36.916016, 35)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lqr2k"]
 size = Vector2(41, 37)
@@ -118,31 +119,31 @@ tile_set = ExtResource("1_ptyfu")
 
 [node name="Detalhes" type="TileMapLayer" parent="Cenario" unique_id=1271880717]
 texture_filter = 1
-tile_map_data = PackedByteArray("AAAqABgABAACAAQAAAArABgABAACAAQAAAArABcABAACAAQAAAAsABcABAACAAQAAAAsABgABAACAAQAAAAtABgABAACAAQAAAAtABcABAACAAQAAAAuABgABAACAAQAAAAqABcABAABAAMAAAAsABYABAABAAMAAAAtABYABAABAAMAAAAuABcABAABAAMAAAAyABMABAACAAQAAAAzABMABAACAAQAAAAzABIABAACAAQAAAA0ABIABAACAAQAAAA0ABMABAACAAQAAAA1ABMABAACAAQAAAA1ABIABAACAAQAAAA2ABMABAACAAQAAAAzABEABAACAAMAAAA0ABEABAACAAMAAAA1ABEABAACAAMAAAAyABIABAACAAMAAAA7AB0ABAABAAQAAAA8AB0ABAABAAQAAAA9AB0ABAABAAQAAAA+AB0ABAABAAQAAAA/AB0ABAABAAQAAAA+ABwABAABAAQAAAA9ABwABAABAAQAAAA9ABsABAABAAQAAAA+ABsABAABAAQAAAA8ABsABAACAAMAAAA9ABoABAACAAMAAAA+ABoABAACAAMAAAA/ABwABAACAAMAAAA7ABwABAACAAMAAAA8ABwABAACAAQAAAASAP//AAAIAAYAAAASAAAAAAAIAAcAAAASAAEAAAAIAAgAAAATAP//AAAJAAYAAAATAAAAAAAJAAcAAAATAAEAAAAJAAgAAAAUAP//AAAKAAYAAAAUAAAAAAAKAAcAAAAUAAEAAAAKAAgAAAA1AP//AAAIAAYAAAA1AAAAAAAIAAcAAAA1AAEAAAAIAAgAAAA2AP//AAAJAAYAAAA2AAAAAAAJAAcAAAA2AAEAAAAJAAgAAAA3AP//AAAKAAYAAAA3AAAAAAAKAAcAAAA3AAEAAAAKAAgAAAA1AAYAAAAEAAYAAAA1AAcAAAAEAAcAAAA1AAgAAAAEAAgAAAA2AAYAAAAFAAYAAAA2AAcAAAAFAAcAAAA2AAgAAAAFAAgAAAA3AAYAAAAGAAYAAAA3AAcAAAAGAAcAAAA3AAgAAAAGAAgAAAASAAYAAAAEAAYAAAASAAcAAAAEAAcAAAASAAgAAAAEAAgAAAATAAYAAAAFAAYAAAATAAcAAAAFAAcAAAATAAgAAAAFAAgAAAAUAAYAAAAGAAYAAAAUAAcAAAAGAAcAAAAUAAgAAAAGAAgAAAAvAAAAAAACAAIAAAAvAAEAAAACAAMAAAAvAAIAAAACAAQAAAAvAAMAAAACAAUAAAAvAAQAAAACAAYAAAAvAAUAAAACAAcAAAAwAAAAAAADAAIAAAAwAAEAAAADAAMAAAAwAAIAAAADAAQAAAAwAAMAAAADAAUAAAAwAAQAAAADAAYAAAAwAAUAAAADAAcAAAAfAAIAAAAEAAYAAAAfAAMAAAAEAAcAAAAfAAQAAAAEAAgAAAAgAAIAAAAFAAYAAAAgAAMAAAAFAAcAAAAgAAQAAAAFAAgAAAAhAAIAAAAGAAYAAAAhAAMAAAAGAAcAAAAhAAQAAAAGAAgAAAAoAAIAAAAIAAYAAAAoAAMAAAAIAAcAAAAoAAQAAAAIAAgAAAApAAIAAAAJAAYAAAApAAMAAAAJAAcAAAApAAQAAAAJAAgAAAAqAAIAAAAKAAYAAAAqAAMAAAAKAAcAAAAqAAQAAAAKAAgAAAAZAAAAAAACAAIAAAAZAAEAAAACAAMAAAAZAAIAAAACAAQAAAAZAAMAAAACAAUAAAAZAAQAAAACAAYAAAAZAAUAAAACAAcAAAAaAAAAAAADAAIAAAAaAAEAAAADAAMAAAAaAAIAAAADAAQAAAAaAAMAAAADAAUAAAAaAAQAAAADAAYAAAAaAAUAAAADAAcAAAA=")
+tile_map_data = PackedByteArray("AAASAP//AAAIAAYAAAASAAAAAAAIAAcAAAASAAEAAAAIAAgAAAATAP//AAAJAAYAAAATAAAAAAAJAAcAAAATAAEAAAAJAAgAAAAUAP//AAAKAAYAAAAUAAAAAAAKAAcAAAAUAAEAAAAKAAgAAAA1AP//AAAIAAYAAAA1AAAAAAAIAAcAAAA1AAEAAAAIAAgAAAA2AP//AAAJAAYAAAA2AAAAAAAJAAcAAAA2AAEAAAAJAAgAAAA3AP//AAAKAAYAAAA3AAAAAAAKAAcAAAA3AAEAAAAKAAgAAAA1AAYAAAAEAAYAAAA1AAcAAAAEAAcAAAA1AAgAAAAEAAgAAAA2AAYAAAAFAAYAAAA2AAcAAAAFAAcAAAA2AAgAAAAFAAgAAAA3AAYAAAAGAAYAAAA3AAcAAAAGAAcAAAA3AAgAAAAGAAgAAAASAAYAAAAEAAYAAAASAAcAAAAEAAcAAAASAAgAAAAEAAgAAAATAAYAAAAFAAYAAAATAAcAAAAFAAcAAAATAAgAAAAFAAgAAAAUAAYAAAAGAAYAAAAUAAcAAAAGAAcAAAAUAAgAAAAGAAgAAAAvAAAAAAACAAIAAAAvAAEAAAACAAMAAAAvAAIAAAACAAQAAAAvAAMAAAACAAUAAAAvAAQAAAACAAYAAAAvAAUAAAACAAcAAAAwAAAAAAADAAIAAAAwAAEAAAADAAMAAAAwAAIAAAADAAQAAAAwAAMAAAADAAUAAAAwAAQAAAADAAYAAAAwAAUAAAADAAcAAAAfAAIAAAAEAAYAAAAfAAMAAAAEAAcAAAAfAAQAAAAEAAgAAAAgAAIAAAAFAAYAAAAgAAMAAAAFAAcAAAAgAAQAAAAFAAgAAAAhAAIAAAAGAAYAAAAhAAMAAAAGAAcAAAAhAAQAAAAGAAgAAAAoAAIAAAAIAAYAAAAoAAMAAAAIAAcAAAAoAAQAAAAIAAgAAAApAAIAAAAJAAYAAAApAAMAAAAJAAcAAAApAAQAAAAJAAgAAAAqAAIAAAAKAAYAAAAqAAMAAAAKAAcAAAAqAAQAAAAKAAgAAAAZAAAAAAACAAIAAAAZAAEAAAACAAMAAAAZAAIAAAACAAQAAAAZAAMAAAACAAUAAAAZAAQAAAACAAYAAAAZAAUAAAACAAcAAAAaAAAAAAADAAIAAAAaAAEAAAADAAMAAAAaAAIAAAADAAQAAAAaAAMAAAADAAUAAAAaAAQAAAADAAYAAAAaAAUAAAADAAcAAAA=")
 tile_set = ExtResource("1_ptyfu")
 
 [node name="MinasInterativas" type="Node2D" parent="." unique_id=795165590]
 
-[node name="Mina01" type="Area2D" parent="MinasInterativas" unique_id=1220374806]
+[node name="Mina01" type="Area2D" parent="MinasInterativas" unique_id=1220374806 groups=["minas"]]
 script = ExtResource("2_8pfbp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MinasInterativas/Mina01" unique_id=383891145]
-position = Vector2(588, 463)
-scale = Vector2(0.2811586, 0.20672455)
+position = Vector2(527.0326, 480.60352)
+scale = Vector2(0.10236719, 0.09419505)
 sprite_frames = SubResource("SpriteFrames_8pfbp")
 animation = &"cheia"
 
 [node name="CollisionMina01" type="CollisionShape2D" parent="MinasInterativas/Mina01" unique_id=1925563520]
-position = Vector2(589, 461)
+position = Vector2(527.5746, 480.10352)
 shape = SubResource("RectangleShape2D_un37q")
 
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina01" unique_id=1137050041]
 
-[node name="Mina02" type="Area2D" parent="MinasInterativas" unique_id=1854232202]
+[node name="Mina02" type="Area2D" parent="MinasInterativas" unique_id=1854232202 groups=["minas"]]
 script = ExtResource("2_8pfbp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MinasInterativas/Mina02" unique_id=1963225517]
-position = Vector2(317.00003, 330)
+position = Vector2(645.68286, 481.72693)
 scale = Vector2(0.11414617, 0.10494648)
 sprite_frames = SubResource("SpriteFrames_8pfbp")
 animation = &"cheia"
@@ -150,14 +151,14 @@ animation = &"cheia"
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina02" unique_id=901597861]
 
 [node name="CollisionMina02" type="CollisionShape2D" parent="MinasInterativas/Mina02" unique_id=853823908]
-position = Vector2(317.5, 329.5)
+position = Vector2(646.18286, 481.22693)
 shape = SubResource("RectangleShape2D_lqr2k")
 
-[node name="Mina03" type="Area2D" parent="MinasInterativas" unique_id=27497366]
+[node name="Mina03" type="Area2D" parent="MinasInterativas" unique_id=27497366 groups=["minas"]]
 script = ExtResource("2_8pfbp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="MinasInterativas/Mina03" unique_id=1398435033]
-position = Vector2(214.00003, 313)
+position = Vector2(589.68286, 481.72693)
 scale = Vector2(0.11414617, 0.10494648)
 sprite_frames = SubResource("SpriteFrames_8pfbp")
 animation = &"cheia"
@@ -165,7 +166,7 @@ animation = &"cheia"
 [node name="Timer" type="Timer" parent="MinasInterativas/Mina03" unique_id=1847032622]
 
 [node name="CollisionMina03" type="CollisionShape2D" parent="MinasInterativas/Mina03" unique_id=468075262]
-position = Vector2(214, 312.5)
+position = Vector2(589.68286, 481.22693)
 shape = SubResource("RectangleShape2D_c26eh")
 
 [node name="AnimatedEffect" type="AnimatedSprite2D" parent="MinasInterativas" unique_id=727647790]
@@ -175,6 +176,7 @@ sprite_frames = SubResource("SpriteFrames_un37q")
 
 [node name="Npcs" type="Node2D" parent="." unique_id=1005132495]
 script = ExtResource("6_dmbx5")
+npc_scene = ExtResource("7_ktxpj")
 
 [node name="UI" type="Control" parent="." unique_id=1658092192]
 layout_mode = 3
@@ -192,6 +194,7 @@ offset_bottom = 635.0
 text = "🛒 SHOP"
 
 [node name="MenuLateral" type="Panel" parent="UI" unique_id=863084788]
+visible = false
 layout_mode = 0
 offset_right = 260.0
 offset_bottom = 668.0

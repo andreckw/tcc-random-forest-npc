@@ -1,28 +1,32 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://bx7ooa7vkbbla"]
 
-[ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="1_xffox"]
+[ext_resource type="Texture2D" uid="uid://57x3eaim75pa" path="res://images/characters/mineradores/minerbasic.png" id="1_xffox"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_botw2"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_14swp"]
 atlas = ExtResource("1_xffox")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(238, 636, 119, 159)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_7gycr"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_kbbne"]
 atlas = ExtResource("1_xffox")
-region = Rect2(32, 0, 32, 32)
+region = Rect2(0, 318, 119, 159)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_le8ok"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_nhjwu"]
 atlas = ExtResource("1_xffox")
-region = Rect2(0, 0, 32, 32)
+region = Rect2(119, 318, 119, 159)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_dph16"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_2l8aw"]
 atlas = ExtResource("1_xffox")
-region = Rect2(64, 0, 32, 32)
+region = Rect2(238, 318, 119, 159)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16oed"]
+atlas = ExtResource("1_xffox")
+region = Rect2(357, 318, 119, 159)
 
 [resource]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_botw2")
+"texture": SubResource("AtlasTexture_14swp")
 }],
 "loop": 1,
 "name": &"idle",
@@ -30,13 +34,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_7gycr")
+"texture": SubResource("AtlasTexture_kbbne")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_le8ok")
+"texture": SubResource("AtlasTexture_nhjwu")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dph16")
+"texture": SubResource("AtlasTexture_2l8aw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_16oed")
 }],
 "loop": 1,
 "name": &"walk",

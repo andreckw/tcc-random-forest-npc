@@ -2,35 +2,35 @@ using System;
 using Godot;
 namespace States
 {
-    public class PatrolWalk : IActionState
-    {
-        private const float Intensity = 1.0f;
+	public class PatrolWalk : IActionState
+	{
+		private const float Intensity = 1.0f;
 
 
-        public void Act(NpcAgent npc, float delta)
-        {
-            if (npc.targetNav == null)
-            {
-                var screenSize = npc.GetViewportRect().Size;
-                int posX = (int)GD.RandRange(50, screenSize.X - 50);
-                int posY = (int)GD.RandRange(50, screenSize.Y - 50);
+		public void Act(NpcAgent npc, float delta)
+		{
+			if (npc.targetNav == null)
+			{
+				var screenSize = npc.GetViewportRect().Size;
+				int posX = (int)GD.RandRange(50, screenSize.X - 50);
+				int posY = (int)GD.RandRange(50, screenSize.Y - 50);
 
-                npc.targetNav = new Vector2(posX, posY);
-            }
+				npc.targetNav = new Vector2(posX, posY);
+			}
 
-            npc.ApplyMetabolism(delta);
-            npc.SpendStamina(delta, Intensity);
-            npc.AccumulateLeisureNeed(delta);
+			npc.ApplyMetabolism(delta);
+			npc.SpendStamina(delta, Intensity);
+			npc.AccumulateLeisureNeed(delta);
 
-            if (npc.Sprite != null)
-            {
-                npc.Sprite.Modulate = Color.FromHsv(0.94f, 1, 1);
-            }
+			if (npc.Sprite != null)
+			{
+				npc.Sprite.Modulate = Color.FromHsv(0.94f, 1, 1);
+			}
 
 
-            Vector2 direction = ((Vector2)npc.targetNav - npc.GlobalPosition).Normalized();
-            npc.Velocity = direction * 80f;
-            npc.MoveAndSlide();
-        }
-    }
+			Vector2 direction = ((Vector2)npc.targetNav - npc.GlobalPosition).Normalized();
+			npc.Velocity = direction * 80f;
+			npc.MoveAndSlide();
+		}
+	}
 }

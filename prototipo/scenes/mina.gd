@@ -80,11 +80,7 @@ func minerar(posicao_clique):
 	# ALTERAÇÃO NO DINHEIRO valor_por_clique 
 	var dinheiro_base: int = roundi(valor_por_clique   * dano_real)
 
-	# Fortuna aumenta o dinheiro recebido
-	# Fortuna 0 = x1
-	# Fortuna 1 = x2
-	# Fortuna 2 = x3
-	# etc.
+	
 	var multiplicador_fortuna: int = GameManager.fortuna
 
 	var dinheiro_ganho: int = dinheiro_base * multiplicador_fortuna
