@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://dvsyb4hs5vdmk" path="res://images/Effect.png" id="4_maxyj"]
 [ext_resource type="Script" uid="uid://dkbgs2pfeyqmi" path="res://scenes/dinheiro_label.gd" id="5_2svpv"]
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
+[ext_resource type="Script" uid="uid://k6ixkpi6ynhm" path="res://scenes/npcs.gd" id="6_dmbx5"]
 [ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
 [ext_resource type="Texture2D" uid="uid://dymxfdq0qqq6v" path="res://images/pickaxes/iron_pickaxe.png" id="10_ol6ku"]
 [ext_resource type="Script" uid="uid://ctkcovk2boef1" path="res://script/npc_menu.gd" id="12_oiexa"]
@@ -171,6 +172,9 @@ shape = SubResource("RectangleShape2D_c26eh")
 position = Vector2(316.23682, 207.55432)
 scale = Vector2(0.070527256, 0.057827067)
 sprite_frames = SubResource("SpriteFrames_un37q")
+
+[node name="Npcs" type="Node2D" parent="." unique_id=1005132495]
+script = ExtResource("6_dmbx5")
 
 [node name="UI" type="Control" parent="." unique_id=1658092192]
 layout_mode = 3
