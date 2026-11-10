@@ -20,7 +20,18 @@ font_size = 25
 outline_size = 5
 outline_color = Color(0, 0, 0, 1)
 
-[node name="TitleScreen" type="Control" unique_id=179648205]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_boogr"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+bg_color = Color(0.54213023, 0.24906036, 0, 0.6784314)
+shadow_size = 2
+
+[sub_resource type="Theme" id="Theme_v2a3n"]
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_boogr")
+
+[node name="TitleScreen" type="Control" unique_id=179648205 node_paths=PackedStringArray("panel_benchmark", "lineEditQtdNpcs", "line_edit_min_bench")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,6 +39,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_mgrm8")
+panel_benchmark = NodePath("PanelBenchmark")
+lineEditQtdNpcs = NodePath("PanelBenchmark/VBoxContainer/HBoxContainer/VBoxContainer/LineEdit")
+line_edit_min_bench = NodePath("PanelBenchmark/VBoxContainer/HBoxContainer/VBoxMin/LineEdit")
 
 [node name="Background" type="TextureRect" parent="." unique_id=1880720034]
 layout_mode = 1
@@ -93,6 +107,76 @@ layout_mode = 2
 theme = ExtResource("2_s4lrb")
 text = "Decision Tree World"
 
+[node name="Benchmark" type="Button" parent="VBoxContainer" unique_id=2069341519]
+texture_filter = 3
+layout_mode = 2
+theme = ExtResource("2_s4lrb")
+text = "Benchmark
+"
+
+[node name="PanelBenchmark" type="PanelContainer" parent="." unique_id=1491633304]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -161.91449
+offset_top = -143.75
+offset_right = 161.91449
+offset_bottom = 143.75
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_v2a3n")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelBenchmark" unique_id=1275707224]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelBenchmark/VBoxContainer" unique_id=1903644338]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelBenchmark/VBoxContainer/HBoxContainer" unique_id=17288401]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="PanelBenchmark/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=456228812]
+layout_mode = 2
+text = "Qtd Npcs"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LineEdit" type="LineEdit" parent="PanelBenchmark/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1437334759]
+layout_mode = 2
+text = "50"
+alignment = 1
+max_length = 3
+
+[node name="VBoxMin" type="VBoxContainer" parent="PanelBenchmark/VBoxContainer/HBoxContainer" unique_id=672659958]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Label" type="Label" parent="PanelBenchmark/VBoxContainer/HBoxContainer/VBoxMin" unique_id=925529055]
+layout_mode = 2
+text = "Minutos"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="LineEdit" type="LineEdit" parent="PanelBenchmark/VBoxContainer/HBoxContainer/VBoxMin" unique_id=307169166]
+layout_mode = 2
+text = "10"
+alignment = 1
+max_length = 3
+
+[node name="Button" type="Button" parent="PanelBenchmark/VBoxContainer" unique_id=998254373]
+layout_mode = 2
+text = "Iniciar Benchmark"
+
 [connection signal="pressed" from="VBoxContainer/Prototipo" to="." method="_on_game_btn_pressed"]
 [connection signal="pressed" from="VBoxContainer/RFWBtn" to="." method="_on_rfw_btn_pressed"]
 [connection signal="pressed" from="VBoxContainer/DTWBtn" to="." method="_on_dtw_btn_pressed"]
+[connection signal="button_up" from="VBoxContainer/Benchmark" to="." method="_on_benchmark_button_up"]
+[connection signal="button_up" from="PanelBenchmark/VBoxContainer/Button" to="." method="_on_button_button_up"]

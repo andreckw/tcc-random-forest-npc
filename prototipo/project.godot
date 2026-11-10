@@ -31,7 +31,7 @@ project/assembly_name="prototipo"
 
 [editor_plugins]
 
-enabled=PackedStringArray()
+enabled=PackedStringArray("res://addons/npc-godot/plugin.cfg")
 
 [layer_names]
 

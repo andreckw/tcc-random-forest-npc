@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://cbuu34dhlb2qh"]
+
+[ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="1_dv0kh"]
+[ext_resource type="Script" uid="uid://bo0bw1njhp00v" path="res://scenes/Npc2dBenchmark.cs" id="1_iyvj2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iyvj2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1cxbx"]
+size = Vector2(28, 28)
+
+[node name="Npc2dBenchmark" type="CharacterBody2D" unique_id=2088882905 node_paths=PackedStringArray("Sprite")]
+collision_mask = 2
+script = ExtResource("1_iyvj2")
+modelProfile = 3
+Sprite = NodePath("AnimatedSprite2D")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=635217513]
+sprite_frames = ExtResource("1_dv0kh")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1492523680]
+shape = SubResource("RectangleShape2D_iyvj2")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=2075961976]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=34816586]
+position = Vector2(-1, 0)
+shape = SubResource("RectangleShape2D_1cxbx")
