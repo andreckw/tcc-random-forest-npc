@@ -9,6 +9,8 @@ func spawnar_npc():
 
 	var npc = npc_scene.instantiate()
 	npc.set("GerarDataset", false)
+	npc.collision_layer = 2
+	npc.collision_mask = 1
 	npc.position = Vector2(590, 228)
 
 	add_child(npc)
