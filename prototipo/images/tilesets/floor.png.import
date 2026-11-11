@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c43wxeojv822o"
-path="res://.godot/imported/Sprite Sheet de Mineiro Pixel Art.png-4535025049d983f12918035a13615099.ctex"
+uid="uid://6lnjjb5fpm4b"
+path="res://.godot/imported/floor.png-d7db962298c932eae4bc5accaae73e67.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/characters/mineradores/Sprite Sheet de Mineiro Pixel Art.png"
-dest_files=["res://.godot/imported/Sprite Sheet de Mineiro Pixel Art.png-4535025049d983f12918035a13615099.ctex"]
+source_file="res://images/tilesets/floor.png"
+dest_files=["res://.godot/imported/floor.png-d7db962298c932eae4bc5accaae73e67.ctex"]
 
 [params]
 

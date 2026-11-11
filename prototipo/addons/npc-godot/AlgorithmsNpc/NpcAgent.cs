@@ -6,6 +6,7 @@ using Util;
 
 public abstract partial class NpcAgent : CharacterBody2D
 {
+	
 	[Export]
 	public Trait trait;
 	[Export]
@@ -45,13 +46,16 @@ public abstract partial class NpcAgent : CharacterBody2D
 	public string NpcId { get; private set; }
 
 	public IActionState CurrentState { get; private set; }
-
+	public bool IsMining { get; private set; } = false;
+	public bool IsGoingToMine { get; set; } = false;
 	public float Hour => WorldClock.Hour;
 
 	[Export]
 	public AnimatedSprite2D Sprite { get; set; }
 	[Export]
 	public int Speed = 200;
+	[Export]
+	public bool PodeMinerar = false;
 	public Vector2? targetNav;
 
 	[Export]
@@ -105,17 +109,36 @@ public abstract partial class NpcAgent : CharacterBody2D
 		SalvarDataset.GetInstance().Flush();
 	}
 
-	public override void _Process(double delta)
+public override void _Process(double delta)
+{
+	if (!IsMining && !IsGoingToMine)
 	{
 		timer.Update((float)delta);
 	}
+}
 
 	public override void _PhysicsProcess(double delta)
+{
+	base._PhysicsProcess(delta);
+
+	if (IsMining)
 	{
-		base._PhysicsProcess(delta);
-		CurrentState.Act(this, (float)delta);
+		Velocity = Vector2.Zero;
+		MoveAndSlide();
+		return;
 	}
 
+	if (IsGoingToMine && targetNav != null)
+	{
+		Vector2 direcao = ((Vector2)targetNav - GlobalPosition).Normalized();
+
+		Velocity = direcao * 80f;
+		MoveAndSlide();
+		return;
+	}
+
+	CurrentState.Act(this, (float)delta);
+}
 	protected abstract int DecideAction();
 
 	public float[] BuildFeatureVector()
@@ -169,6 +192,9 @@ public abstract partial class NpcAgent : CharacterBody2D
 
 	private void ChangeState()
 	{
+		if (IsMining)
+		return;
+
 		if (trait.alwaysRandomizer)
 		{
 			trait.RandomTraits(rng);
@@ -224,4 +250,29 @@ public abstract partial class NpcAgent : CharacterBody2D
 
 		return maisProximo;
 	}
+	
+	public void BeginMining()
+	{
+		if (IsMining)
+			return;
+
+		IsGoingToMine = false;
+		IsMining = true;
+		targetNav = null;
+		Velocity = Vector2.Zero;
+
+		GD.Print("NPC começou a minerar: ", NpcId);
+	}
+
+public void EndMining()
+	{
+		if (!IsMining)
+			return;
+
+		IsMining = false;
+		IsGoingToMine = false;
+		targetNav = null;
+
+		GD.Print("NPC terminou de minerar: ", NpcId);
+}
 }

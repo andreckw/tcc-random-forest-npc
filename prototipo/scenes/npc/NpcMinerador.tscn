@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://6gl4efd16pf0" path="res://script/Npc2dRadomForest.cs" id="1_44syb"]
 [ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="2_k0gy0"]
+[ext_resource type="Script" uid="uid://cbnpd8gkivb52" path="res://script/MineracaoController.cs" id="3_ep8eu"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_b5hxq"]
 outline_size = 3
@@ -19,6 +20,7 @@ script = ExtResource("1_44syb")
 AreaClickable = NodePath("Area2D")
 Label = NodePath("Label")
 Sprite = NodePath("AnimatedSprite2D")
+PodeMinerar = true
 GerarDataset = true
 
 [node name="Label" type="Label" parent="." unique_id=1635147997]
@@ -49,3 +51,4 @@ collision_mask = 2147483648
 shape = SubResource("RectangleShape2D_ng2pk")
 
 [node name="MineracaoController" type="Node2D" parent="." unique_id=431728196]
+script = ExtResource("3_ep8eu")
