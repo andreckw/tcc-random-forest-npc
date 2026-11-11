@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://buag2nyaaolne"
-path="res://.godot/imported/IronOre.png-dcfe9f448d2de385326ce4e524abe80d.ctex"
+uid="uid://caher1x1uyf67"
+path="res://.godot/imported/tab_efficiency.png-3a15016bb60f2775a5acbc10dc3f4198.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/IronOre.png"
-dest_files=["res://.godot/imported/IronOre.png-dcfe9f448d2de385326ce4e524abe80d.ctex"]
+source_file="res://assets/shop/icons/tabs/tab_efficiency.png"
+dest_files=["res://.godot/imported/tab_efficiency.png-3a15016bb60f2775a5acbc10dc3f4198.ctex"]
 
 [params]
 

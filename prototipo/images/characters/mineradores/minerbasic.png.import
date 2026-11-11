@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bmruaj7qpqf4a"
-path="res://.godot/imported/ironstone.jpg-04c3e58607261c58292d05d30fd84dec.ctex"
+uid="uid://57x3eaim75pa"
+path="res://.godot/imported/minerbasic.png-19df38d2a35ed0609130f22588c72b04.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/ironstone.jpg"
-dest_files=["res://.godot/imported/ironstone.jpg-04c3e58607261c58292d05d30fd84dec.ctex"]
+source_file="res://images/characters/mineradores/minerbasic.png"
+dest_files=["res://.godot/imported/minerbasic.png-19df38d2a35ed0609130f22588c72b04.ctex"]
 
 [params]
 

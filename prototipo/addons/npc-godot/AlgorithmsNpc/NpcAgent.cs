@@ -6,222 +6,273 @@ using Util;
 
 public abstract partial class NpcAgent : CharacterBody2D
 {
-    [Export]
-    public Trait trait;
-    [Export]
-    public TimerResource timer;
-    [Export]
-    public SocialClass socialClass;
-    [Export]
-    public Priority priority;
-    [Export]
-    public SocialStatus socialStatus;
+	
+	[Export]
+	public Trait trait;
+	[Export]
+	public TimerResource timer;
+	[Export]
+	public SocialClass socialClass;
+	[Export]
+	public Priority priority;
+	[Export]
+	public SocialStatus socialStatus;
 
-    [Export(PropertyHint.Range, "0,1")]
-    public float stamina = 1;
-    [Export(PropertyHint.Range, "0,1")]
-    public float hunger = 0;
-    [Export(PropertyHint.Range, "0,1")]
-    public float leisure = 0;
+	[Export(PropertyHint.Range, "0,1")]
+	public float stamina = 1;
+	[Export(PropertyHint.Range, "0,1")]
+	public float hunger = 0;
+	[Export(PropertyHint.Range, "0,1")]
+	public float leisure = 0;
 
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float staminaDrainRate = 0.02f;
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float staminaRecoveryRate = 0.05f;
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float hungerGrowthRate = 0.015f;
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float hungerSatiationRate = 0.08f;
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float leisureGrowthRate = 0.01f;
-    [Export(PropertyHint.Range, "0,1,0.001")]
-    public float leisureSatisfactionRate = 0.06f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float staminaDrainRate = 0.02f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float staminaRecoveryRate = 0.05f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float hungerGrowthRate = 0.015f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float hungerSatiationRate = 0.08f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float leisureGrowthRate = 0.01f;
+	[Export(PropertyHint.Range, "0,1,0.001")]
+	public float leisureSatisfactionRate = 0.06f;
 
-    [Export(PropertyHint.Range, "0,1,0.01")]
-    public float explorationRate = 0.15f;
-    [Export]
-    public int randomSeed = 0;
+	[Export(PropertyHint.Range, "0,1,0.01")]
+	public float explorationRate = 0.15f;
+	[Export]
+	public int randomSeed = 0;
 
-    public string NpcId { get; private set; }
+	public string NpcId { get; private set; }
 
-    public IActionState CurrentState { get; private set; }
+	public IActionState CurrentState { get; private set; }
+	public bool IsMining { get; private set; } = false;
+	public bool IsGoingToMine { get; set; } = false;
+	public float Hour => WorldClock.Hour;
 
-    public float Hour => WorldClock.Hour;
+	[Export]
+	public AnimatedSprite2D Sprite { get; set; }
+	[Export]
+	public int Speed = 200;
+	[Export]
+	public bool PodeMinerar = false;
+	public Vector2? targetNav;
 
-    [Export]
-    public AnimatedSprite2D Sprite { get; set; }
-    [Export]
-    public int Speed = 200;
-    public Vector2? targetNav;
-
-    [Export]
-    public bool GerarDataset = false;
-
-
-    protected Random rng;
-
-    public override void _Ready()
-    {
-        base._Ready();
+	[Export]
+	public bool GerarDataset = false;
 
 
-        NpcId = Guid.NewGuid().ToString();
-        rng = randomSeed == 0 ? new Random() : new Random(randomSeed);
-        CurrentState = ActionCatalog.FromIndex(0);
+	protected Random rng;
 
-        if (Engine.IsEditorHint())
-        {
-            SetPhysicsProcess(false);
-            SetProcess(false);
-            return;
-        }
+	public override void _Ready()
+	{
+		base._Ready();
 
-        if (trait == null)
-        {
-            trait = new Trait();
-            trait.RandomTraits(rng);
-        }
-        else
-        {
-            trait = (Trait)trait.Duplicate();
-        }
 
-        timer = timer == null ? new TimerResource() : (TimerResource)timer.Duplicate();
+		NpcId = Guid.NewGuid().ToString();
+		rng = randomSeed == 0 ? new Random() : new Random(randomSeed);
+		CurrentState = ActionCatalog.FromIndex(0);
 
-        timer.OnTimeout += ChangeState;
-        timer.Start();
-    }
+		if (Engine.IsEditorHint())
+		{
+			SetPhysicsProcess(false);
+			SetProcess(false);
+			return;
+		}
 
-    public override void _ExitTree()
-    {
-        base._ExitTree();
+		if (trait == null)
+		{
+			trait = new Trait();
+			trait.RandomTraits(rng);
+		}
+		else
+		{
+			trait = (Trait)trait.Duplicate();
+		}
 
-        if (Engine.IsEditorHint())
-        {
-            return;
-        }
+		timer = timer == null ? new TimerResource() : (TimerResource)timer.Duplicate();
 
-        timer.OnTimeout -= ChangeState;
-        SalvarDataset.GetInstance().Flush();
-    }
+		timer.OnTimeout += ChangeState;
+		timer.Start();
+	}
 
-    public override void _Process(double delta)
-    {
-        timer.Update((float)delta);
-    }
+	public override void _ExitTree()
+	{
+		base._ExitTree();
 
-    public override void _PhysicsProcess(double delta)
-    {
-        base._PhysicsProcess(delta);
-        CurrentState.Act(this, (float)delta);
-    }
+		if (Engine.IsEditorHint())
+		{
+			return;
+		}
 
-    protected abstract int DecideAction();
+		timer.OnTimeout -= ChangeState;
+		SalvarDataset.GetInstance().Flush();
+	}
 
-    public float[] BuildFeatureVector()
-    {
-        return
-        [
-            stamina,
-            hunger,
-            WorldClock.NormalizedHour,
-            (int)socialClass,
-            (int)socialStatus,
-            leisure,
-            (int)priority,
-            trait.extraversion,
-            trait.agreeableness,
-            trait.conscientiousness,
-            trait.emotionalStability,
-            trait.opennessExp
-        ];
-    }
+public override void _Process(double delta)
+{
+	if (!IsMining && !IsGoingToMine)
+	{
+		timer.Update((float)delta);
+	}
+}
 
-    public void ApplyMetabolism(float delta)
-    {
-        hunger = Clamp01(hunger + hungerGrowthRate * delta);
-    }
+	public override void _PhysicsProcess(double delta)
+{
+	base._PhysicsProcess(delta);
 
-    public void SpendStamina(float delta, float intensity)
-    {
-        stamina = Clamp01(stamina - staminaDrainRate * intensity * delta);
-    }
+	if (IsMining)
+	{
+		Velocity = Vector2.Zero;
+		MoveAndSlide();
+		return;
+	}
 
-    public void RestoreStamina(float delta)
-    {
-        stamina = Clamp01(stamina + staminaRecoveryRate * delta);
-    }
+	if (IsGoingToMine && targetNav != null)
+	{
+		Vector2 direcao = ((Vector2)targetNav - GlobalPosition).Normalized();
 
-    public void Eat(float delta)
-    {
-        hunger = Clamp01(hunger - hungerSatiationRate * delta);
-    }
+		Velocity = direcao * 80f;
+		MoveAndSlide();
+		return;
+	}
 
-    public void AccumulateLeisureNeed(float delta)
-    {
-        leisure = Clamp01(leisure + leisureGrowthRate * delta);
-    }
+	CurrentState.Act(this, (float)delta);
+}
+	protected abstract int DecideAction();
 
-    public void SatisfyLeisureNeed(float delta)
-    {
-        leisure = Clamp01(leisure - leisureSatisfactionRate * delta);
-    }
+	public float[] BuildFeatureVector()
+	{
+		return
+		[
+			stamina,
+			hunger,
+			WorldClock.NormalizedHour,
+			(int)socialClass,
+			(int)socialStatus,
+			leisure,
+			(int)priority,
+			trait.extraversion,
+			trait.agreeableness,
+			trait.conscientiousness,
+			trait.emotionalStability,
+			trait.opennessExp
+		];
+	}
 
-    private void ChangeState()
-    {
-        if (trait.alwaysRandomizer)
-        {
-            trait.RandomTraits(rng);
-        }
-        targetNav = null;
+	public void ApplyMetabolism(float delta)
+	{
+		hunger = Clamp01(hunger + hungerGrowthRate * delta);
+	}
 
-        int action = DecideAction();
+	public void SpendStamina(float delta, float intensity)
+	{
+		stamina = Clamp01(stamina - staminaDrainRate * intensity * delta);
+	}
 
-        if (rng.NextSingle() < explorationRate)
-        {
-            action = rng.Next(ActionCatalog.Count);
-        }
+	public void RestoreStamina(float delta)
+	{
+		stamina = Clamp01(stamina + staminaRecoveryRate * delta);
+	}
 
-        CurrentState = ActionCatalog.FromIndex(action);
-        if (GerarDataset)
-        {
-            SalvarDataset.GetInstance().InsertLinha(this, action);
-        }
-        timer.Start();
-    }
+	public void Eat(float delta)
+	{
+		hunger = Clamp01(hunger - hungerSatiationRate * delta);
+	}
 
-    private static float Clamp01(float value)
-    {
-        if (value < 0f)
-        {
-            return 0f;
-        }
+	public void AccumulateLeisureNeed(float delta)
+	{
+		leisure = Clamp01(leisure + leisureGrowthRate * delta);
+	}
 
-        return value > 1f ? 1f : value;
-    }
+	public void SatisfyLeisureNeed(float delta)
+	{
+		leisure = Clamp01(leisure - leisureSatisfactionRate * delta);
+	}
 
-    public NpcAgent GetNearestNpc()
-    {
-        float menorDistancia = float.MaxValue;
-        NpcAgent maisProximo = null;
+	private void ChangeState()
+	{
+		if (IsMining)
+		return;
 
-        foreach (Node filho in GetParent().GetChildren())
-        {
-            if (filho == this)
-                continue;
+		if (trait.alwaysRandomizer)
+		{
+			trait.RandomTraits(rng);
+		}
+		targetNav = null;
 
-            if (filho is NpcAgent npc)
-            {
-                float distancia = Position.DistanceTo(npc.Position);
+		int action = DecideAction();
 
-                if (distancia < menorDistancia)
-                {
-                    menorDistancia = distancia;
-                    maisProximo = npc;
-                }
-            }
-        }
+		if (rng.NextSingle() < explorationRate)
+		{
+			action = rng.Next(ActionCatalog.Count);
+		}
 
-        return maisProximo;
-    }
+		CurrentState = ActionCatalog.FromIndex(action);
+		if (GerarDataset)
+		{
+			SalvarDataset.GetInstance().InsertLinha(this, action);
+		}
+		timer.Start();
+	}
+
+	private static float Clamp01(float value)
+	{
+		if (value < 0f)
+		{
+			return 0f;
+		}
+
+		return value > 1f ? 1f : value;
+	}
+
+	public NpcAgent GetNearestNpc()
+	{
+		float menorDistancia = float.MaxValue;
+		NpcAgent maisProximo = null;
+
+		foreach (Node filho in GetParent().GetChildren())
+		{
+			if (filho == this)
+				continue;
+
+			if (filho is NpcAgent npc)
+			{
+				float distancia = Position.DistanceTo(npc.Position);
+
+				if (distancia < menorDistancia)
+				{
+					menorDistancia = distancia;
+					maisProximo = npc;
+				}
+			}
+		}
+
+		return maisProximo;
+	}
+	
+	public void BeginMining()
+	{
+		if (IsMining)
+			return;
+
+		IsGoingToMine = false;
+		IsMining = true;
+		targetNav = null;
+		Velocity = Vector2.Zero;
+
+		GD.Print("NPC começou a minerar: ", NpcId);
+	}
+
+public void EndMining()
+	{
+		if (!IsMining)
+			return;
+
+		IsMining = false;
+		IsGoingToMine = false;
+		targetNav = null;
+
+		GD.Print("NPC terminou de minerar: ", NpcId);
+}
 }
