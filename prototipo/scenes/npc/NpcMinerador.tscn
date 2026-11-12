@@ -9,10 +9,10 @@ outline_size = 3
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
-size = Vector2(24, 27)
+size = Vector2(28, 57)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ng2pk"]
-size = Vector2(32, 32)
+size = Vector2(28.5, 57)
 
 [node name="NpcMinerador" type="CharacterBody2D" unique_id=679041133 node_paths=PackedStringArray("AreaClickable", "Label", "Sprite")]
 collision_mask = 2
@@ -32,14 +32,14 @@ offset_bottom = -12.0
 label_settings = SubResource("LabelSettings_b5hxq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1019706443]
-position = Vector2(0, -0.5)
+position = Vector2(1, 1.5)
 shape = SubResource("RectangleShape2D_86cna")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1761662260]
 modulate = Color(0.05000007, 1, 0, 1)
 texture_filter = 1
-position = Vector2(9.536743e-07, -1.0000005)
-scale = Vector2(0.18697478, 0.2059749)
+position = Vector2(9.536743e-07, 3.8146973e-06)
+scale = Vector2(0.3960083, 0.4237421)
 sprite_frames = ExtResource("2_k0gy0")
 animation = &"walk"
 
@@ -48,6 +48,7 @@ collision_layer = 2147483648
 collision_mask = 2147483648
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1225644746]
+position = Vector2(0.75, 1.5)
 shape = SubResource("RectangleShape2D_ng2pk")
 
 [node name="MineracaoController" type="Node2D" parent="." unique_id=431728196]

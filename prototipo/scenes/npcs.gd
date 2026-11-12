@@ -8,8 +8,8 @@ func spawnar_npc():
 		return
 
 	var npc = npc_scene.instantiate()
-	npc.set("GerarDataset", false)
-	npc.position = Vector2(590, 228)
+	npc.set("GerarDataset", false) ## 228
+	npc.position = Vector2(590, 240)
 
 	add_child(npc)
 

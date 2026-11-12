@@ -1,6 +1,6 @@
 extends Control
 class_name NpcMenu
-## LOJA DE NPCs - Mineradores (e abas futuras). Godot 4.2+
+## LOJA DE NPCs - Mineradores, Cenário, Especiais e Secretos. Godot 4.2+
 ## Anexe este script a um nó Control (dentro de um CanvasLayer).
 ## Imagens em res://assets/npc/ (estrutura no final do arquivo).
 ##
@@ -15,7 +15,7 @@ signal closed
 
 ## Nome do Autoload de dinheiro (Projeto > Configurações > Autoload). Vazio = detecta sozinho.
 @export var money_autoload := ""
-@export var panel_size := Vector2(570, 660)
+@export var panel_size := Vector2(589, 700)
 ## Escala visual do menu inteiro (0.7 = 70%).
 @export_range(0.3, 2.0, 0.05) var ui_scale := 1.0
 @export var play_open_animation := true
@@ -24,40 +24,51 @@ signal closed
 @export var assets_folder := "res://assets/npc/"
 
 # ======================= DADOS (edite à vontade) =======================
-# width = largura da aba (px). A aba só mostra NPCs se existir lista em NPCS[id].
+# view: "miner" e "scenery" = lista de NPCs (NPCS[id]); "soon" = tela "Em breve".
 var TABS := [
-	{"id": "miners",  "title": "MINERADORES", "icon": "icons/tab_miners.png",  "width": 153},
-	{"id": "scenery", "title": "CENÁRIO",     "icon": "icons/tab_scenery.png", "width": 125},
-	{"id": "special", "title": "ESPECIAIS",   "icon": "icons/tab_special.png", "width": 130},
-	{"id": "secret",  "title": "SECRETOS",    "icon": "icons/tab_secret.png",  "width": 125},
+	{"id": "miners",  "title": "MINERADORES", "icon": "icons/tab_miners.png",  "width": 152, "view": "miner"},
+	{"id": "scenery", "title": "CENÁRIO",     "icon": "icons/tab_scenery.png", "width": 130, "view": "scenery"},
+	{"id": "special", "title": "ESPECIAIS",   "icon": "icons/tab_special.png", "width": 131, "view": "soon"},
+	{"id": "secret",  "title": "SECRETOS",    "icon": "icons/tab_secret.png",  "width": 128, "view": "soon"},
 ]
 
 # id (único) | name | desc | price | limit (máx. que o jogador pode ter) | portrait (arquivo em portraits/)
+# Mineradores: perf e exp de 0 a 10 (use -1 para "?"); bonus (opcional) mostra a faixa dourada.
 var NPCS := {
 	"miners": [
-		{"id": "minerador_iniciante",    "name": "Minerador Iniciante",    "desc": "Um trabalhador recém-chegado à mineração.",           "price": 100,   "limit": 10, "portrait": "minerador_iniciante"},
-		{"id": "minerador_auxiliar",     "name": "Minerador Auxiliar",     "desc": "Estou trabalhando e mantendo o ritmo da operação.",   "price": 1000,  "limit": 5,  "portrait": "minerador_auxiliar"},
-		{"id": "minerador_experiente",   "name": "Minerador Experiente",   "desc": "Trabalhador experiente, eficiente e resistente.",     "price": 3000,  "limit": 5,  "portrait": "minerador_experiente"},
-		{"id": "minerador_explorador",   "name": "Minerador Explorador",   "desc": "Explora a mina e procura novas áreas de recursos.",   "price": 5000,  "limit": 3,  "portrait": "minerador_explorador"},
-		{"id": "minerador_especialista", "name": "Minerador Especialista", "desc": "Especialista em mineração, altamente eficiente.",     "price": 10000, "limit": 5,  "portrait": "minerador_especialista"},
-		{"id": "supervisor_mina",        "name": "Supervisor de Mina",     "desc": "Observa os trabalhadores e acompanha as atividades da mina.", "price": 20000, "limit": 1, "portrait": "supervisor_mina"},
+		{"id": "minerador_iniciante",    "name": "Minerador Iniciante",    "desc": "Trabalhador inexperiente, recém chegado a mineração.",                   "price": 100,   "limit": 10, "portrait": "minerador_iniciante",    "perf": 4,  "exp": 4},
+		{"id": "minerador_auxiliar",     "name": "Minerador Auxiliar",     "desc": "Trabalhador prestativo, ágil e versátil.",                               "price": 1000,  "limit": 5,  "portrait": "minerador_auxiliar",     "perf": 6,  "exp": 6},
+		{"id": "minerador_experiente",   "name": "Minerador Experiente",   "desc": "Trabalhador experiente, eficiente e resistente.",                        "price": 3000,  "limit": 5,  "portrait": "minerador_experiente",   "perf": 8,  "exp": 8},
+		{"id": "minerador_explorador",   "name": "Minerador Explorador",   "desc": "Trabalhador aventureiro, observador e especializado em explorar as minas.", "price": 5000, "limit": 3,  "portrait": "minerador_explorador",   "perf": -1, "exp": -1},
+		{"id": "minerador_especialista", "name": "Minerador Especialista", "desc": "Especialista em mineração, altamente eficiente.",                        "price": 10000, "limit": 5,  "portrait": "minerador_especialista", "perf": 10, "exp": 10},
+		{"id": "supervisor_mina",        "name": "Supervisor da Mina",     "desc": "Observa os trabalhadores e acompanha as atividades.",                    "price": 20000, "limit": 1,  "portrait": "supervisor_mina",        "perf": -1, "exp": -1, "bonus": "Bônus de dinheiro e velocidade."},
 	],
-	"scenery": [],
-	"special": [],
-	"secret": [],
+	"scenery": [
+		{"id": "campones",    "name": "Camponês",    "desc": "Trabalhador humilde e dedicado, acostumado à vida simples do campo.",       "price": 100,  "limit": 5, "portrait": "campones"},
+		{"id": "comerciante", "name": "Comerciante", "desc": "Negociante experiente e persuasivo, sempre em busca de boas oportunidades.", "price": 200,  "limit": 5, "portrait": "comerciante"},
+		{"id": "professor",   "name": "Professor",   "desc": "Intelectual curioso e sábio, dedicado ao estudo e à descoberta de novos conhecimentos.", "price": 1000, "limit": 1, "portrait": "professor"},
+		{"id": "cavaleiro",   "name": "Cavaleiro",   "desc": "Guerreiro honrado e disciplinado, conhecido por sua coragem e lealdade.",   "price": 500,  "limit": 2, "portrait": "cavaleiro"},
+		{"id": "arqueiro",    "name": "Arqueiro",    "desc": "Habilidoso, ágil e preciso, especialista em acertar seus alvos à distância.", "price": 500,  "limit": 2, "portrait": "arqueiro"},
+		{"id": "mago",        "name": "Mago",        "desc": "Figura misteriosa e enigmática, conhecedora de antigas artes e segredos ocultos.", "price": 2456, "limit": 1, "portrait": "mago"},
+	],
 }
 
 # Margens dos 9-patch (l, t, r, b) na escala de tela. Só mude se trocar a imagem.
 var MARGINS := {
-	"window_bg": [138, 152, 115, 24], "card_frame": [18, 18, 18, 18], "stats_box": [9, 9, 9, 9],
+	"window_bg": [142, 142, 120, 50], "card_miner": [20, 20, 20, 20], "card_scenery": [22, 32, 22, 22],
+	"stat_box": [10, 10, 10, 10], "desc_box": [11, 11, 11, 11], "desc_scenery": [13, 13, 13, 13],
+	"price_box": [11, 11, 11, 11], "bonus_banner": [12, 11, 12, 11],
 	"btn_buy": [15, 12, 15, 12], "btn_grey": [15, 12, 15, 12],
 	"tab_active": [20, 20, 20, 20], "tab_normal": [20, 20, 20, 20], "tab_hover": [20, 20, 20, 20],
 }
 
-const CARD_SIZE := Vector2(174, 224)
 const C_TEXT := Color.WHITE
-const C_DESC := Color("9fd0ff")
 const C_SOFT := Color("cfe3ff")
+const C_GOLD := Color("ffd23a")
+const C_PERF := Color("ffb020")
+const C_EXP := Color("1aa6ff")
+const C_BAR_OFF := Color("17305e")
+const CARD_W := 182
 
 # ======================= ESTADO =======================
 var npc_counts := {}          # id -> quantos o jogador possui
@@ -228,6 +239,24 @@ func _label(text: String, size: int, color := C_TEXT, bold := true, outline := 0
 	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return l
 
+## Texto centralizado que quebra linha, com espaçamento de linha reduzido.
+func _wrap_label(text: String, size: int, color := C_SOFT) -> Label:
+	var l := _label(text, size, color, false)
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	l.add_theme_constant_override("line_spacing", -3)
+	l.custom_minimum_size.x = 100
+	return l
+
+## Maior tamanho de fonte (entre min_size e max_size) em que o texto cabe na largura.
+func _fit_size(text: String, width: float, max_size: int, min_size: int, font: Font = null) -> int:
+	var f := font if font else _font_bold
+	for size in range(max_size, min_size - 1, -1):
+		if f.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, size).x <= width:
+			return size
+	return min_size
+
 func _img(rel: String, size: Vector2) -> TextureRect:
 	var tr := TextureRect.new()
 	tr.texture = _tex(rel)
@@ -327,10 +356,20 @@ func _build_ui() -> void:
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(center)
 
+	var column := VBoxContainer.new()   # janela + mensagem logo abaixo dela
+	column.add_theme_constant_override("separation", 2)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(column)
+
 	window = PanelContainer.new()
 	window.custom_minimum_size = panel_size
-	window.add_theme_stylebox_override("panel", _nine("window_bg", Vector4(11, 6, 12, 16)))
-	center.add_child(window)
+	window.add_theme_stylebox_override("panel", _nine("window_bg"))
+	column.add_child(window)
+
+	message_label = _label("", 12, C_TEXT, false, 2)
+	message_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	message_label.custom_minimum_size.y = 22
+	column.add_child(message_label)
 
 	var root := VBoxContainer.new()
 	root.add_theme_constant_override("separation", 0)
@@ -338,37 +377,37 @@ func _build_ui() -> void:
 	root.add_child(_build_header())
 	root.add_child(_build_tabs())
 	root.add_child(_build_body())
+	root.add_child(_build_footer())
 
 
 func _build_header() -> Control:
-	var m := _margin(0, 12, 0, 0)
-	m.custom_minimum_size.y = 90
-	var h := HBoxContainer.new()
-	h.alignment = BoxContainer.ALIGNMENT_CENTER
-	h.add_theme_constant_override("separation", 0)
-	m.add_child(h)
+	var h := Control.new()
+	h.custom_minimum_size = Vector2(panel_size.x, 91)
 
-	h.add_child(_spacer(125))                                   # espaço do carrinho de minério
-	h.add_child(_img("icons/title_npcs.png", Vector2(328, 52)))
-	h.add_child(_spacer(0, true))
+	var title := _img("icons/title_npcs.png", Vector2(338, 48))
+	title.position = Vector2(141, 27)
+	h.add_child(title)
 
 	var close_btn := TextureButton.new()
 	close_btn.texture_normal = _tex("icons/close_btn.png")
 	close_btn.ignore_texture_size = true
 	close_btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
-	close_btn.custom_minimum_size = Vector2(51, 50)
 	close_btn.focus_mode = Control.FOCUS_NONE
+	close_btn.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	close_btn.offset_left = -73
+	close_btn.offset_right = -19
+	close_btn.offset_top = 25
+	close_btn.offset_bottom = 76
 	close_btn.pressed.connect(close_menu)
 	_juicy(close_btn)
 	h.add_child(close_btn)
-	h.add_child(_spacer(4))
-	return m
+	return h
 
 
 func _build_tabs() -> Control:
-	var m := _margin(0, 6, 0, 0)
+	var m := _margin(16, 0, 14, 0)
 	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 4)
+	h.add_theme_constant_override("separation", 5)
 	m.add_child(h)
 	for i in TABS.size():
 		var b := _make_tab(i)
@@ -384,18 +423,18 @@ func _make_tab(i: int) -> Button:
 	b.toggle_mode = true
 	b.button_group = tab_group
 	b.focus_mode = Control.FOCUS_NONE
-	b.custom_minimum_size = Vector2(t["width"], 44)
+	b.custom_minimum_size = Vector2(t["width"], 48)
 	b.add_theme_stylebox_override("normal", _nine("tab_normal"))
 	b.add_theme_stylebox_override("hover", _nine("tab_hover"))
 	b.add_theme_stylebox_override("pressed", _nine("tab_active"))
 	b.add_theme_stylebox_override("hover_pressed", _nine("tab_active"))
 	b.add_theme_stylebox_override("focus", StyleBoxEmpty.new())
 
-	var m := _margin(8, 0, 8, 0)
+	var m := _margin(8, 0, 6, 0)
 	m.set_anchors_preset(Control.PRESET_FULL_RECT)
 	var h := HBoxContainer.new()
 	h.alignment = BoxContainer.ALIGNMENT_CENTER
-	h.add_theme_constant_override("separation", 6)
+	h.add_theme_constant_override("separation", 5)
 	h.add_child(_img(t["icon"], Vector2(30, 30)))
 	h.add_child(_label(t["title"], 11, C_TEXT, true, 3))
 	m.add_child(h)
@@ -408,36 +447,32 @@ func _make_tab(i: int) -> Button:
 
 
 func _build_body() -> Control:
-	var m := _margin(3, 8, 3, 0)
+	var m := _margin(14, 6, 14, 0)
 	m.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 4)
-	m.add_child(v)
-
 	var scroll := ScrollContainer.new()
-	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	v.add_child(scroll)
+	m.add_child(scroll)
 
 	grid = GridContainer.new()
 	grid.columns = 3
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	grid.add_theme_constant_override("h_separation", 9)
-	grid.add_theme_constant_override("v_separation", 11)
+	grid.add_theme_constant_override("h_separation", 7)
+	grid.add_theme_constant_override("v_separation", 7)
 	scroll.add_child(grid)
-
-	# Rodapé: saldo (esquerda) e mensagens (direita)
-	var f := HBoxContainer.new()
-	f.custom_minimum_size.y = 24
-	f.add_theme_constant_override("separation", 5)
-	f.add_child(_img("icons/coin.png", Vector2(18, 18)))
-	coins_label = _label("", 14, Color("ffd23a"), true, 2)
-	f.add_child(coins_label)
-	f.add_child(_spacer(0, true))
-	message_label = _label("", 10, C_TEXT, false)
-	f.add_child(message_label)
-	v.add_child(f)
 	return m
+
+
+## Rodapé: saldo dentro da moldura (o desenho da moldura já está na imagem da janela)
+func _build_footer() -> Control:
+	var c := CenterContainer.new()
+	c.custom_minimum_size.y = 50
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 6)
+	h.add_child(_img("icons/coin.png", Vector2(26, 26)))
+	coins_label = _label("", 22, C_GOLD, true, 3)
+	h.add_child(coins_label)
+	c.add_child(h)
+	return c
 
 
 # =====================================================================
@@ -453,15 +488,18 @@ func _populate_cards(animate := false) -> void:
 		grid.remove_child(c)
 		c.queue_free()
 
-	var list: Array = NPCS.get(TABS[current_tab]["id"], [])
-	if list.is_empty():
+	var tab: Dictionary = TABS[current_tab]
+	if tab["view"] == "soon":
 		grid.columns = 1
-		grid.add_child(_coming_soon())
+		var soon := _img("icons/coming_soon.png", Vector2(panel_size.x - 28.0, panel_size.y - 195.0))
+		soon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		soon.clip_contents = true
+		grid.add_child(soon)
 		return
 
 	grid.columns = 3
-	for npc in list:
-		grid.add_child(_make_card(npc))
+	for npc in NPCS.get(tab["id"], []):
+		grid.add_child(_make_miner_card(npc) if tab["view"] == "miner" else _make_scenery_card(npc))
 
 	if animate:
 		var i := 0
@@ -473,97 +511,195 @@ func _populate_cards(animate := false) -> void:
 			i += 1
 
 
-func _coming_soon() -> Control:
-	var c := CenterContainer.new()
-	c.custom_minimum_size = Vector2(540, 260)
-	c.add_child(_label("Em breve...", 20, C_SOFT))
-	return c
-
-
-func _make_card(npc: Dictionary) -> Control:
+# ---------------------------- Cartão: MINERADOR ----------------------------
+func _make_miner_card(npc: Dictionary) -> Control:
 	var id: String = npc["id"]
 	var owned := get_npc_count(id)
-	var limit: int = npc["limit"]
-	var maxed := owned >= limit
+	var maxed := owned >= int(npc["limit"])
 
 	var card := PanelContainer.new()
-	card.custom_minimum_size = CARD_SIZE
-	card.add_theme_stylebox_override("panel", _nine("card_frame", Vector4(10, 6, 10, 8)))
+	card.custom_minimum_size.x = CARD_W
+	card.add_theme_stylebox_override("panel", _nine("card_miner", Vector4(9, 5, 9, 8)))
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 2)
+	v.add_theme_constant_override("separation", 3)
 	card.add_child(v)
 
-	# Retrato
-	var portrait := TextureRect.new()
-	portrait.texture = _tex("portraits/%s.png" % npc["portrait"])
-	portrait.custom_minimum_size = Vector2(154, 70)
-	portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	portrait.clip_contents = true
-	portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	v.add_child(portrait)
+	# Título
+	var title := _label(npc["name"], _fit_size(npc["name"], 156.0, 14, 9), C_TEXT, true, 2)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	v.add_child(title)
 
-	# Nome e descrição
-	var name_l := _label(npc["name"], 13, C_TEXT, true, 2)
-	name_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	v.add_child(name_l)
-	var desc := _label(npc["desc"], _fit_desc_size(npc["desc"], 154.0), C_DESC, false)
-	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	desc.custom_minimum_size = Vector2(150, 26)
-	v.add_child(desc)
+	# Retrato (esquerda) + Desempenho / Experiência (direita)
+	var mid := HBoxContainer.new()
+	mid.add_theme_constant_override("separation", 3)
+	v.add_child(mid)
+	var portrait := _img("portraits/%s.png" % npc["portrait"], Vector2(70, 86))
+	portrait.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	mid.add_child(portrait)
+	var stats := VBoxContainer.new()
+	stats.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	stats.add_theme_constant_override("separation", 3)
+	mid.add_child(stats)
+	stats.add_child(_stat_box("icons/stat_pick.png", "Desempenho", int(npc.get("perf", -1)), C_PERF))
+	stats.add_child(_stat_box("icons/stat_star.png", "Experiência", int(npc.get("exp", -1)), C_EXP))
 
-	v.add_child(_make_stats(npc["price"], owned, limit))
-	var fill := Control.new()
-	fill.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	v.add_child(fill)
+	# Descrição
+	var desc_box := PanelContainer.new()
+	desc_box.add_theme_stylebox_override("panel", _nine("desc_box", Vector4(8, 3, 8, 4)))
+	desc_box.custom_minimum_size.y = 30
+	desc_box.add_child(_wrap_label(npc["desc"], 9))
+	v.add_child(desc_box)
 
-	# Botão comprar
+	# Faixa de bônus (opcional)
+	if npc.has("bonus"):
+		v.add_child(_bonus_banner(npc["bonus"]))
+
+	# Preço / possui / limite
+	v.add_child(_miner_price_box(npc["price"], owned, int(npc["limit"])))
+
 	var btn := _make_buy_button(maxed)
 	btn.pressed.connect(_on_buy_pressed.bind(id))
 	v.add_child(btn)
 	return card
 
 
-## Maior tamanho de fonte (10 a 8) em que a descrição cabe em até 2 linhas.
-func _fit_desc_size(text: String, width: float) -> int:
-	for size in [10, 9, 8]:
-		var h := _font_med.get_multiline_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, width, size).y
-		if h <= _font_med.get_height(size) * 2.0 + 1.0:
-			return size
-	return 8
-
-
-## Caixa com preço, quantidade que possui e limite
-func _make_stats(price: int, owned: int, limit: int) -> Control:
+func _stat_box(icon_rel: String, label: String, value: int, color: Color) -> Control:
 	var box := PanelContainer.new()
-	box.add_theme_stylebox_override("panel", _nine("stats_box", Vector4(8, 3, 8, 3)))
+	box.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	box.add_theme_stylebox_override("panel", _nine("stat_box", Vector4(6, 2, 5, 2)))
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 4)
+	box.add_child(h)
+	h.add_child(_img(icon_rel, Vector2(18, 18)))
+	var v := VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_theme_constant_override("separation", 0)
+	h.add_child(v)
+	v.add_child(_label(label, 8, C_SOFT, true))
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 3)
+	row.add_child(_bar(value, color))
+	row.add_child(_label("?/10" if value < 0 else "%d/10" % value, 8, C_TEXT, true))
+	v.add_child(row)
+	return box
+
+
+## Barra de 10 segmentos (valor -1 = desconhecido: só 1 segmento apagado)
+func _bar(value: int, color: Color) -> Control:
+	var h := HBoxContainer.new()
+	h.add_theme_constant_override("separation", 1)
+	h.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var filled := 1 if value < 0 else value
+	for i in 10:
+		var seg := ColorRect.new()
+		seg.custom_minimum_size = Vector2(3, 6)
+		seg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if i < filled:
+			seg.color = color.darkened(0.5) if value < 0 else color
+		else:
+			seg.color = C_BAR_OFF
+		h.add_child(seg)
+	return h
+
+
+func _bonus_banner(text: String) -> Control:
+	var p := PanelContainer.new()
+	p.add_theme_stylebox_override("panel", _nine("bonus_banner", Vector4(8, 2, 8, 2)))
+	var h := HBoxContainer.new()
+	h.alignment = BoxContainer.ALIGNMENT_CENTER
+	h.add_theme_constant_override("separation", 4)
+	p.add_child(h)
+	h.add_child(_img("icons/crown.png", Vector2(20, 16)))
+	var l := _wrap_label(text, 8, C_GOLD)
+	l.add_theme_font_override("font", _font_bold)
+	l.custom_minimum_size.x = 90
+	h.add_child(l)
+	return p
+
+
+func _miner_price_box(price: int, owned: int, limit: int) -> Control:
+	var box := PanelContainer.new()
+	box.add_theme_stylebox_override("panel", _nine("price_box", Vector4(8, 2, 8, 3)))
 	var v := VBoxContainer.new()
 	v.add_theme_constant_override("separation", 0)
 	box.add_child(v)
 
 	var r1 := HBoxContainer.new()
 	r1.add_theme_constant_override("separation", 4)
-	r1.add_child(_img("icons/coin.png", Vector2(20, 20)))
+	r1.add_child(_img("icons/coin.png", Vector2(22, 22)))
 	r1.add_child(_label(_fmt(price), 14, C_TEXT, true, 2))
 	r1.add_child(_spacer(0, true))
-	r1.add_child(_img("icons/person.png", Vector2(14, 14)))
+	r1.add_child(_img("icons/person.png", Vector2(15, 15)))
 	r1.add_child(_label("Possui: %d" % owned, 9, C_SOFT, false))
 	v.add_child(r1)
 
 	var r2 := HBoxContainer.new()
+	r2.alignment = BoxContainer.ALIGNMENT_CENTER
 	r2.add_theme_constant_override("separation", 4)
-	r2.add_child(_spacer(4))
 	r2.add_child(_img("icons/lock.png", Vector2(12, 12)))
 	r2.add_child(_label("Limite: %d" % limit, 9, C_SOFT, false))
 	v.add_child(r2)
 	return box
 
 
+# ---------------------------- Cartão: CENÁRIO ----------------------------
+func _make_scenery_card(npc: Dictionary) -> Control:
+	var id: String = npc["id"]
+	var owned := get_npc_count(id)
+	var limit: int = npc["limit"]
+	var maxed := owned >= limit
+
+	var card := PanelContainer.new()
+	card.custom_minimum_size.x = CARD_W
+	card.add_theme_stylebox_override("panel", _nine("card_scenery", Vector4(10, 3, 10, 8)))
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 2)
+	card.add_child(v)
+
+	# Título (dentro da faixa do topo)
+	var title := _label(npc["name"], _fit_size(npc["name"], 150.0, 15, 10), C_TEXT, true, 2)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title.custom_minimum_size.y = 28
+	v.add_child(title)
+
+	# Retrato grande (com o fundo quadriculado)
+	var portrait := _img("portraits/%s.png" % npc["portrait"], Vector2(162, 92))
+	portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	portrait.clip_contents = true
+	v.add_child(portrait)
+
+	# Descrição
+	var desc_box := PanelContainer.new()
+	desc_box.add_theme_stylebox_override("panel", _nine("desc_scenery", Vector4(8, 4, 8, 5)))
+	desc_box.custom_minimum_size.y = 46
+	desc_box.add_child(_wrap_label(npc["desc"], 9, C_TEXT))
+	v.add_child(desc_box)
+
+	# Preço e limite
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	row.add_child(_spacer(2))
+	row.add_child(_img("icons/coin.png", Vector2(24, 24)))
+	row.add_child(_label(_fmt(npc["price"]), 15, C_TEXT, true, 2))
+	row.add_child(_spacer(0, true))
+	row.add_child(_img("icons/person.png", Vector2(16, 16)))
+	var limit_text := "Limite: %d" % limit if owned == 0 else "Limite: %d/%d" % [owned, limit]
+	row.add_child(_label(limit_text, 9, C_SOFT, false))
+	row.add_child(_spacer(2))
+	v.add_child(row)
+
+	var btn := _make_buy_button(maxed)
+	btn.pressed.connect(_on_buy_pressed.bind(id))
+	v.add_child(btn)
+	return card
+
+
 ## Botão verde "COMPRAR" (ou cinza "LIMITE" quando atingiu o máximo)
 func _make_buy_button(maxed: bool) -> Button:
 	var b := Button.new()
-	b.custom_minimum_size = Vector2(130, 32)
+	b.custom_minimum_size = Vector2(138, 32)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	b.focus_mode = Control.FOCUS_NONE
 	var normal := _nine("btn_grey" if maxed else "btn_buy")
@@ -626,8 +762,10 @@ func _toast(text: String, color: Color) -> void:
 
 # =====================================================================
 #  ESTRUTURA DE PASTAS ESPERADA (res://assets/npc/)
-#    ui/        -> window_bg, card_frame, stats_box, btn_buy, btn_grey, tab_*
-#    icons/     -> title_npcs, close_btn, coin, person, lock, tab_*
+#    ui/        -> window_bg, card_miner, card_scenery, stat_box, desc_box, desc_scenery,
+#                  price_box, bonus_banner, btn_buy, btn_grey, tab_active/normal/hover
+#    icons/     -> title_npcs, close_btn, coin, person, lock, crown, stat_pick, stat_star,
+#                  tab_miners/scenery/special/secret, coming_soon
 #    portraits/ -> um PNG por NPC (nome = campo "portrait")
 #    fonts/     -> Poppins-Bold.ttf, Poppins-Medium.ttf
 # =====================================================================
