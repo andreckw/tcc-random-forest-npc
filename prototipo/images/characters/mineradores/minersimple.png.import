@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bnga5lnog7w34"
-path="res://.godot/imported/minersimples.png-ff34287442280d4911718ff6e35858ef.ctex"
+uid="uid://cy1h6ff0elpqt"
+path="res://.godot/imported/minersimple.png-4ca39dcb72df485df11774f3fdfbabf4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/characters/mineradores/minersimples.png"
-dest_files=["res://.godot/imported/minersimples.png-ff34287442280d4911718ff6e35858ef.ctex"]
+source_file="res://images/characters/mineradores/minersimple.png"
+dest_files=["res://.godot/imported/minersimple.png-4ca39dcb72df485df11774f3fdfbabf4.ctex"]
 
 [params]
 

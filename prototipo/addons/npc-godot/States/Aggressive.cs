@@ -12,11 +12,6 @@ namespace States
 			npc.AccumulateLeisureNeed(delta);
 
 
-			if (npc.Sprite != null)
-			{
-				npc.Sprite.Modulate = Color.FromHsv(0, 1, 1);
-			}
-
 			// procura o npc mais prox
 			NpcAgent alvo = npc.GetNearestNpc();
 			if (alvo != null)

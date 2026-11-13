@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cccythmvui8f"]
+
+[ext_resource type="PackedScene" uid="uid://bcyxw78et1k06" path="res://scenes/npc/InitialNPC.tscn" id="1_2e02w"]
+
+[node name="InitiallNPC" unique_id=679041133 instance=ExtResource("1_2e02w")]
+PodeMinerar = false

@@ -894,11 +894,3 @@ func _toast(text: String, color: Color) -> void:
 	toast_tween = create_tween()
 	toast_tween.tween_interval(2.0)
 	toast_tween.tween_callback(func(): message_label.text = "")
-
-# =====================================================================
-#  ESTRUTURA DE PASTAS ESPERADA (res://assets/shop/)
-#    ui/      -> window_bg, row_card, icon_frame, btn_*, pill_*, tab_*, section_bar, diamond
-#    tiles/   -> efficiency_1..6, fortune_1..6   (moldura + ícone brilhante)
-#    icons/   -> skins/, efficiency/, fortune/, extras/, tabs/, sections/, header/
-#    fonts/   -> Poppins-Bold.ttf, Poppins-Medium.ttf
-# =====================================================================

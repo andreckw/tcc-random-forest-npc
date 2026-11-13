@@ -22,14 +22,14 @@ namespace States
 			npc.SpendStamina(delta, Intensity);
 			npc.AccumulateLeisureNeed(delta);
 
-			if (npc.Sprite != null)
-			{
-				npc.Sprite.Modulate = Color.FromHsv(0.94f, 1, 1);
-			}
 
 
 			Vector2 direction = ((Vector2)npc.targetNav - npc.GlobalPosition).Normalized();
+
 			npc.Velocity = direction * 80f;
+
+			npc.AtualizarAnimacaoMovimento(direction);
+
 			npc.MoveAndSlide();
 		}
 	}

@@ -41,7 +41,7 @@ var NPCS := {
 		{"id": "minerador_experiente",   "name": "Minerador Experiente",   "desc": "Trabalhador experiente, eficiente e resistente.",                        "price": 3000,  "limit": 5,  "portrait": "minerador_experiente",   "perf": 8,  "exp": 8},
 		{"id": "minerador_explorador",   "name": "Minerador Explorador",   "desc": "Trabalhador aventureiro, observador e especializado em explorar as minas.", "price": 5000, "limit": 3,  "portrait": "minerador_explorador",   "perf": -1, "exp": -1},
 		{"id": "minerador_especialista", "name": "Minerador Especialista", "desc": "Especialista em mineração, altamente eficiente.",                        "price": 10000, "limit": 5,  "portrait": "minerador_especialista", "perf": 10, "exp": 10},
-		{"id": "supervisor_mina",        "name": "Supervisor da Mina",     "desc": "Observa os trabalhadores e acompanha as atividades.",                    "price": 20000, "limit": 1,  "portrait": "supervisor_mina",        "perf": -1, "exp": -1, "bonus": "Bônus de dinheiro e velocidade."},
+		{"id": "supervisor_mina",        "name": "Supervisor da Mina",     "desc": "Observa os trabalhadores e acompanha as atividades.",                    "price": 1, "limit": 1,  "portrait": "supervisor_mina",        "perf": -1, "exp": -1, "bonus": "Bônus de dinheiro e velocidade."},
 	],
 	"scenery": [
 		{"id": "campones",    "name": "Camponês",    "desc": "Trabalhador humilde e dedicado, acostumado à vida simples do campo.",       "price": 100,  "limit": 5, "portrait": "campones"},
@@ -142,6 +142,10 @@ func get_save_data() -> Dictionary:
 
 func load_save_data(d: Dictionary) -> void:
 	npc_counts = d.get("npc_counts", npc_counts)
+	
+	if npc_counts.get("supervisor_mina", 0) > 0:
+		ativar_bonus_supervisor()
+	
 	if grid != null:
 		_populate_cards()
 
@@ -728,19 +732,45 @@ func _make_buy_button(maxed: bool) -> Button:
 # =====================================================================
 #  COMPRA
 # =====================================================================
+
 func _on_buy_pressed(npc_id: String) -> void:
 	var npc := _find_npc(npc_id)
+
 	if npc.is_empty():
 		return
+
+	# Verifica se existe uma cena disponível para esse NPC.
+	var spawner = get_node_or_null("../../Npcs")
+
+	if spawner == null or not spawner.has_method("can_spawn_npc"):
+		_toast("Sistema de NPCs não encontrado!", Color("ff6b6b"))
+		return
+
+	if not spawner.can_spawn_npc(npc_id):
+		_toast("Esse NPC ainda não está disponível!", Color("ffb347"))
+		return
+
+	# Verifica o limite de contratação.
 	if get_npc_count(npc_id) >= int(npc["limit"]):
 		_toast("Limite atingido!", Color("ffb347"))
 		return
+
+	# Realiza o pagamento.
 	if not _try_spend(npc["price"]):
 		return
+
+	
 	npc_counts[npc_id] = get_npc_count(npc_id) + 1
+	
+	if npc_id == "supervisor_mina":
+		ativar_bonus_supervisor()
+	
+	
 	npc_purchased.emit(npc_id, npc_counts[npc_id])
+
 	_toast("Contratado: " + npc["name"], Color("7dff7d"))
 	_populate_cards()
+
 
 
 func _find_npc(npc_id: String) -> Dictionary:
@@ -760,12 +790,6 @@ func _toast(text: String, color: Color) -> void:
 	toast_tween.tween_interval(2.0)
 	toast_tween.tween_callback(func(): message_label.text = "")
 
-# =====================================================================
-#  ESTRUTURA DE PASTAS ESPERADA (res://assets/npc/)
-#    ui/        -> window_bg, card_miner, card_scenery, stat_box, desc_box, desc_scenery,
-#                  price_box, bonus_banner, btn_buy, btn_grey, tab_active/normal/hover
-#    icons/     -> title_npcs, close_btn, coin, person, lock, crown, stat_pick, stat_star,
-#                  tab_miners/scenery/special/secret, coming_soon
-#    portraits/ -> um PNG por NPC (nome = campo "portrait")
-#    fonts/     -> Poppins-Bold.ttf, Poppins-Medium.ttf
-# =====================================================================
+func ativar_bonus_supervisor():
+	if _money != null and _money.has_method("ativar_bonus_supervisor"):
+		_money.call("ativar_bonus_supervisor")

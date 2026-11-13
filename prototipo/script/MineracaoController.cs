@@ -150,7 +150,17 @@ public partial class MineracaoController : Node
 		{
 			tempoAtaque = 0f;
 
-			minaAlvo.Call("receber_dano", DanoPorAtaque, 1);
+			var gameManager = GetNode<Node>("/root/GameManager");
+
+			int multiplicadorDano = gameManager.Get("multiplicador_dano_npcs").AsInt32();
+			int multiplicadorFortuna = gameManager.Get("multiplicador_fortuna_npcs").AsInt32();
+
+			// Calcula os atributos finais do NPC.
+			int danoFinal = DanoPorAtaque * multiplicadorDano;
+			int fortunaFinal = npc.FortunaMineracao * multiplicadorFortuna;
+
+			// Aplica o dano e a fortuna na mina.
+			minaAlvo.Call("receber_dano", danoFinal, fortunaFinal);
 
 			// Verifica novamente porque o ataque pode ter esgotado a mina.
 			if (GodotObject.IsInstanceValid(minaAlvo) &&
