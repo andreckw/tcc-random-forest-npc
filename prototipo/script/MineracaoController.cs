@@ -26,7 +26,7 @@ public partial class MineracaoController : Node
 
 	public override void _Process(double delta)
 	{
-		if (npc == null || !npc.PodeMinerar)
+		if (npc == null || !npc.PodeMinerar || npc.EstaFugindo)
 			return;
 
 		// Se já existe uma mina escolhida, acompanha o processo.
@@ -150,7 +150,17 @@ public partial class MineracaoController : Node
 		{
 			tempoAtaque = 0f;
 
-			minaAlvo.Call("receber_dano", DanoPorAtaque, 1);
+			var gameManager = GetNode<Node>("/root/GameManager");
+
+			int multiplicadorDano = gameManager.Get("multiplicador_dano_npcs").AsInt32();
+			int multiplicadorFortuna = gameManager.Get("multiplicador_fortuna_npcs").AsInt32();
+
+			// Calcula os atributos finais do NPC.
+			int danoFinal = DanoPorAtaque * multiplicadorDano;
+			int fortunaFinal = npc.FortunaMineracao * multiplicadorFortuna;
+
+			// Aplica o dano e a fortuna na mina.
+			minaAlvo.Call("receber_dano", danoFinal, fortunaFinal);
 
 			// Verifica novamente porque o ataque pode ter esgotado a mina.
 			if (GodotObject.IsInstanceValid(minaAlvo) &&
@@ -186,6 +196,21 @@ public partial class MineracaoController : Node
 		{
 			minaAlvo.Call("liberar_reserva_npc", npc);
 		}
+	}
+	
+	public void CancelarPorExplosao()
+	{
+		if (npc == null)
+			return;
+
+		if (minaAlvo == null &&
+			!npc.IsMining &&
+			!npc.IsGoingToMine)
+			return;
+
+		FinalizarMineracao();
+
+		GD.Print("Mineração cancelada por explosão!");
 	}
 
 	public override void _ExitTree()

@@ -51,7 +51,7 @@ var EFFICIENCY_TIERS := [
 	{"name": "Eficiência III", "mult": 4.0,  "price": 500},
 	{"name": "Eficiência IV",  "mult": 5.0,  "price": 1000},
 	{"name": "Eficiência V",   "mult": 7.0,  "price": 5000},
-	{"name": "Eficiência X",   "mult": 20.0, "price": 1},
+	{"name": "Eficiência X",   "mult": 20.0, "price": 20000},
 ]
 var FORTUNE_TIERS := [
 	{"name": "Fortuna I",   "mult": 2.0,  "price": 100},
@@ -59,7 +59,7 @@ var FORTUNE_TIERS := [
 	{"name": "Fortuna III", "mult": 4.0,  "price": 1500},
 	{"name": "Fortuna IV",  "mult": 7.0,  "price": 4500},
 	{"name": "Fortuna V",   "mult": 10.0, "price": 15000},
-	{"name": "Fortuna X",   "mult": 20.0, "price": 1},
+	{"name": "Fortuna X",   "mult": 20.0, "price": 100000},
 ]
 
 # once = true -> compra única. false -> consumível (pode comprar várias vezes)
@@ -119,6 +119,7 @@ var _tex_cache := {}
 var _font_bold: Font
 var _font_med: Font
 
+var pandora_ativa: bool = false
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -877,12 +878,21 @@ func _on_tier_pressed(category: String, index: int) -> void:
 	_populate_list()
 
 func _on_extra_pressed(id: String) -> void:
+	if id == "pandoras_box" and pandora_ativa:
+		_toast("Já existe uma Caixa de Pandora no mapa!", Color("ff7777"))
+		return
+
 	var e: Dictionary = EXTRAS[id]
+
 	if (e["once"] and get_extra_count(id) > 0) or not _try_spend(e["price"]):
 		return
+
 	extras_inventory[id] = get_extra_count(id) + 1
+
 	item_purchased.emit("extra", id)
+
 	_toast("Adquirido: " + e["name"], Color("7dff7d"))
+
 	_populate_list()
 
 
@@ -894,11 +904,7 @@ func _toast(text: String, color: Color) -> void:
 	toast_tween = create_tween()
 	toast_tween.tween_interval(2.0)
 	toast_tween.tween_callback(func(): message_label.text = "")
-
-# =====================================================================
-#  ESTRUTURA DE PASTAS ESPERADA (res://assets/shop/)
-#    ui/      -> window_bg, row_card, icon_frame, btn_*, pill_*, tab_*, section_bar, diamond
-#    tiles/   -> efficiency_1..6, fortune_1..6   (moldura + ícone brilhante)
-#    icons/   -> skins/, efficiency/, fortune/, extras/, tabs/, sections/, header/
-#    fonts/   -> Poppins-Bold.ttf, Poppins-Medium.ttf
-# =====================================================================
+	
+func set_pandora_ativa(ativa: bool) -> void:
+	pandora_ativa = ativa
+	_populate_list()	

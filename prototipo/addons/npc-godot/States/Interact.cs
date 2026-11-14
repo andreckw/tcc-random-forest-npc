@@ -12,10 +12,6 @@ namespace States
 			npc.SatisfyLeisureNeed(delta);
 			npc.SpendStamina(delta, Intensity);
 
-			if (npc.Sprite != null)
-			{
-				npc.Sprite.Modulate = Color.FromHsv(0.52f, 1, 1);
-			}
 
 			npc.Velocity = Vector2.Zero;
 			npc.MoveAndSlide();

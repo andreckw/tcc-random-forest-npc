@@ -77,7 +77,7 @@ grow_vertical = 0
 texture_filter = 3
 layout_mode = 2
 theme = ExtResource("2_s4lrb")
-text = "Living/Dynamic Click"
+text = "Dynamic Click"
 autowrap_mode = 2
 
 [node name="RFWBtn" type="Button" parent="VBoxContainer" unique_id=253962097]

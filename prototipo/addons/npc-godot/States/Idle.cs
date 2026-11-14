@@ -10,11 +10,9 @@ namespace States
 			npc.AccumulateLeisureNeed(delta);
 
 			npc.Velocity = Vector2.Zero;
-
-			if (npc.Sprite != null)
-			{
-				npc.Sprite.Modulate = Color.FromHsv(0, 0, 1);
-			}
+			npc.AtualizarAnimacaoMovimento(Vector2.Zero);
+			
+			
 			npc.MoveAndSlide();
 		}
 	}
