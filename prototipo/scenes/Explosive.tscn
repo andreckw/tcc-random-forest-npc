@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://b77o3kc43fy7x"]
+
+[ext_resource type="Texture2D" uid="uid://dbb5hc26cbehm" path="res://images/dinamite.png" id="1_yyqsw"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sre82"]
+atlas = ExtResource("1_yyqsw")
+region = Rect2(1064, 0, 266, 275)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j8uii"]
+atlas = ExtResource("1_yyqsw")
+region = Rect2(798, 0, 266, 275)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ml4l1"]
+atlas = ExtResource("1_yyqsw")
+region = Rect2(532, 0, 266, 275)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lm2yj"]
+atlas = ExtResource("1_yyqsw")
+region = Rect2(0, 0, 266, 275)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lqr2k"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sre82")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j8uii")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ml4l1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lm2yj")
+}],
+"loop": 1,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D" unique_id=1367932668]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=786998922]
+position = Vector2(3, -6)
+scale = Vector2(0.16541354, 0.19181824)
+sprite_frames = SubResource("SpriteFrames_lqr2k")

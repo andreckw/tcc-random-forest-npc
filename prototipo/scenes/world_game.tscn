@@ -9,12 +9,17 @@
 [ext_resource type="Script" uid="uid://phg1xotl1eno" path="res://scenes/ui.gd" id="5_lb20b"]
 [ext_resource type="Script" uid="uid://k6ixkpi6ynhm" path="res://scenes/npcs.gd" id="6_dmbx5"]
 [ext_resource type="PackedScene" uid="uid://bcyxw78et1k06" path="res://scenes/npc/InitialNPC.tscn" id="7_ktxpj"]
-[ext_resource type="Texture2D" uid="uid://bhy4yfiowhg8d" path="res://images/menu.png" id="7_oiexa"]
+[ext_resource type="Script" uid="uid://cx2451x2y43sd" path="res://script/explosives_controller.gd" id="8_ao8dx"]
+[ext_resource type="PackedScene" uid="uid://b77o3kc43fy7x" path="res://scenes/Explosive.tscn" id="9_dxv3v"]
+[ext_resource type="PackedScene" uid="uid://vdyiux5tf1bc" path="res://scenes/Explosion.tscn" id="10_n6rv6"]
 [ext_resource type="Texture2D" uid="uid://dymxfdq0qqq6v" path="res://images/pickaxes/iron_pickaxe.png" id="10_ol6ku"]
 [ext_resource type="Script" uid="uid://jycdfmailbm2" path="res://script/npc_menu.gd" id="12_oiexa"]
 [ext_resource type="Script" uid="uid://chvr28m0aca0p" path="res://scenes/shop_menu.gd" id="13_dmbx5"]
 [ext_resource type="Script" uid="uid://b2uhdxybhp782" path="res://scenes/cursor.gd" id="14_1nqxk"]
-[ext_resource type="Script" uid="uid://dbq7gu4l5763a" path="res://script/roleta_loja.gd" id="15_1nqxk"]
+[ext_resource type="Texture2D" uid="uid://3r3csv411utm" path="res://images/menuloja01 (2).png" id="14_48trb"]
+[ext_resource type="Script" uid="uid://c5xxtgoh80w3a" path="res://script/roleta.gd" id="18_dxv3v"]
+[ext_resource type="Texture2D" uid="uid://co75thrtntf2m" path="res://assets/npc/icons/close_btn.png" id="19_n6rv6"]
+[ext_resource type="AudioStream" uid="uid://76d7bbi8ktvu" path="res://scenes/roletaSound.mp3" id="20_lufov"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ao8dx"]
 atlas = ExtResource("3_ktxpj")
@@ -184,6 +189,11 @@ sprite_frames = SubResource("SpriteFrames_un37q")
 script = ExtResource("6_dmbx5")
 npc_scene = ExtResource("7_ktxpj")
 
+[node name="ExplosivesController" type="Node2D" parent="." unique_id=292124488]
+script = ExtResource("8_ao8dx")
+cena_explosivo = ExtResource("9_dxv3v")
+cena_explosao = ExtResource("10_n6rv6")
+
 [node name="UI" type="Control" parent="." unique_id=1658092192]
 layout_mode = 3
 anchors_preset = 0
@@ -200,52 +210,51 @@ offset_bottom = 635.0
 text = "🛒 SHOP"
 
 [node name="MenuLateral" type="Panel" parent="UI" unique_id=863084788]
-visible = false
 layout_mode = 0
-offset_right = 260.0
-offset_bottom = 668.0
+offset_right = 2.0
+offset_bottom = 9.0
 offset_transform_visual_only = false
 
 [node name="TextureMenu" type="TextureRect" parent="UI/MenuLateral" unique_id=401141350]
 layout_mode = 0
-offset_left = -6.0
-offset_top = -17.0
-offset_right = 259.0
-offset_bottom = 671.0
-texture = ExtResource("7_oiexa")
+offset_left = 414.0
+offset_top = -25.0
+offset_right = 766.0
+offset_bottom = 348.0
+texture = ExtResource("14_48trb")
 expand_mode = 1
 
 [node name="LojaButton" type="Button" parent="UI/MenuLateral" unique_id=745114326]
 layout_mode = 0
-offset_left = 40.0
-offset_top = 93.0
-offset_right = 216.0
-offset_bottom = 238.0
+offset_left = 473.0
+offset_top = 77.0
+offset_right = 710.0
+offset_bottom = 133.0
 flat = true
 alignment = 0
 
 [node name="RoletaButton" type="Button" parent="UI/MenuLateral" unique_id=1694752381]
 layout_mode = 0
-offset_left = 38.0
-offset_top = 262.0
-offset_right = 215.0
-offset_bottom = 413.0
+offset_left = 464.0
+offset_top = 157.0
+offset_right = 719.0
+offset_bottom = 207.0
 flat = true
 
 [node name="NPCButton" type="Button" parent="UI/MenuLateral" unique_id=303095399]
 layout_mode = 0
-offset_left = 41.0
-offset_top = 426.0
-offset_right = 215.0
-offset_bottom = 583.0
+offset_left = 465.0
+offset_top = 230.0
+offset_right = 722.0
+offset_bottom = 293.0
 flat = true
 
 [node name="BackButton" type="Button" parent="UI/MenuLateral" unique_id=19752054]
 layout_mode = 0
-offset_left = 200.0
-offset_top = 20.0
-offset_right = 235.0
-offset_bottom = 48.0
+offset_left = 707.0
+offset_top = 40.0
+offset_right = 749.0
+offset_bottom = 72.0
 flat = true
 
 [node name="DinheiroLabel" type="Label" parent="UI" unique_id=1077521063]
@@ -295,11 +304,24 @@ offset_right = 287.0
 script = ExtResource("12_oiexa")
 
 [node name="Roleta" type="Control" parent="CanvasLayer" unique_id=7418845]
-visible = false
 layout_mode = 3
 anchors_preset = 0
-offset_left = 281.0
-offset_top = -16.0
-offset_right = 768.0
-offset_bottom = 360.0
-script = ExtResource("15_1nqxk")
+offset_left = 374.0
+offset_top = 87.0
+offset_right = 398.0
+offset_bottom = 108.0
+script = ExtResource("18_dxv3v")
+
+[node name="ExitButton" type="Button" parent="CanvasLayer/Roleta" unique_id=947374833]
+custom_minimum_size = Vector2(-0.39, -2.25)
+layout_mode = 0
+offset_left = 432.0
+offset_top = 521.0
+offset_right = 548.0
+offset_bottom = 631.0
+scale = Vector2(0.5, 0.5)
+icon = ExtResource("19_n6rv6")
+flat = true
+
+[node name="SpinSound" type="AudioStreamPlayer" parent="CanvasLayer/Roleta" unique_id=1506671321]
+stream = ExtResource("20_lufov")

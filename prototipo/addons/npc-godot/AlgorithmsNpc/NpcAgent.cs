@@ -82,6 +82,14 @@ public abstract partial class NpcAgent : CharacterBody2D
 	[Export]
 	public bool GerarDataset = false;
 
+	[Export]
+	public float VelocidadeFuga = 200f;
+
+	public bool EstaFugindo { get; private set; } = false;
+
+	private Vector2 pontoExplosao;
+	private float tempoFugaRestante = 0f;
+
 	protected Random rng;
 
 	public override void _Ready()
@@ -130,6 +138,10 @@ public abstract partial class NpcAgent : CharacterBody2D
 
 	public override void _Process(double delta)
 	{
+		
+		if (EstaFugindo)
+		return;
+
 		if (!IsMining && !IsGoingToMine)
 		{
 			timer.Update((float)delta);
@@ -142,6 +154,37 @@ public abstract partial class NpcAgent : CharacterBody2D
 		
 		AtualizarCorPorEstado();
 		
+		// Prioridade máxima: fugir de uma explosão.
+		if (EstaFugindo)
+		{
+			tempoFugaRestante -= (float)delta;
+
+			if (tempoFugaRestante <= 0f)
+			{
+				EstaFugindo = false;
+				Velocity = Vector2.Zero;
+
+				if (Sprite != null)
+					Sprite.Play("idle");
+
+				GD.Print("NPC terminou a fuga: ", NpcId);
+				MoveAndSlide();
+				return;
+			}
+
+			Vector2 direcao = (GlobalPosition - pontoExplosao).Normalized();
+
+			// Evita divisão por zero caso o NPC esteja exatamente no centro.
+			if (direcao.LengthSquared() < 0.01f)
+				direcao = Vector2.FromAngle(GD.Randf() * Mathf.Tau);
+
+			Velocity = direcao * VelocidadeFuga;
+
+			AtualizarAnimacaoMovimento(direcao);
+			MoveAndSlide();
+			return;
+		}
+
 		if (IsMining)
 		{
 			Velocity = Vector2.Zero;
@@ -377,5 +420,26 @@ public abstract partial class NpcAgent : CharacterBody2D
 		}
 
 		GD.Print("NPC terminou a mineração: ", NpcId);
+	}
+	
+	public void FugirDeExplosao(Vector2 origem, float duracao)
+	{
+		pontoExplosao = origem;
+		tempoFugaRestante = duracao;
+		EstaFugindo = true;
+
+		// Cancela a mineração e libera a reserva da mina.
+		foreach (Node filho in GetChildren())
+		{
+			if (filho is MineracaoController controlador)
+			{
+				controlador.CancelarPorExplosao();
+				break;
+			}
+		}
+
+		Velocity = Vector2.Zero;
+
+		GD.Print("NPC fugindo da explosão: ", NpcId);
 	}
 }

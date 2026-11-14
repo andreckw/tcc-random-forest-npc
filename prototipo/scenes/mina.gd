@@ -81,7 +81,7 @@ func receber_dano(dano: int, multiplicador_fortuna: int = 1):
 	var dinheiro_base: int = roundi(valor_por_clique * dano_real)
 	
 	## VALOR ALTERAR dinheiro_base = valor que vc quer
-	var dinheiro_ganho: int = dinheiro_base * multiplicador_fortuna
+	var dinheiro_ganho: int = 50000 * multiplicador_fortuna
 
 	GameManager.adicionar_dinheiro(dinheiro_ganho)
 

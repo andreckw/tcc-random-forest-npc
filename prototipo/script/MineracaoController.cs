@@ -26,7 +26,7 @@ public partial class MineracaoController : Node
 
 	public override void _Process(double delta)
 	{
-		if (npc == null || !npc.PodeMinerar)
+		if (npc == null || !npc.PodeMinerar || npc.EstaFugindo)
 			return;
 
 		// Se já existe uma mina escolhida, acompanha o processo.
@@ -196,6 +196,21 @@ public partial class MineracaoController : Node
 		{
 			minaAlvo.Call("liberar_reserva_npc", npc);
 		}
+	}
+	
+	public void CancelarPorExplosao()
+	{
+		if (npc == null)
+			return;
+
+		if (minaAlvo == null &&
+			!npc.IsMining &&
+			!npc.IsGoingToMine)
+			return;
+
+		FinalizarMineracao();
+
+		GD.Print("Mineração cancelada por explosão!");
 	}
 
 	public override void _ExitTree()
