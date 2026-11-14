@@ -1,0 +1,58 @@
+[gd_scene format=3 uid="uid://d3ftel6r8nqp"]
+
+[ext_resource type="AudioStream" uid="uid://c8spqmb44v1v0" path="res://scenes/nukeSound.mp3" id="1_3v3y1"]
+[ext_resource type="Texture2D" uid="uid://bkquv6os83veq" path="res://images/nuke.png" id="1_u1bhf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bl2l5"]
+atlas = ExtResource("1_u1bhf")
+region = Rect2(0, 0, 256, 408)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gay1v"]
+atlas = ExtResource("1_u1bhf")
+region = Rect2(0, 0, 256, 408)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bqnpl"]
+atlas = ExtResource("1_u1bhf")
+region = Rect2(0, 0, 256, 408)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_clajv"]
+atlas = ExtResource("1_u1bhf")
+region = Rect2(0, 0, 256, 408)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wkswf"]
+atlas = ExtResource("1_u1bhf")
+region = Rect2(1024, 0, 256, 408)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lqr2k"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bl2l5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gay1v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bqnpl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_clajv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wkswf")
+}],
+"loop": 1,
+"name": &"nuke",
+"speed": 5.0
+}]
+
+[node name="Node2D" type="Node2D" unique_id=1804927933]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=546192921]
+position = Vector2(-4, 15)
+scale = Vector2(0.6328125, 0.5894608)
+sprite_frames = SubResource("SpriteFrames_lqr2k")
+animation = &"nuke"
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=1813285635]
+stream = ExtResource("1_3v3y1")

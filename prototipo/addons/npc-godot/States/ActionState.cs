@@ -1,8 +1,8 @@
 using Godot;
 namespace States
 {
-    public interface IActionState
-    {
-        void Act(NpcAgent npc, float delta);
-    }
+	public interface IActionState
+	{
+		void Act(NpcAgent npc, float delta);
+	}
 }

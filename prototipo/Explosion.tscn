@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://oydug74h40xd"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_lqr2k"]
+
+[node name="Node2D" type="Node2D" unique_id=97884924]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1765465620]
+sprite_frames = SubResource("SpriteFrames_lqr2k")
+
+[node name="Timer" type="Timer" parent="." unique_id=310190282]

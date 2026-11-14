@@ -4,41 +4,41 @@ using Godot;
 
 public partial class Npc2dRadomForest : NpcRandomForest
 {
-    [Export]
-    Area2D AreaClickable { get; set; }
+	[Export]
+	Area2D AreaClickable { get; set; }
 
-    [Export]
-    Label Label { get; set; }
+	[Export]
+	Label Label { get; set; }
 
-    public override void _Ready()
-    {
-        base._Ready();
+	public override void _Ready()
+	{
+		base._Ready();
 
-        if (AreaClickable != null)
-        {
-            AreaClickable.InputEvent += OnAreaInputEvent;
-        }
-    }
+		if (AreaClickable != null)
+		{
+			AreaClickable.InputEvent += OnAreaInputEvent;
+		}
+	}
 
-    public override void _Process(double delta)
-    {
-        base._Process(delta);
+	public override void _Process(double delta)
+	{
+		base._Process(delta);
 
-        if (Label != null)
-        {
-            Label.Text = CurrentState.GetType().Name + " - " +  Math.Round(timer.TimeLeft, 2);
-        }
+		if (Label != null)
+		{
+			Label.Text = CurrentState.GetType().Name + " - " +  Math.Round(timer.TimeLeft, 2);
+		}
 
-    }
+	}
 
-    private void OnAreaInputEvent(Node viewport, InputEvent inputEvent, long shapeIdx)
-    {
-        if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
-        {
-            if (Label != null)
-            {
-                Label.Visible = !Label.Visible;
-            }
-        }
-    }
+	private void OnAreaInputEvent(Node viewport, InputEvent inputEvent, long shapeIdx)
+	{
+		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+		{
+			if (Label != null)
+			{
+				Label.Visible = !Label.Visible;
+			}
+		}
+	}
 }
