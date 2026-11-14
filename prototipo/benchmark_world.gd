@@ -65,6 +65,7 @@ func _on_timer_timeout() -> void:
 
 		lblK.text = str(k)
 		lblV.text = str(qtd_actions[k]) 
+		lblV.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 
 		grid_actions.add_child(lblK)
 		grid_actions.add_child(lblV)
