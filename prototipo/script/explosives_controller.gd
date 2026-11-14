@@ -13,6 +13,15 @@ extends Node
 @export var raio_tnt: float = 350.0
 @export var dano_tnt: int = 20
 
+@export_group("Nuke")
+@export var cena_nuke: PackedScene
+@export var altura_queda_nuke: float = 600.0
+@export var tempo_queda_nuke: float = 2.5
+
+@export_group("Nuke")
+@export var raio_nuke: float = 700.0
+@export var dano_nuke: int = 999999
+
 @onready var loja = $"../CanvasLayer/Shop"
 
 var explosivo_em_espera: bool = false
@@ -37,7 +46,7 @@ func _on_item_purchased(tipo: String, id: String) -> void:
 	if tipo != "extra":
 		return
 
-	if id != "dynamite" and id != "tnt":
+	if id != "dynamite" and id != "tnt" and id != "nuke":
 		return
 
 	if explosivo_em_espera:
@@ -53,9 +62,17 @@ func _on_item_purchased(tipo: String, id: String) -> void:
 	var mundo := get_parent() as Node2D
 	var posicao := mundo.to_global(ponto_explosao)
 
-	mostrar_bomba(posicao)
-
 	print("Explosivo comprado: ", id)
+
+	# A Nuke possui uma sequência própria.
+	if id == "nuke":
+		await executar_nuke(posicao)
+		explosivo_em_espera = false
+		return
+
+	# Dinamite e TNT continuam com o funcionamento atual.
+	mostrar_bomba(posicao, id)
+
 	print("Explosivo será acionado em 2 segundos...")
 
 	await get_tree().create_timer(2.0).timeout
@@ -87,9 +104,14 @@ func _executar_explosao(id: String) -> void:
 	if id == "dynamite":
 		raio = raio_dinamite
 		dano = dano_dinamite
+		
 	elif id == "tnt":
 		raio = raio_tnt
 		dano = dano_tnt
+		
+	elif id == "nuke":
+		raio = raio_nuke
+		dano = dano_nuke
 	else:
 		return
 
@@ -139,19 +161,22 @@ func _executar_explosao(id: String) -> void:
 
 	print("NPCs que começaram a fugir: ", npcs_afetados)
 
-func mostrar_bomba(posicao: Vector2) -> void:
+func mostrar_bomba(posicao: Vector2, id: String) -> void:
 	if cena_explosivo == null:
 		push_error("Cena do explosivo não foi configurada!")
 		return
 
 	explosivo_atual = cena_explosivo.instantiate() as Node2D
-
 	get_parent().add_child(explosivo_atual)
 	explosivo_atual.global_position = posicao
-	
+
 	var animacao = explosivo_atual.get_node("AnimatedSprite2D") as AnimatedSprite2D
-	animacao.play("default")	
-	
+
+	if id == "tnt":
+		animacao.play("tnt")
+	else:
+		animacao.play("default")
+		
 func mostrar_explosao(posicao: Vector2, id: String) -> void:
 	if cena_explosao == null:
 		push_error("Cena da explosão não foi configurada!")
@@ -172,8 +197,112 @@ func mostrar_explosao(posicao: Vector2, id: String) -> void:
 	# TNT terá uma explosão visual maior.
 	if id == "tnt":
 		explosao.scale = Vector2(2.0, 2.0)
+		
+	elif id == "nuke":
+		explosao.scale = Vector2(4.0, 4.0)	
 
 	animacao.animation_finished.connect(explosao.queue_free)
 	animacao.play("default")	
 	var audio = explosao.get_node("AudioStreamPlayer2D") as AudioStreamPlayer2D
 	audio.play()
+	
+func eliminar_todos_npcs() -> void:
+	var npcs = get_parent().get_node_or_null("Npcs")
+
+	if npcs == null:
+		push_warning("Nó Npcs não encontrado!")
+		return
+
+	for npc in npcs.get_children():
+		npc.queue_free()
+
+func executar_nuke(posicao: Vector2) -> void:
+	if cena_nuke == null:
+		push_error("Cena da Nuke não foi configurada!")
+		return
+
+	var mundo := get_parent() as Node2D
+
+	# Instancia a Nuke.
+	var nuke := cena_nuke.instantiate() as Node2D
+	mundo.add_child(nuke)
+
+	# Começa acima do ponto de explosão.
+	var posicao_inicial := posicao + Vector2(0, -altura_queda_nuke)
+	nuke.global_position = posicao_inicial
+
+	# Inicia a animação.
+	var animacao := nuke.get_node("AnimatedSprite2D") as AnimatedSprite2D
+	animacao.play("default")
+
+	# Prepara o som.
+	var audio := nuke.get_node("AudioStreamPlayer2D") as AudioStreamPlayer2D
+
+	# Faz a Nuke cair até o chão.
+	var tween := create_tween()
+
+	tween.tween_property(
+		nuke,
+		"global_position",
+		posicao,
+		tempo_queda_nuke
+	).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+
+	# Aguarda a chegada da bomba.
+	await tween.finished
+
+	# Som no momento do impacto.
+	if is_instance_valid(nuke):
+		audio.play()
+
+	# Remove a bomba.
+	nuke.queue_free()
+
+	# Reproduz a explosão existente.
+	mostrar_explosao(posicao, "nuke")
+
+	# Destrói os minérios dentro do raio da Nuke.
+	_executar_explosao("nuke")
+
+	# Elimina todos os NPCs.
+	eliminar_todos_npcs()
+
+	print("NUKE ACIONADA! Todos os NPCs foram eliminados.")
+	
+func executar_recompensa_explosivo(id: String) -> void:
+	if id != "dynamite" and id != "tnt":
+		return
+
+	# Aguarda outro explosivo terminar, se necessário.
+	while explosivo_em_espera:
+		await get_tree().process_frame
+
+	explosivo_em_espera = true
+
+	var mundo := get_parent() as Node2D
+
+	if mundo == null:
+		push_error("Mundo não encontrado!")
+		explosivo_em_espera = false
+		return
+
+	var posicao := mundo.to_global(ponto_explosao)
+
+	print("Explosivo recebido como recompensa: ", id)
+
+	# Mostra a bomba.
+	mostrar_bomba(posicao, id)
+
+	# Mantém o mesmo tempo de acionamento da loja.
+	await get_tree().create_timer(2.0).timeout
+
+	if is_instance_valid(explosivo_atual):
+		explosivo_atual.queue_free()
+
+	explosivo_atual = null
+
+	# Executa a explosão e aplica os danos.
+	mostrar_explosao(posicao, id)
+	_executar_explosao(id)
+
+	explosivo_em_espera = false	

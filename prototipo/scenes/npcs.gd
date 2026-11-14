@@ -91,3 +91,29 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode == KEY_N:
 			spawnar_npc()
+			
+func spawnar_npc_aleatorio() -> void:
+	var npcs_disponiveis: Array[String] = []
+
+	for npc_id in NPC_SCENES:
+		var caminho: String = NPC_SCENES[npc_id]
+
+		if ResourceLoader.exists(caminho):
+			npcs_disponiveis.append(npc_id)
+
+	if npcs_disponiveis.is_empty():
+		push_warning("Nenhuma cena de NPC disponível para sorteio!")
+		return
+
+	var npc_id: String = npcs_disponiveis.pick_random()
+	var caminho: String = NPC_SCENES[npc_id]
+
+	var cena := load(caminho) as PackedScene
+
+	if cena == null:
+		push_error("Não foi possível carregar o NPC: " + npc_id)
+		return
+
+	print("NPC sorteado como recompensa: ", npc_id)
+
+	instanciar_npc(cena)			

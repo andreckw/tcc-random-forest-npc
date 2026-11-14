@@ -41,7 +41,7 @@ var NPCS := {
 		{"id": "minerador_experiente",   "name": "Minerador Experiente",   "desc": "Trabalhador experiente, eficiente e resistente.",                        "price": 3000,  "limit": 5,  "portrait": "minerador_experiente",   "perf": 8,  "exp": 8},
 		{"id": "minerador_explorador",   "name": "Minerador Explorador",   "desc": "Trabalhador aventureiro, observador e especializado em explorar as minas.", "price": 5000, "limit": 3,  "portrait": "minerador_explorador",   "perf": -1, "exp": -1},
 		{"id": "minerador_especialista", "name": "Minerador Especialista", "desc": "Especialista em mineração, altamente eficiente.",                        "price": 10000, "limit": 5,  "portrait": "minerador_especialista", "perf": 10, "exp": 10},
-		{"id": "supervisor_mina",        "name": "Supervisor da Mina",     "desc": "Observa os trabalhadores e acompanha as atividades.",                    "price": 1, "limit": 1,  "portrait": "supervisor_mina",        "perf": -1, "exp": -1, "bonus": "Bônus de dinheiro e velocidade."},
+		{"id": "supervisor_mina",        "name": "Supervisor da Mina",     "desc": "Observa os trabalhadores e acompanha as atividades.",                    "price": 50000, "limit": 1,  "portrait": "supervisor_mina",        "perf": -1, "exp": -1, "bonus": "Bônus de dinheiro e velocidade."},
 	],
 	"scenery": [
 		{"id": "campones",    "name": "Camponês",    "desc": "Trabalhador humilde e dedicado, acostumado à vida simples do campo.",       "price": 100,  "limit": 5, "portrait": "campones"},

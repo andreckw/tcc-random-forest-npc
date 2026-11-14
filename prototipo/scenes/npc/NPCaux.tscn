@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" uid="uid://bcyxw78et1k06" path="res://scenes/npc/InitialNPC.tscn" id="1_guhti"]
 [ext_resource type="Texture2D" uid="uid://c55b621mi8w7v" path="res://images/characters/mineradores/mineraux.png" id="2_mxs82"]
+[ext_resource type="Texture2D" uid="uid://tpmhbr4tqjaw" path="res://images/characters/mineradores/mineraux2.png" id="3_poni1"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_poni1"]
 atlas = ExtResource("2_mxs82")
@@ -40,44 +41,56 @@ atlas = ExtResource("2_mxs82")
 region = Rect2(504, 2013, 168, 183)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_an8ao"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(0, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(468, 1870, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_25etn"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(168, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(156, 1870, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y5neo"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(336, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(0, 1870, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_bqevf"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(504, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(312, 1870, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tjpvy"]
 atlas = ExtResource("2_mxs82")
-region = Rect2(336, 2013, 168, 183)
+region = Rect2(0, 2013, 168, 183)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ny28t"]
 atlas = ExtResource("2_mxs82")
-region = Rect2(504, 2013, 168, 183)
+region = Rect2(336, 2013, 168, 183)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rxwgp"]
 atlas = ExtResource("2_mxs82")
-region = Rect2(504, 1098, 168, 183)
+region = Rect2(504, 2013, 168, 183)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ufmuu"]
 atlas = ExtResource("2_mxs82")
-region = Rect2(336, 1098, 168, 183)
+region = Rect2(168, 2013, 168, 183)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_gwa28"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(168, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(0, 1360, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7hgt5"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(0, 1098, 168, 183)
+atlas = ExtResource("3_poni1")
+region = Rect2(156, 1530, 156, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dmf4q"]
+atlas = ExtResource("3_poni1")
+region = Rect2(312, 1360, 156, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6u4q4"]
+atlas = ExtResource("3_poni1")
+region = Rect2(468, 1530, 156, 170)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ljexr"]
+atlas = ExtResource("3_poni1")
+region = Rect2(468, 1360, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_1hcgc"]
 atlas = ExtResource("2_mxs82")
@@ -95,10 +108,6 @@ region = Rect2(336, 1464, 168, 183)
 atlas = ExtResource("2_mxs82")
 region = Rect2(504, 1464, 168, 183)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_dmf4q"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(0, 1281, 168, 183)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_sxd43"]
 atlas = ExtResource("2_mxs82")
 region = Rect2(168, 1281, 168, 183)
@@ -111,21 +120,25 @@ region = Rect2(336, 1281, 168, 183)
 atlas = ExtResource("2_mxs82")
 region = Rect2(504, 1281, 168, 183)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_n048c"]
+atlas = ExtResource("2_mxs82")
+region = Rect2(168, 915, 168, 183)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_2dj0g"]
 atlas = ExtResource("2_mxs82")
 region = Rect2(0, 915, 168, 183)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_n048c"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(168, 915, 168, 183)
+[sub_resource type="AtlasTexture" id="AtlasTexture_uf6mg"]
+atlas = ExtResource("3_poni1")
+region = Rect2(0, 850, 156, 170)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ttord"]
 atlas = ExtResource("2_mxs82")
 region = Rect2(336, 915, 168, 183)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_6u4q4"]
-atlas = ExtResource("2_mxs82")
-region = Rect2(504, 915, 168, 183)
+[sub_resource type="AtlasTexture" id="AtlasTexture_26qds"]
+atlas = ExtResource("3_poni1")
+region = Rect2(468, 850, 156, 170)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_ljexr"]
 animations = [{
@@ -194,6 +207,12 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ny28t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxwgp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ufmuu")
 }],
 "loop": 1,
 "name": &"walk_down_right",
@@ -201,16 +220,19 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_rxwgp")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ufmuu")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_gwa28")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_7hgt5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dmf4q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6u4q4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ljexr")
 }],
 "loop": 1,
 "name": &"walk_left",
@@ -230,9 +252,6 @@ animations = [{
 "texture": SubResource("AtlasTexture_6b5bc")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_dmf4q")
-}, {
-"duration": 1.0,
 "texture": SubResource("AtlasTexture_sxd43")
 }, {
 "duration": 1.0,
@@ -247,16 +266,19 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_n048c")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_2dj0g")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_n048c")
+"texture": SubResource("AtlasTexture_uf6mg")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_ttord")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_6u4q4")
+"texture": SubResource("AtlasTexture_26qds")
 }],
 "loop": 1,
 "name": &"walk_up",
@@ -267,5 +289,7 @@ animations = [{
 FortunaMineracao = 2
 
 [node name="AnimatedSprite2D" parent="." index="2" unique_id=1761662260]
+position = Vector2(1, -1.0000002)
+scale = Vector2(0.2814745, 0.31341788)
 sprite_frames = SubResource("SpriteFrames_ljexr")
-animation = &"walk_up"
+animation = &"idle"
