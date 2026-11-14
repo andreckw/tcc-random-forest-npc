@@ -12,7 +12,7 @@ size = Vector2(28, 28)
 script = ExtResource("1_t5bx6")
 AreaClickable = NodePath("Area2D")
 Label = NodePath("Label")
-metadata/_custom_type_script = "uid://disn23faqf6rm"
+GerarDataset = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1342897689]
 sprite_frames = ExtResource("2_34gih")
