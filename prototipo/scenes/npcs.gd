@@ -74,6 +74,8 @@ func instanciar_npc(cena: PackedScene) -> void:
 
 	add_child(npc)
 	npc.position = spawn_position
+	npc.collision_layer = 2
+	npc.collision_mask = 1
 
 	print("NPC apareceu na posição: ", spawn_position)
 

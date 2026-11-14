@@ -161,6 +161,9 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_32sqe"]
+size = Vector2(642, 256)
+
 [node name="WorldGame" type="Node2D" unique_id=49269676]
 
 [node name="Cenario" type="Node2D" parent="." unique_id=1637220367]
@@ -391,3 +394,9 @@ flat = true
 
 [node name="SpinSound" type="AudioStreamPlayer" parent="CanvasLayer/Roleta" unique_id=1506671321]
 stream = ExtResource("20_lufov")
+
+[node name="ColisaoCastelo" type="StaticBody2D" parent="." unique_id=1966707528]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ColisaoCastelo" unique_id=1461383989]
+position = Vector2(592, 80)
+shape = SubResource("RectangleShape2D_32sqe")
