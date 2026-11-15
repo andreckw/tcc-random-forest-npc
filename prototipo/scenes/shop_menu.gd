@@ -99,7 +99,8 @@ const TITLE_SIZE := 18
 var owned_skins: Array = ["basica"]
 var equipped_skin := "basica"
 var owned_tiers := {"efficiency": [], "fortune": []}   # índices dos níveis comprados
-var extras_inventory := {}                              # id -> quantidade
+var extras_inventory := {}      
+var purchased_once_extras: Array = []                     
 var current_tab := 0
 
 # ======================= UI =======================
@@ -213,14 +214,26 @@ func close_shop() -> void:
 	closed.emit()
 
 func get_save_data() -> Dictionary:
-	return {"owned_skins": owned_skins, "equipped_skin": equipped_skin,
-		"owned_tiers": owned_tiers, "extras_inventory": extras_inventory}
+	return {
+		"owned_skins": owned_skins,
+		"equipped_skin": equipped_skin,
+		"owned_tiers": owned_tiers,
+		"extras_inventory": extras_inventory,
+		"purchased_once_extras": purchased_once_extras
+	}
 
 func load_save_data(d: Dictionary) -> void:
 	owned_skins = d.get("owned_skins", owned_skins)
 	equipped_skin = d.get("equipped_skin", equipped_skin)
 	owned_tiers = d.get("owned_tiers", owned_tiers)
 	extras_inventory = d.get("extras_inventory", extras_inventory)
+	purchased_once_extras = d.get("purchased_once_extras", [])
+
+	for id in EXTRAS:
+		if EXTRAS[id]["once"] and get_extra_count(id) > 0:
+			if id not in purchased_once_extras:
+				purchased_once_extras.append(id)
+			
 	if list_box != null:
 		_populate_list()
 
@@ -682,7 +695,7 @@ func _populate_extras() -> void:
 			var e: Dictionary = EXTRAS[id]
 			var owned := get_extra_count(id)
 			var btn: Button
-			if e["once"] and owned > 0:
+			if e["once"] and id in purchased_once_extras:
 				btn = _make_button("disabled", 0, "Comprado")
 			else:
 				btn = _make_button("buy", e["price"], "Comprar")
@@ -884,10 +897,18 @@ func _on_extra_pressed(id: String) -> void:
 
 	var e: Dictionary = EXTRAS[id]
 
-	if (e["once"] and get_extra_count(id) > 0) or not _try_spend(e["price"]):
+	# Impede a compra de itens que só podem ser adquiridos uma vez.
+	if e["once"] and id in purchased_once_extras:
+		return
+
+	if not _try_spend(e["price"]):
 		return
 
 	extras_inventory[id] = get_extra_count(id) + 1
+
+	# Registra a compra permanentemente.
+	if e["once"]:
+		purchased_once_extras.append(id)
 
 	item_purchased.emit("extra", id)
 

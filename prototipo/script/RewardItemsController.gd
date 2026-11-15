@@ -22,6 +22,7 @@ extends Node
 @onready var loja = get_node_or_null("../CanvasLayer/Shop")
 @onready var npcs = get_node_or_null("../Npcs")
 @onready var explosivos = get_node_or_null("../ExplosivesController")
+@onready var roleta = get_node_or_null("../CanvasLayer/Roleta")
 
 @onready var canvas_layer = get_node_or_null("../CanvasLayer")
 
@@ -40,7 +41,12 @@ func _ready() -> void:
 		return
 
 	loja.item_purchased.connect(_on_item_purchased)
-
+	
+	if roleta != null:
+		roleta.prize_won.connect(_on_prize_won)
+	else:
+		push_warning("RewardItemsController: roleta não encontrada!")
+	
 	print("RewardItemsController iniciado!")
 	
 		
@@ -373,3 +379,15 @@ func _spawnar_nave() -> void:
 	_mostrar_notificacao("OLHO DA PIRÂMIDE AVISTADO! UM MINÉRIO ESPECIAL ESTÁ CHEGANDO!")
 
 	print("Olho da Pirâmide ativado!")
+	
+func _on_prize_won(prize_id: String, _amount: int) -> void:
+	if prize_id != "nuke":
+		return
+
+	if explosivos == null:
+		push_error("ExplosivesController não encontrado!")
+		return
+
+	print("Nuke recebida pela roleta!")
+
+	await explosivos.executar_recompensa_explosivo("nuke")	

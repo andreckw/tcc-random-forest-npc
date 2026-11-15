@@ -270,10 +270,10 @@ func executar_nuke(posicao: Vector2) -> void:
 	print("NUKE ACIONADA! Todos os NPCs foram eliminados.")
 	
 func executar_recompensa_explosivo(id: String) -> void:
-	if id != "dynamite" and id != "tnt":
+	if id != "dynamite" and id != "tnt" and id != "nuke":
 		return
 
-	# Aguarda outro explosivo terminar, se necessário.
+	# Aguarda outro explosivo terminar.
 	while explosivo_em_espera:
 		await get_tree().process_frame
 
@@ -290,10 +290,15 @@ func executar_recompensa_explosivo(id: String) -> void:
 
 	print("Explosivo recebido como recompensa: ", id)
 
-	# Mostra a bomba.
+	# A Nuke possui uma sequência própria.
+	if id == "nuke":
+		await executar_nuke(posicao)
+		explosivo_em_espera = false
+		return
+
+	# Dinamite e TNT mantêm o funcionamento atual.
 	mostrar_bomba(posicao, id)
 
-	# Mantém o mesmo tempo de acionamento da loja.
 	await get_tree().create_timer(2.0).timeout
 
 	if is_instance_valid(explosivo_atual):
@@ -301,8 +306,7 @@ func executar_recompensa_explosivo(id: String) -> void:
 
 	explosivo_atual = null
 
-	# Executa a explosão e aplica os danos.
 	mostrar_explosao(posicao, id)
 	_executar_explosao(id)
 
-	explosivo_em_espera = false	
+	explosivo_em_espera = false
