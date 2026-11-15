@@ -1,7 +1,48 @@
 [gd_scene format=3 uid="uid://cbuu34dhlb2qh"]
 
-[ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="1_dv0kh"]
 [ext_resource type="Script" uid="uid://bo0bw1njhp00v" path="res://scenes/Npc2dBenchmark.cs" id="1_iyvj2"]
+[ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="2_1cxbx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_miudh"]
+atlas = ExtResource("2_1cxbx")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_iyvj2"]
+atlas = ExtResource("2_1cxbx")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1cxbx"]
+atlas = ExtResource("2_1cxbx")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0riog"]
+atlas = ExtResource("2_1cxbx")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_m1g5x"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_miudh")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_iyvj2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1cxbx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0riog")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 4.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iyvj2"]
 
@@ -15,8 +56,8 @@ modelProfile = 3
 Sprite = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=635217513]
-sprite_frames = ExtResource("1_dv0kh")
-animation = &"idle"
+sprite_frames = SubResource("SpriteFrames_m1g5x")
+animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1492523680]
 shape = SubResource("RectangleShape2D_iyvj2")

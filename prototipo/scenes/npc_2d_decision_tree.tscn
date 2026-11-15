@@ -1,7 +1,48 @@
 [gd_scene format=3 uid="uid://cdenswyngsxr8"]
 
 [ext_resource type="Script" uid="uid://coeggy7bbcx44" path="res://script/Npc2dDecisionTree.cs" id="1_t5bx6"]
-[ext_resource type="SpriteFrames" uid="uid://bx7ooa7vkbbla" path="res://utik/sprite_sheet_npc.tres" id="2_34gih"]
+[ext_resource type="Texture2D" uid="uid://8qqpw2rlsbcj" path="res://images/npc2d.png" id="2_t5bx6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_34gih"]
+atlas = ExtResource("2_t5bx6")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kb13l"]
+atlas = ExtResource("2_t5bx6")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6vw2k"]
+atlas = ExtResource("2_t5bx6")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ehxx"]
+atlas = ExtResource("2_t5bx6")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_42m8m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_34gih")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kb13l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6vw2k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ehxx")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 4.0
+}]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_86cna"]
 
@@ -15,8 +56,8 @@ Label = NodePath("Label")
 GerarDataset = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1342897689]
-sprite_frames = ExtResource("2_34gih")
-animation = &"idle"
+sprite_frames = SubResource("SpriteFrames_42m8m")
+animation = &"walk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1854565951]
 shape = SubResource("RectangleShape2D_86cna")
