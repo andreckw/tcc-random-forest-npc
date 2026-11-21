@@ -10,8 +10,10 @@ public abstract partial class NpcAgent : CharacterBody2D
 	[Export]
 	public Trait trait;
 
-	[Export]
 	public TimerResource timer;
+
+	[Export]
+	public float timerDuration = 1;
 
 	[Export]
 	public SocialClass socialClass;
@@ -117,7 +119,8 @@ public abstract partial class NpcAgent : CharacterBody2D
 			trait = (Trait)trait.Duplicate();
 		}
 
-		timer = timer == null ? new TimerResource() : (TimerResource)timer.Duplicate();
+		timer = new TimerResource();
+		timer.Duration = timerDuration;
 
 		timer.OnTimeout += ChangeState;
 		timer.Start();
